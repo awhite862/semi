@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.4)
 project(SEMI CXX)
 
-set(SEMI_DIR "${LIBQINTS_SOURCE_DIR}")
+set(SEMI_DIR "${SEMI_SOURCE_DIR}")
 
 include(CheckCXXSourceCompiles)
 include(CheckIncludeFileCXX)
@@ -12,6 +12,8 @@ include_directories(${ARMADILLO_INCLUDE_DIRS})
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}")
 
 enable_testing()
+add_subdirectory(tests)
+add_executable(semi++ ${SEMI_DIR}/src/main.cpp)
 
 #if(DOXYGEN_FOUND AND (DOXYGEN_VERSION VERSION_GREATER "1.8"))
 #    configure_file(
