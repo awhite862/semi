@@ -1,0 +1,48 @@
+#!/bin/bash
+
+CC0=
+CXX0=
+BUILD_TYPE=
+GENERATOR_UNIX="Unix Makefiles"
+GENERATOR=$GENERATOR_UNIX
+ARMADILLO_PATH=
+
+function set_compilers() {
+  CC0=$1
+  CXX0=$2
+}
+
+function set_build_type() {
+    BUILD_TYPE=$1
+}
+
+while [ $# -gt 0 ]; do
+  case $1 in
+    gcc )     set_compilers "gcc" "g++"
+              ;;
+    intel )   set_compilers "icc" "icpc"
+              ;;
+    debug )   set_build_type "DEBUG"
+              ;;
+    release ) set_build_type "RELEASE"
+              ;;
+    relwdeb ) set_build_type "RELWITHDEBINFO"
+              ;;
+    --with-armadillo=* )
+              ARMADILLO_PATH="${1#--with-armadillo=}"
+              ;;
+  esac
+  shift
+done
+
+if [ "x$BUILD_TYPE" == "x" ]; then
+    BUILD_TYPE=DEBUG
+fi
+
+mkdir build
+cd build
+CC="$CC0" CXX="$CXX0" cmake -G "$GENERATOR" \
+-D CMAKE_BUILD_TYPE="$BUILD_TYPE" \
+-D ARMADILLO_PATH="$ARMADILLO_PATH" \
+..
+
