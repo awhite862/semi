@@ -1,4 +1,5 @@
 set(TESTS 
+    arma_test
     framework_test
 )
 foreach(TEST ${TESTS})

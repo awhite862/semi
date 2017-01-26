@@ -1,5 +1,5 @@
+/** \test Trivial test to make sure testing framework compiles
+ **/
 int main() {
-    int i = 1;
-
     return 0;
 }

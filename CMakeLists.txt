@@ -5,6 +5,7 @@ set(SEMI_DIR "${SEMI_SOURCE_DIR}")
 
 include(CheckCXXSourceCompiles)
 include(CheckIncludeFileCXX)
+include("${SEMI_DIR}/cmake/SEMIDeps.txt")
 
 #find_package(Doxygen)
 

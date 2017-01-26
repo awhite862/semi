@@ -1,0 +1,13 @@
+# Third party dependencies
+
+include(CheckCXXSourceCompiles)
+
+if(ARMADILLO_PATH)
+    find_package(Armadillo REQUIRED CONFIG PATHS "${ARMADILLO_PATH}" "${ARMADILLO_PATH}/usr" "${ARMADILLO_PATH}/usr/local" NO_DEFAULT_PATH)
+else(ARMADILLO_PATH)
+    find_package(Armadillo REQUIRED)
+endif(ARMADILLO_PATH)
+if(Armadillo_FOUND)
+    message(STATUS "Using Armadillo ${Armadillo_VERSION}")
+    set(WITH_ARMADILLO TRUE)
+endif(Armadillo_FOUND)
