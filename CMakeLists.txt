@@ -10,12 +10,14 @@ include("${SEMI_DIR}/cmake/SEMIDeps.txt")
 #find_package(Doxygen)
 
 include_directories(${ARMADILLO_INCLUDE_DIRS})
+include_directories(${SEMI_DIR}/src)
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}")
 
 enable_testing()
 add_subdirectory(src/io)
 add_subdirectory(tests)
 add_executable(semi++ ${SEMI_DIR}/src/main.cpp)
+target_link_libraries(semi++ io)
 
 #if(DOXYGEN_FOUND AND (DOXYGEN_VERSION VERSION_GREATER "1.8"))
 #    configure_file(
