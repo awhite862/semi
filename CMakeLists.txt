@@ -13,6 +13,7 @@ include_directories(${ARMADILLO_INCLUDE_DIRS})
 set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}")
 
 enable_testing()
+add_subdirectory(src/io)
 add_subdirectory(tests)
 add_executable(semi++ ${SEMI_DIR}/src/main.cpp)
 
