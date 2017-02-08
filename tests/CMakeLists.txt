@@ -1,10 +1,12 @@
 set(TESTS 
     arma_test
+    io_utils_test
     framework_test
 )
 foreach(TEST ${TESTS})
     add_executable(${TEST} ${TEST}.cpp)
 endforeach()
+include_directories(${SEMI_DIR}/src)
 
 #if(OPENMP_FOUND)
 #    set(TESTS_COMPILE_FLAGS ${OpenMP_CXX_FLAGS})
@@ -20,7 +22,7 @@ foreach(TEST ${TESTS})
             MACOSX_RPATH TRUE
             INSTALL_RPATH "${ARMADILLO_LIBRARY_DIRS}")
     endif(APPLE)
-    target_link_libraries(${TEST} 
+    target_link_libraries(${TEST} io
         ${ARMADILLO_LIBRARIES})
 endforeach()
 foreach(TEST ${TESTS})
