@@ -15,6 +15,7 @@ set(CMAKE_INSTALL_PREFIX "${CMAKE_CURRENT_SOURCE_DIR}")
 
 enable_testing()
 add_subdirectory(src/io)
+add_subdirectory(src/semi)
 add_subdirectory(tests)
 add_executable(semi++ ${SEMI_DIR}/src/main.cpp)
 target_link_libraries(semi++ io)
