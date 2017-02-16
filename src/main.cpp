@@ -1,10 +1,11 @@
 #include <fstream>
 #include <io/io_input_section.h>
+#include <cstdlib> // EXIT_FAILURE failed compilation
+#include "semi/Integral/Cndo.h"
 
 int main(int argc, char * argv[]) {
-     
-    try {
 
+    try {
         if (argc < 2) {
             std::cout << "No input file was specified!" << std::endl;
             return EXIT_FAILURE;
@@ -15,7 +16,6 @@ int main(int argc, char * argv[]) {
             io::get_input_sections(fin, inputs);
             if (argc == 2) {
                 io::print_input_sections(std::cout, inputs);
-
             }
             else if (argc == 3) {
                 std::ofstream fout(argv[2]);
@@ -26,16 +26,14 @@ int main(int argc, char * argv[]) {
             std::cout << "Too many input parameters." << std::endl;
             return EXIT_FAILURE;
         }
-
     }
     catch (std::exception &e) {
-        std::cout << "Exception: " << e.what() << std::endl; 
+        std::cout << "Exception: " << e.what() << std::endl;
         return EXIT_FAILURE;
     }
     catch (...) {
         std::cout << "Unrecognized exception!!!" << std::endl;
         return EXIT_FAILURE;
     }
-
     return EXIT_SUCCESS;
 }
