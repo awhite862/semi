@@ -1,5 +1,8 @@
 set(SRC
-    test.cpp
+    Atom.cpp
+    Basis.cpp
+    BasisSet.cpp
+    Molecule.cpp
 )
 
 add_library(libsemi ${SRC})
