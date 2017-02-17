@@ -50,12 +50,12 @@ double calculateOverlapMatrix(BasisSet a, BasisSet b) {
 	for (uint k = 0; k < a.size(); k++) {
 		for (uint l = 0; l < b.size(); l++) {
 			r = distance()
-			    zeta_average = 0.5 * (a.zeta + b.zeta);
-			tau = (a.zeta - b.zeta) / (a.zeta + b.zeta);
-			rho = 0.5 * (a.zeta + b.zeta) * r;
+			    zeta_average = 0.5 * (a[k].zeta + b[l].zeta);
+			tau = (a[k].zeta - b[l].zeta) / (a[k].zeta + b[l].zeta);
+			rho = 0.5 * (a[k].zeta + b[l].zeta) * r;
 			kappa = 0.5 * (rho + 1 / rho);
-			rho_alpha = a.zeta * r;
-			rho_beta = b.zeta * r;
+			rho_alpha = a[k].zeta * r;
+			rho_beta = b[l].zeta * r;
 			std::string overlap = a[k] + b[l];
 			if (overlap == "0s1s") {
 				Smatrix(k, l) = (pow((1 - pow * (tau, 2)), 0.5) / (pow(2, 0.5) * tau * rho))

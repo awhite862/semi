@@ -2,6 +2,7 @@ set(TESTS
     arma_test
     io_utils_test
     framework_test
+    semi_test
 )
 foreach(TEST ${TESTS})
     add_executable(${TEST} ${TEST}.cpp)
@@ -22,7 +23,7 @@ foreach(TEST ${TESTS})
             MACOSX_RPATH TRUE
             INSTALL_RPATH "${ARMADILLO_LIBRARY_DIRS}")
     endif(APPLE)
-    target_link_libraries(${TEST} io
+    target_link_libraries(${TEST} io libsemi
         ${ARMADILLO_LIBRARIES})
 endforeach()
 foreach(TEST ${TESTS})
