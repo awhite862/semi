@@ -1,11 +1,17 @@
 #ifndef BASISSET_H
 #define BASISSET_H
 
-#include <string>
 #include <vector>
 #include "Basis.h"
+
 namespace Semi {
-class BasisSet : public std::vector<Basis> {
+
+class BasisSet {
+public:
+	std::vector<Basis> myBasis;
+
+	//constructor
+	BasisSet(std::vector<Basis> _myBasis);
 
 };
 

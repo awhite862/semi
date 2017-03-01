@@ -1,6 +1,7 @@
 #ifndef CNDO_H
 #define CNDO_H
 
+#include <armadillo>
 
 namespace Semi {
 //U_uu
@@ -13,7 +14,7 @@ double calculateTotalChargeDensity();
 double calculateChargeDensity();
 
 //P_uv
-double calculateTotalChargeDensity();
+double calculateTotalChargeDensityDiff();
 
 //Gamma_uv
 double calculateElectronRepulsion();
@@ -25,7 +26,9 @@ double calculateNucleurAttraction();
 double calculateBondingParameter();
 
 //S_uv
-double calculateOverlapMatrix();
+arma::mat calculateOverlapMatrix();
+
+double distance (double x1, double y1, double z1, double x2, double y2, double z2);
 
 }
 

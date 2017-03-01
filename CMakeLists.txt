@@ -18,7 +18,7 @@ add_subdirectory(src/io)
 add_subdirectory(src/semi)
 add_subdirectory(tests)
 add_executable(semi++ ${SEMI_DIR}/src/main.cpp)
-target_link_libraries(semi++ io)
+target_link_libraries(semi++ io libsemi)
 
 #if(DOXYGEN_FOUND AND (DOXYGEN_VERSION VERSION_GREATER "1.8"))
 #    configure_file(

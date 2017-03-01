@@ -1,7 +1,6 @@
 #include <fstream>
 #include <io/io_input_section.h>
 #include <cstdlib> // EXIT_FAILURE failed compilation
-#include "semi/Integral/Cndo.h"
 
 int main(int argc, char * argv[]) {
 

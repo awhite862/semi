@@ -2,7 +2,6 @@
 #define BASIS_H
 
 #include <string>
-#include <sstream>
 
 namespace Semi {
 class Basis {
@@ -16,14 +15,12 @@ public:
 	double z;
 
 	//constructor
-	Basis(double zetaValue, int nValue, int lValue, int mValue, double xValue, double yValue, double zValue);
+	Basis(double _zeta, int _n, int _l, int _m, double _x, double _y, double _z);
 
 	//get string represeting orbital type
 	std::string getOrbitalType();
-
-
-
 };
-}
+
+} // namespace Semi
 
 #endif //BASIS_H

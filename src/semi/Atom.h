@@ -6,7 +6,7 @@
 namespace Semi {
 class Atom {
 public:
-	// xyz coordinates
+	// xyz coordinatesdouble _x, double _y, double _z
 	double x;
 	double y;
 	double z;
@@ -15,11 +15,12 @@ public:
 	double charge;
 
 	//constructor
-	Atom(double xValue, double yValue, double zValue, double chargeValue);
+	Atom(double _x, double _y, double _z, double _charge);
 
 	//get element from charge
 	std::string getElement();
 };
-}//namespace Semi
+
+} //namespace Semi
 
 #endif //ATOM_H
