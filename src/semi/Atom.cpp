@@ -2,7 +2,6 @@
 
 namespace Semi {
 
-//constructor
 Atom::Atom(double _x, double _y, double _z, double _charge) {
 	this->x = _x;
 	this->y = _y;
@@ -10,7 +9,6 @@ Atom::Atom(double _x, double _y, double _z, double _charge) {
 	this->charge = _charge;
 }
 
-//get element from charge
 std::string Atom::getElement() {
 	int temp = this->charge;
 	switch ((int) temp) {

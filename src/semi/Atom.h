@@ -1,3 +1,4 @@
+/** \brief Class that represents an atom. **/
 #ifndef ATOM_H
 #define ATOM_H
 
@@ -6,18 +7,22 @@
 namespace Semi {
 class Atom {
 public:
-	// xyz coordinatesdouble _x, double _y, double _z
+	/** \brief x value of atom. **/
 	double x;
+
+	/** \brief y value of atom. **/
 	double y;
+
+	/** \brief z value of atom. **/
 	double z;
 
-	//charge or element
+	/** \brief Charge of an atom. Same as atomic number. **/
 	double charge;
 
-	//constructor
+	/** \brief Constructor. **/
 	Atom(double _x, double _y, double _z, double _charge);
 
-	//get element from charge
+	/** \brief Determines string corresponding to an elements charge. **/
 	std::string getElement();
 };
 
