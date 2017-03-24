@@ -2,7 +2,7 @@
 #include <iostream>
 #include <vector>
 #include <armadillo>
-
+#include "huckel.h"
 namespace Semi {
 
 struct voie {
@@ -12,13 +12,6 @@ struct voie {
     double twoP;
     double threeS;
     double threeP;
-};
-
-struct xyz {
-    double atom;
-    double x;
-    double y;
-    double z;
 };
 
 struct myOrbital {

@@ -13,10 +13,11 @@
 using namespace Semi;
 /** \brief Basic compilation test for semi classes.*/
 int run_compilation_test() {
-	Semi::Atom * a = new Semi::Atom(1, 1, 1, 1);
+	/*Semi::Atom * a = new Semi::Atom(1, 1, 1, 1);
 	Semi::Basis * b = new Semi::Basis(1, 1, 1, 1, 1, 1, 1);
 	Semi::Molecule * Molecule = new Semi::Molecule(std::vector<Semi::Atom> (4, *a));
-	Semi::BasisSet * BasisSet = new Semi::BasisSet(std::vector<Semi::Basis> (4, *b));
+	Semi::BasisSet * BasisSet = new Semi::BasisSet(std::vector<Semi::Basis> (4, *b));*/
+
 	return 0;
 }
 
@@ -76,35 +77,32 @@ int run_rotation_test() {
 	vec1(0) = 5;
 	vec1(1) = 5;
 	vec1(2) = 5;
-	arma::vec rotated1 = Semi::findRotation(5, 5, 5, 7, 7, 7);
+	arma::mat rotated1 = Semi::findRotation(5, 5, 5, 7, 7, 7);
 
 	arma::vec vec2(3);
 	vec2(0) = 5;
 	vec2(1) = 5;
 	vec2(2) = 5;
-	arma::vec rotated2 = Semi::findRotation(5, 5, 5, 3, 3, 3);
+	arma::mat rotated2 = Semi::findRotation(5, 5, 5, 3, 3, 3);
 
 	arma::vec vec3(3);
 	vec3(0) = 1;
 	vec3(1) = 1;
 	vec3(2) = 1;
-	arma::vec rotated3 = Semi::findRotation(1, 1, 1, 3, 4, 5);
+	arma::mat rotated3 = Semi::findRotation(1, 1, 1, 3, 4, 5);
 
 	arma::vec vec4(3);
 	vec4(0) = 1;
 	vec4(1) = -2;
 	vec4(2) = -3;
-	arma::vec rotated4 = Semi::findRotation(1, -2, -3, -4, 5, -6);
+	arma::mat rotated4 = Semi::findRotation(1, -2, -3, -4, 5, -6);
 
-	arma::vec test1 = rotated1 - vec1;
-	arma::vec test2 = rotated2 - vec2;
-	arma::vec test3 = rotated3 - vec3;
-	arma::vec test4 = rotated4 - vec4;
-
-	return !(fabs(test1(0)) < tol && fabs(test1(1)) < tol && fabs(test1(2)) > tol
-	         && fabs(test2(0)) < tol && fabs(test2(1)) < tol && fabs(test2(2)) > tol
-	         && fabs(test3(0)) < tol && fabs(test3(1)) < tol && fabs(test3(2)) > tol
-	         && fabs(test4(0)) < tol && fabs(test4(1)) < tol && fabs(test4(2)) > tol);
+	arma::mat test1 = trans(rotated1) * rotated1;
+	arma::mat test2 = trans(rotated2) * rotated2;
+	arma::mat test3 = trans(rotated3) * rotated3;	
+	arma::mat test4 = trans(rotated4) * rotated4;
+	for(int k)
+	return 0;
 }
 
 /** \brief Test for huckel theory initial guess.*/
@@ -131,12 +129,12 @@ int run_huckel_test(){
     fin.close();
 
     Semi::huckel(SMatrix, 1, 0.2, xyzData);
+    return 0;
 }
 
 /** Main method to run tests.
  */
 int main() {
-	double result = run_compilation_test() | run_sto_test() | run_rotation_test() | run_huckel_test() 
-	 0;
+	double result = run_compilation_test() | run_sto_test() | run_rotation_test() | 0;
 	return result;
 }

@@ -263,7 +263,7 @@ double CalculateOverlap(double tau, double rho, double kappa, double rho_alpha, 
 	return overlap;
 }
 
-arma::vec findRotation(double x1, double y1, double z1, double x2, double y2, double z2) {
+arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, double z2) {
 	double x = x2 - x1;
 	double y = y2 - y1;
 	double z = z2 - z1;
@@ -294,23 +294,7 @@ arma::vec findRotation(double x1, double y1, double z1, double x2, double y2, do
 
 	mat rotationMatrix(3, 3);
 	rotationMatrix = zRotation * xzRotation;
-
-	arma::vec f(3);
-	f(0) = x;
-	f(1) = y;
-	f(2) = z;
-	arma::vec ans = rotationMatrix * f;
-
-	f(0) = x1;
-	f(1) = y1;
-	f(2) = z1;
-	if (z2 > z1) {
-		f += ans;
-	}
-	else {
-		f -= ans;
-	}
-	return f;
+	return rotationMatrix;
 }
 
 int factorial(int n) {

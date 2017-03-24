@@ -1,19 +1,18 @@
 /** \brief Class that represents approxiamtes initial guess via Huckel theory. **/
-#ifndef IntegralEvaluator_H
-#define IntegralEvaluator_H
+#ifndef HUCKEL_H
+#define HUCKEL_H
 #include <armadillo>
 #include <vector>
 
 namespace Semi {
 
-/** \brief Struct that stores voie data. **/
-struct voie;
-
 /** \brief Struct that stores xyz and element info. **/
-struct xyz;
-
-/** \brief Calculates the inverse square root of a matrix. **/
-struct myOrbital;
+struct xyz {
+    double atom;
+    double x;
+    double y;
+    double z;
+};
 
 /** \brief Calculates the inverse square root of a matrix. **/
 arma::mat invSqrt(arma::mat A);
@@ -22,10 +21,10 @@ arma::mat invSqrt(arma::mat A);
 double fetchVOIE(std::string atom1, std::string orbital1);
 
 /** \brief Retrieves all orbitals for a given element. **/
-vector<std::string> fetchOrbitals(double atom);
+std::vector<std::string> fetchOrbitals(double atom);
 
 /** \brief Retrieves all valence orbitals for a given element. **/
-vector<string> fetchValenceOrbitals(double atom);
+std::vector<std::string> fetchValenceOrbitals(double atom);
 
 /** \brief Calculates number of valence electrons for given atom. **/
 int numValence(int num);
@@ -34,7 +33,7 @@ int numValence(int num);
 double kCalc(double k, double sigma, int i, int j);
 
 /** \brief Huckel approximation of initial guess given overlap matrix, xyz data and parameters. **/
-mat huckel(mat Smatrix, double kValue, double sigmaValue, vector<xyz> xyzData);
+arma::mat huckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vector<xyz> xyzData);
 
 /** \brief Main. **/
 int main();
