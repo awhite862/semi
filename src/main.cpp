@@ -1,6 +1,6 @@
 #include <fstream>
 #include <io/io_input_section.h>
-#include <cstdlib> // EXIT_FAILURE failed compilation
+#include <cstdlib> // for EXIT_FAILURE
 
 int main(int argc, char * argv[]) {
 
