@@ -11,9 +11,9 @@ include("${SEMI_DIR}/cmake/SEMIDeps.txt")
 #find_package( BLAS REQUIRED )
 #find_package( LAPACK REQUIRED )
 
-set(ARMADILLO_LIBRARY ${Armadillo_DIR}/libarmadillo.so)
-set(ARMADILLO_INCLUDE_DIR ${Armadillo_DIR}/include/)
-include_directories(${ARMADILLO_INCLUDE_DIR})
+#set(ARMADILLO_LIBRARY ${Armadillo_DIR}/libarmadillo.so)
+#set(ARMADILLO_INCLUDE_DIR ${Armadillo_DIR}/include/)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 #include_directories(${LAPACK_INCLUDE_DIR}${BLAS_INCLUDE_DIR}${ARMADILLO_INCLUDE_DIRS})
 include_directories(${SEMI_DIR}/src)
