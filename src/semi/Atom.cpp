@@ -3,14 +3,14 @@
 namespace Semi {
 
 Atom::Atom(double _x, double _y, double _z, double _charge) {
-    this->x = _x;
-    this->y = _y;
-    this->z = _z;
-    this->charge = _charge;
+    x = _x;
+    y = _y;
+    z = _z;
+    charge = _charge;
 }
 
 std::string Atom::getElement() {
-    int temp = this->charge;
+    int temp = charge;
     switch ((int) temp) {
     case 1: return "H";
     case 2: return "He";

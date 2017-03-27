@@ -2,9 +2,8 @@
 
 namespace Semi {
 
-//constructor
 Molecule::Molecule(std::vector<Atom> _myMolecule) {
-    this->myMolecule = _myMolecule;
+    myMolecule = _myMolecule;
 }
 
 } //namespace Semi
