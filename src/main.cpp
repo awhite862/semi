@@ -1,5 +1,5 @@
 #include <fstream>
-#include <io/io_input_section.h>
+#include <io/io_get_input.h>
 #include <cstdlib> // for EXIT_FAILURE
 
 int main(int argc, char * argv[]) {
@@ -11,14 +11,15 @@ int main(int argc, char * argv[]) {
         }
         else if (argc < 4) {
             std::ifstream fin(argv[1]);
+            std::map<std::string, io::molecular_input> min;
             std::map<std::string, io::input_section> inputs;
-            io::get_input_sections(fin, inputs);
+            io::get_input_sections(fin, min, inputs);
             if (argc == 2) {
-                io::print_input_sections(std::cout, inputs);
+                io::print_input_sections(std::cout, min, inputs);
             }
             else if (argc == 3) {
                 std::ofstream fout(argv[2]);
-                io::print_input_sections(fout, inputs);
+                io::print_input_sections(fout, min, inputs);
             }
         }
         else {
