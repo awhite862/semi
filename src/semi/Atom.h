@@ -1,29 +1,28 @@
-/** \brief Class that represents an atom. **/
 #ifndef ATOM_H
 #define ATOM_H
 
 #include <string>
 
 namespace Semi {
+/** \brief Class that represents an atom. **/
 class Atom {
 public:
-	/** \brief x value of atom. **/
-	double x;
+    double x; ///!< x-position
+    double y; ///!< y-position
+    double z; ///!< z-position
+    double charge; ///!< charge of the atom
 
-	/** \brief y value of atom. **/
-	double y;
+public:
+    /** \brief Constructor. 
+        \param _x x-position.
+        \param _y x-position.
+        \param _z x-position.
+        \param _charge charge.
+     **/
+    Atom(double _x, double _y, double _z, double _charge);
 
-	/** \brief z value of atom. **/
-	double z;
-
-	/** \brief Charge of an atom. Same as atomic number. **/
-	double charge;
-
-	/** \brief Constructor. **/
-	Atom(double _x, double _y, double _z, double _charge);
-
-	/** \brief Determines string corresponding to an elements charge. **/
-	std::string getElement();
+    /** \brief Determines string corresponding to an elements charge. **/
+    std::string getElement();
 };
 
 } //namespace Semi

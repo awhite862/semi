@@ -8,12 +8,12 @@ include(CheckIncludeFileCXX)
 include("${SEMI_DIR}/cmake/SEMIDeps.txt")
 
 #find_package(Doxygen)
-find_package( BLAS REQUIRED )
-find_package( LAPACK REQUIRED )
+#find_package( BLAS REQUIRED )
+#find_package( LAPACK REQUIRED )
 
-set(ARMADILLO_LIBRARY ${Armadillo_DIR}/libarmadillo.so)
-set(ARMADILLO_INCLUDE_DIR ${Armadillo_DIR}/include/)
-include_directories(${ARMADILLO_INCLUDE_DIR})
+#set(ARMADILLO_LIBRARY ${Armadillo_DIR}/libarmadillo.so)
+#set(ARMADILLO_INCLUDE_DIR ${Armadillo_DIR}/include/)
+include_directories(${ARMADILLO_INCLUDE_DIRS})
 
 #include_directories(${LAPACK_INCLUDE_DIR}${BLAS_INCLUDE_DIR}${ARMADILLO_INCLUDE_DIRS})
 include_directories(${SEMI_DIR}/src)
@@ -24,7 +24,7 @@ add_subdirectory(src/io)
 add_subdirectory(src/semi)
 add_subdirectory(tests)
 add_executable(semi++ ${SEMI_DIR}/src/main.cpp)
-target_link_libraries(semi++ io libsemi -O2 blas lapack)
+target_link_libraries(semi++ io libsemi ${ARMADILLO_LIBRARIES})
 
 #if(DOXYGEN_FOUND AND (DOXYGEN_VERSION VERSION_GREATER "1.8"))
 #    configure_file(

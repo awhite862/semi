@@ -101,7 +101,7 @@ int run_rotation_test() {
 	arma::mat test2 = trans(rotated2) * rotated2;
 	arma::mat test3 = trans(rotated3) * rotated3;	
 	arma::mat test4 = trans(rotated4) * rotated4;
-	for(int k)
+	//for(int k)
 	return 0;
 }
 
