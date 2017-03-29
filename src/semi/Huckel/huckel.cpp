@@ -23,7 +23,6 @@ std::vector<double> atoms;
 std::vector<voie> voieData;
 std::vector<myOrbital> allOrbitalData;
 std::vector<myOrbital> valenceOrbitalData;
-//std::vector<std::string> atomicNumberData = {"x", "H", "He", "Li", "Be", "B", "C", "N", "O", "F", "Ne", "Na", "Mg", "Al", "Si", "P", "S", "Cl", "Ar"};
 
 arma::mat invSqrt(arma::mat A) {
     arma::vec eigval;
@@ -119,7 +118,7 @@ double kCalc(double k, double sigma, int i, int j) {
     return 1.0 + (k + pow(delta, 2) - pow(delta, 4) * k);
 }
 
-arma::mat huckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vector<xyz> xyzData) {
+arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vector<xyz> xyzData, std::string args) {
     std::ifstream fin;
     int i = 0;
     std::string label;
@@ -196,19 +195,11 @@ arma::mat huckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vecto
     arma::vec eigval;
     eig_sym(eigval, eigvec, Hhuckel);
 
-    std::cout << "eigenvalue" << std::endl;
-    eigval.print();
-    std::cout << "eigenvalue size " << eigval.n_elem << std::endl;
-    std::cout << "eigenstd::vector" << std::endl;
-    eigvec.print();
-    std::cout << "eigenstd::vector size " << eigvec.n_elem << std::endl;
-
     unsigned int numpi = 0;
     for (unsigned int i = 0; i < atoms.size(); i++) {
         numpi += numValence(atoms[i]);
     }
 
-    std::cout << "numpi" << numpi << std::endl;
     unsigned int num_orbitals = numpi / 2;
 
     arma::Col<arma::uword> retain(num_orbitals);
@@ -216,14 +207,8 @@ arma::mat huckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vecto
         retain[i] = i;
     }
 
-    arma::mat C_v(valenceOrbitalData.size(), num_orbitals);
-    std::cout << "number of valence" << std::endl;
-    std::cout << valenceOrbitalData.size() << std::endl;
-    std::cout << "number of filled orbitals" << std::endl;
-    std::cout << num_orbitals << std::endl;
-    C_v = eigvec.cols(0, num_orbitals - 1);
-    std::cout << "C_v size " << C_v.n_elem << std::endl;
-    C_v.print();
+    arma::mat c_v(valenceOrbitalData.size(), num_orbitals);
+    c_v = eigvec.cols(0, num_orbitals - 1);
 
     arma::mat c_full(size, size - valenceOrbitalData.size() + num_orbitals);
     for (unsigned int k = 0; k < size; k++) {
@@ -236,51 +221,45 @@ arma::mat huckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vecto
     }
     for (unsigned int k = 0; k < valenceOrbitalData.size(); k++) {
         for (unsigned int i = 0; i < num_orbitals; i++) {
-            c_full(k + size - valenceOrbitalData.size(), i + size - valenceOrbitalData.size()) = C_v(k, i);
+            c_full(k + size - valenceOrbitalData.size(), i + size - valenceOrbitalData.size()) = c_v(k, i);
         }
     }
 
-    std::cout << "c_full" << c_full.n_elem << std::endl;
-    c_full.print();
-
     arma::mat y = trans(c_full) * Smatrix * c_full;
-    std::cout << "y" << std::endl;
-    y.print();
-
     arma::mat c_basis = c_full * (invSqrt(y));
-    std::cout << "basis matrix" << std::endl;
-    c_basis.print();
-
     arma::mat id = trans(c_basis) * Smatrix * c_basis;
-    std::cout << "identity matrix check" << std::endl;
-    id.print();
-    return c_basis;
-}
 
-int main() {
-    arma::mat SMatrix;
-    SMatrix.load("s.txt", arma::raw_ascii);
+    /*  std::cout << "eigenvalue" << std::endl;
+        eigval.print();
+        std::cout << "eigenvalue size " << eigval.n_elem << std::endl;
+        std::cout << "eigenstd::vector" << std::endl;
+        eigvec.print();
+        std::cout << "eigenstd::vector size " << eigvec.n_elem << std::endl;
+        std::cout << "numpi" << numpi << std::endl;
+        std::cout << "number of valence" << std::endl;
+        std::cout << valenceOrbitalData.size() << std::endl;
+        std::cout << "number of filled orbitals" << std::endl;
+        std::cout << num_orbitals << std::endl;
+        std::cout << "c_v size " << c_v.n_elem << std::endl;
+        c_v.print();
+        std::cout << "c_full" << c_full.n_elem << std::endl;
+        c_full.print();
+        std::cout << "y" << std::endl;
+        y.print();
+        std::cout << "basis matrix" << std::endl;
+        c_basis.print();
+        std::cout << "identity matrix check" << std::endl;
+        id.print();
+    */
 
-    std::vector<xyz> xyzData;
-    std::ifstream fin;
-    std::string line;
-    int i = 0;
-    fin.open("benzene.txt");
-    while (std::getline(fin, line)) {
-        std::stringstream linestream(line);
-        double elem, x, y, z;
-        linestream >> elem >> x >> y >> z;
-        xyzData.push_back(xyz());
-        xyzData[i].atom = elem;
-        xyzData[i].x = x;
-        xyzData[i].y = y;
-        xyzData[i].z = z;
-        i++;
+    if (!args.compare("c_v")) {
+        return c_v;
     }
-    fin.close();
-
-    huckel(SMatrix, 1, 0.2, xyzData);
-    return 0;
+    else if (!args.compare("c_full")) {
+        return c_full;
+    }
+    else if (!args.compare("c_basis")) {
+        return c_basis;
+    }
 }
-
 }

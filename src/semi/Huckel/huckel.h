@@ -32,11 +32,10 @@ int numValence(int num);
 /** \brief Calculates k value from given parameters. **/
 double kCalc(double k, double sigma, int i, int j);
 
-/** \brief Huckel approximation of initial guess given overlap matrix, xyz data and parameters. **/
-arma::mat huckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vector<xyz> xyzData);
-
-/** \brief Main. **/
-int main();
+/** \brief Huckel approximation of initial guess given overlap matrix, xyz data and parameters. 
+ **  args controls the output matrix.
+**/
+arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vector<xyz> xyzData, std::string args);
 
 } //namespace Semi
 #endif //huckel.h
