@@ -50,21 +50,21 @@ double calculateBondingParameter() {
 //S_uv
 arma::mat calculateOverlapMatrix(BasisSet a, BasisSet b) {
     mat Smatrix(a.myBasis.size(), b.myBasis.size());
-    // for (uint k = 0; k < a.size(); k++) {
-    //     for (uint l = 0; l < b.size(); l++) {
-    //         r = distance(a[k].x, a[k].y, a[k].z, b[l].x, b[l].y, b[l].z);
-    //         zeta_average = 0.5 * (a[k].zeta + b[l].zeta);
-    //         tau = (a[k].zeta - b[l].zeta) / (a[k].zeta + b[l].zeta);
-    //         rho = 0.5 * (a[k].zeta + b[l].zeta) * r;
-    //         kappa = 0.5 * (rho + 1 / rho);
-    //         rho_alpha = a[k].zeta * r;
-    //         rho_beta = b[l].zeta * r;
-    //         int aOrbitalType [3] =  {a[k].n, a[k].l, a[k].m};
-    //         int bOrbitalType [3] = {b[l].n, b[l].l, b[l].m};
-    //         Smatrix(k, l) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-    //         mat rotationMatrix(3, 3) = findRotation(a[k].x, a[k].y, a[k].z, b[l].x, b[l].y, b[l].z);
-    //     }
-    // }
+    for (uint k = 0; k < a.size(); k++) {
+        for (uint l = 0; l < b.size(); l++) {
+            double r = distance(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, b.myBasis[l].x, b.myBasis[l].y, b.myBasis[l].z);
+            double zeta_average = 0.5 * (a.myBasis[k].zeta + b.myBasis[l].zeta);
+            double tau = (a.myBasis[k].zeta - b.myBasis[l].zeta) / (a.myBasis[k].zeta + b.myBasis[l].zeta);
+            double rho = 0.5 * (a.myBasis[k].zeta + b.myBasis[l].zeta) * r;
+            double kappa = 0.5 * (rho + 1 / rho);
+            double rho_alpha = a.myBasis[k].zeta * r;
+            double rho_beta = b.myBasis[l].zeta * r;
+            int aOrbitalType [3] =  {a.myBasis[k].n, a.myBasis[k].l, a.myBasis[k].m};
+            int bOrbitalType [3] = {b.myBasis[l].n, b.myBasis[l].l, b.myBasis[l].m};
+            Smatrix(k, l) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+            arma::mat rotationMatrix(3, 3) = findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, b.myBasis[l].x, b.myBasis[l].y, b.myBasis[l].z);
+        }
+    }
     return Smatrix;
 
 }
