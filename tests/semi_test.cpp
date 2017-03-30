@@ -50,7 +50,7 @@ int run_sto_test() {
 	b[0] = 1;
 	b[1] = 0;
 	b[2] = 0;
-	double first = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b);
+	double first = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b, "STO");
 	double normFirst = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualFirst;
 
 	///parameters for second overlap integral
@@ -61,7 +61,7 @@ int run_sto_test() {
 	kappa = 0.5 * (tau + 1.0 / tau);
 	rho_alpha = z1 * r;
 	rho_beta = z2 * r;
-	double second = Semi::CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b);
+	double second = Semi::CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b, "STO");
 	double normSecond = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualSecond;
 
 	normFirst -= first;
@@ -99,37 +99,47 @@ int run_rotation_test() {
 
 	arma::mat test1 = trans(rotated1) * rotated1;
 	arma::mat test2 = trans(rotated2) * rotated2;
-	arma::mat test3 = trans(rotated3) * rotated3;	
+	arma::mat test3 = trans(rotated3) * rotated3;
 	arma::mat test4 = trans(rotated4) * rotated4;
-	//for(int k)
+
+	if(norm(test1 - arma::eye(3,3)) > tol | norm(test2 - arma::eye(3,3)) > tol | norm(test3 - arma::eye(3,3)) > tol | norm(test4 - arma::eye(3,3)) > tol) {
+		return 1;
+	}
+
+	arma::vec vec5(3);
+	vec4(0) = 0;
+	vec4(1) = 0;
+	vec4(2) = 5;
+	arma::mat rotated5 = Semi::findRotation(0, 0, 5, 0, 0, 10);
+	rotated5.print();
 	return 0;
 }
 
 /** \brief Test for huckel theory initial guess.*/
-int run_huckel_test(){ 
+int run_huckel_test() {
 	arma::mat SMatrix;
-    SMatrix.load("s.txt", arma::raw_ascii);
+	SMatrix.load("s.txt", arma::raw_ascii);
 
-    std::vector<Semi::xyz> xyzData;
-    std::ifstream fin;
-    std::string line;
-    int i = 0;
-    fin.open("benzene.txt");
-    while (std::getline(fin, line)) {
-        std::stringstream linestream(line);
-        double elem, x, y, z;
-        linestream >> elem >> x >> y >> z;
-        xyzData.push_back(Semi::xyz());
-        xyzData[i].atom = elem;
-        xyzData[i].x = x;
-        xyzData[i].y = y;
-        xyzData[i].z = z;
-        i++;
-    }
-    fin.close();
+	std::vector<Semi::xyz> xyzData;
+	std::ifstream fin;
+	std::string line;
+	int i = 0;
+	fin.open("benzene.txt");
+	while (std::getline(fin, line)) {
+		std::stringstream linestream(line);
+		double elem, x, y, z;
+		linestream >> elem >> x >> y >> z;
+		xyzData.push_back(Semi::xyz());
+		xyzData[i].atom = elem;
+		xyzData[i].x = x;
+		xyzData[i].y = y;
+		xyzData[i].z = z;
+		i++;
+	}
+	fin.close();
 
-    Semi::huckel(SMatrix, 1, 0.2, xyzData);
-    return 0;
+	Semi::calculateHuckel(SMatrix, 1, 0.2, xyzData, "c_v");
+	return 0;
 }
 
 /** Main method to run tests.
