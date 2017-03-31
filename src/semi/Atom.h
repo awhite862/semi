@@ -13,6 +13,10 @@ public:
     double charge; ///!< charge of the atom
 
 public:
+    /** \brief Default constructor
+     **/
+    Atom() : x(0), y(0), z(0), charge(0.0) { }
+
     /** \brief Constructor. 
         \param _x x-position.
         \param _y x-position.

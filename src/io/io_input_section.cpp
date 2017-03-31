@@ -4,6 +4,12 @@
 namespace io {
 
 input_section::input_section() {  } 
+    
+const std::map<std::string, std::string>& input_section::get() const {
+    return m_data;
+}
+    
+bool input_section::is_empty() const {return m_data.empty();}
 
 void input_section::add(std::string &key, std::string &value) {
     m_data[key] = value;
@@ -16,8 +22,5 @@ void input_section::print(std::ostream &os) const {
         os << " " << ii->first << " " << ii->second << std::endl;
     }
 }
-    
-bool input_section::is_empty() const {return m_data.empty();}
-
 
 } // namespace io

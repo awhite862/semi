@@ -10,6 +10,7 @@ enum calc_type {HUCKEL, CNDO};
 
 struct input {
     Molecule mol; 
+    calc_type ctype;
     parameters huckel_params;
     parameters cndo_params;
 };

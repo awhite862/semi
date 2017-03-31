@@ -22,7 +22,7 @@ public:
     /** \brief Construct from input std::map object.
         \param in_map Input map.
      **/
-    parameters(map_type &in_map) : m_data(in_map) { }
+    parameters(const map_type &in_map) : m_data(in_map) { }
 
     /** \brief Returns true if the parameter structure is empty. **/
     bool is_empty() const {return m_data.empty();}
@@ -31,9 +31,15 @@ public:
         \param key Key specifying parameter to set.
         \param value Value of the defualt.
      **/
-    void set_default(std::string &key, std::string &value) {
+    template <typename T>
+    void set_default(std::string &key, T value) {
         typename map_type::iterator i = m_data.find(key);
-        if (i == m_data.end()) m_data[key] = value;
+        if (i == m_data.end()) {
+            std::stringstream ss;
+            ss << value; 
+            std::string svalue = ss.str();
+            m_data[key] = svalue;
+        }
     }
 
     /** \brief Add a value or overwrite existing value.
