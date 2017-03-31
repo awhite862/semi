@@ -50,7 +50,7 @@ int run_sto_test() {
 	b[0] = 1;
 	b[1] = 0;
 	b[2] = 0;
-	double first = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b, "STO");
+	double first = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b);
 	double normFirst = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualFirst;
 
 	///parameters for second overlap integral
@@ -61,7 +61,7 @@ int run_sto_test() {
 	kappa = 0.5 * (tau + 1.0 / tau);
 	rho_alpha = z1 * r;
 	rho_beta = z2 * r;
-	double second = Semi::CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b, "STO");
+	double second = Semi::CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b);
 	double normSecond = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualSecond;
 
 	normFirst -= first;
