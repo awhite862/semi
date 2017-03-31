@@ -3,6 +3,7 @@
 #include <io/io_get_input.h>
 #include <semi/semi_api.h>
 
+//TODO move this to utilities
 double get_charge(std::string s) {
     if (isdigit(s[0])) {
         double charge;
@@ -12,16 +13,16 @@ double get_charge(std::string s) {
         return charge;
     }
     else {
-        if (s == "H" ) return 1.0;
-        else if (s == "He") return 2.0;
-        else if (s == "Li") return 3.0;
-        else if (s == "Be") return 4.0;
-        else if (s == "B" ) return 5.0;
-        else if (s == "C" ) return 6.0;
-        else if (s == "N" ) return 7.0;
-        else if (s == "O" ) return 8.0;
-        else if (s == "F" ) return 9.0;
-        else if (s == "Ne") return 10.0;
+        if (s == "h" ) return 1.0;
+        else if (s == "he") return 2.0;
+        else if (s == "li") return 3.0;
+        else if (s == "be") return 4.0;
+        else if (s == "b" ) return 5.0;
+        else if (s == "c" ) return 6.0;
+        else if (s == "n" ) return 7.0;
+        else if (s == "o" ) return 8.0;
+        else if (s == "f" ) return 9.0;
+        else if (s == "ne") return 10.0;
         else return 0.0;
     }
 }
@@ -34,8 +35,12 @@ void build_input(
     typedef std::map<std::string, io::input_section> imap_type;
     typedef std::map<std::string, io::molecular_input> mmap_type;
 
-    if (min.size() == 1) {
-        typename mmap_type::const_iterator ii = min.find("mol");
+    size_t nmol = min.size();
+    if (nmol == 1) {
+        typename mmap_type::const_iterator ii = min.find("molecule");
+        if (ii == min.end()) {
+            throw std::runtime_error("Could not find 'molecule' section");
+        }
         std::vector<Semi::Atom> avec;
         for (size_t i = 0; i < ii->second.size(); i++) {
             double charge = get_charge(ii->second.gets(i));
@@ -50,21 +55,28 @@ void build_input(
         in.mol = Semi::Molecule(avec);
     }
     else {
-        // throw something 
+        std::stringstream ss;
+        ss << "Incorrect molecule specification: " << nmol << " molecules were specified.";
+        throw std::runtime_error(ss.str()); 
     }
     
     // parse control section
-    typename imap_type::const_iterator ii = inputs.find("control");
-    const io::input_section &cont = ii->second;
-    std::string method = cont.get_value<std::string>("method");
-    if (method == "huckel") {
-        in.ctype = Semi::HUCKEL;
-    }
-    else if (method == "cndo") {
-        in.ctype = Semi::CNDO;
-    }
-    else {
-        // throw something
+    {
+        typename imap_type::const_iterator ii = inputs.find("control");
+        if (ii == inputs.end()) {
+            throw std::runtime_error("Could not find 'control' section");
+        }
+        const io::input_section &cont = ii->second;
+        std::string method = cont.get_value<std::string>("method");
+        if (method == "huckel") {
+            in.ctype = Semi::HUCKEL;
+        }
+        else if (method == "cndo") {
+            in.ctype = Semi::CNDO;
+        }
+        else {
+            throw std::runtime_error("Unrecognized method: " + method);
+        }
     }
 
     // get huckel section if applicable

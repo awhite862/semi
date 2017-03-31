@@ -1,7 +1,16 @@
+#include <algorithm>
 #include "io_get_input.h"
 #include "io_utils.h"
 
 namespace io {
+
+namespace {
+
+void expand_molecular_abbreviations(std::string &str) {
+    if (str == "mol") str = "molecule";
+}
+
+} // unnamed namespace 
 
 void get_input_sections(
     std::istream &is, 
@@ -13,10 +22,13 @@ void get_input_sections(
         clean_string(name);
         if (!name.empty() && name[0] == '$') {
             name = name.substr(1,name.length());
+            clean_string(name);
+            std::transform(name.begin(), name.end(), name.begin(), ::tolower);
             input[name] = input_section();
             std::string temp;
             while ( std::getline(is, temp) ) {
                 clean_string(temp);
+                std::transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
                 if (!temp.empty() && temp[0] == '$') break;
                 std::string key, value;
                 std::stringstream ss;
@@ -29,10 +41,14 @@ void get_input_sections(
         }
         else if (!name.empty() && name[0] == '@') {
             name = name.substr(1,name.length());
+            clean_string(name);
+            std::transform(name.begin(), name.end(), name.begin(), ::tolower);
+            expand_molecular_abbreviations(name);
             min[name] = molecular_input();
             std::string temp;
             while ( std::getline(is, temp) ) {
                 clean_string(temp);
+                std::transform(temp.begin(), temp.end(), temp.begin(), ::tolower);
                 if (!temp.empty() && temp[0] == '@') break;
                 min[name].add(temp);
             }
