@@ -27,8 +27,8 @@ double get_charge(std::string s) {
 }
 
 void build_input(
-    std::map<std::string, io::molecular_input> &min,
-    std::map<std::string, io::input_section> &inputs,
+    const std::map<std::string, io::molecular_input> &min,
+    const std::map<std::string, io::input_section> &inputs,
     Semi::input &in) {
 
     typedef std::map<std::string, io::input_section> imap_type;
@@ -54,7 +54,8 @@ void build_input(
     }
     
     // parse control section
-    const io::input_section &cont = inputs["control"];
+    typename imap_type::const_iterator ii = inputs.find("control");
+    const io::input_section &cont = ii->second;
     std::string method = cont.get_value<std::string>("method");
     if (method == "huckel") {
         in.ctype = Semi::HUCKEL;
@@ -67,15 +68,16 @@ void build_input(
     }
 
     // get huckel section if applicable
-    typename imap_type::iterator ii = inputs.find("huckel");
-    if (ii != inputs.end()) 
-        in.huckel_params = Semi::parameters(inputs["huckel"].get());
+    if (inputs.count("huckel") != 0) {
+        typename imap_type::const_iterator ih = inputs.find("huckel");
+        in.huckel_params = Semi::parameters(ih->second.get());
+    }
 
     // get CNDO section if applicable
-    ii = inputs.find("cndo");
-    if (ii != inputs.end())
-        in.huckel_params = Semi::parameters(inputs["cndo"].get());
-
+    if (inputs.count("cndo") != 0) {
+        typename imap_type::const_iterator ic = inputs.find("cndo");
+        in.huckel_params = Semi::parameters(ic->second.get());
+    }
 }
 
 int main(int argc, char * argv[]) {
