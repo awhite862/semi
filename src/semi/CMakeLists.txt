@@ -6,6 +6,7 @@ set(SRC
     Integral/IntegralEvaluator.cpp
     Integral/Cndo.cpp
     Huckel/huckel.cpp
+    semi_api.cpp
 )
 
 add_library(libsemi ${SRC})
