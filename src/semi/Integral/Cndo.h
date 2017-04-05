@@ -8,13 +8,10 @@ namespace Semi {
 double calculateCoreHamiltonian();
 
 //P_AA
-double calculateTotalChargeDensity();
+arma::mat calculateTotalChargeDensity();
 
 //P_uv
-double calculateChargeDensity();
-
-//P_uv
-double calculateTotalChargeDensityDiff();
+arma::mat calculateChargeDensity();
 
 //Gamma_uv
 double calculateElectronRepulsion();

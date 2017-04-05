@@ -2,9 +2,9 @@
 
 namespace Semi {
 
-//constructor
-BasisSet::BasisSet(std::vector<Basis> _myBasis) {
-    this->myBasis = _myBasis;
+template <class bType>
+BasisSet<bType>::BasisSet(std::vector<bType> _myBasis) {
+    myBasis = _myBasis;
 }
 
 } //namespace Semi

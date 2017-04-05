@@ -2,15 +2,16 @@
 
 namespace Semi {
 
-Atom::Atom(double _x, double _y, double _z, double _charge) {
+Atom::Atom(double _x, double _y, double _z, double _charge, double _id) {
     x = _x;
     y = _y;
     z = _z;
     charge = _charge;
+    id = _id;
 }
 
 std::string Atom::getElement() {
-    int temp = charge;
+    int temp = (int) (charge + 0.1);
     switch ((int) temp) {
     case 1: return "H";
     case 2: return "He";

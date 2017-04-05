@@ -2,20 +2,23 @@
 #define BASISSET_H
 
 #include <vector>
-#include "Basis.h"
+#include "GTOBasis.h"
+#include "STOBasis.h"
 
 namespace Semi {
+template<typename bType>
 /** \brief Class that represents a basis set by using an vector of basis. **/
 class BasisSet {
 public:
-    /** \brief vector of basis representing a basis set. **/
-    std::vector<Basis> myBasis;
+    std::vector<bType> myBasis; ///!< vector representing basis
 
-    /** \brief Constructor. **/
-    BasisSet(std::vector<Basis> _myBasis);
+    /** \brief Constructor. 
+        \param _myBasis vector of basis.
+     **/
+    BasisSet(std::vector<bType> _myBasis);
 
 };
 
-}//namespace Semi
+} //namespace Semi
 
 #endif //BASISSET_H

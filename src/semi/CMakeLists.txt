@@ -1,6 +1,7 @@
 set(SRC
     Atom.cpp
-    Basis.cpp
+    STOBasis.cpp
+    GTOBasis.cpp
     BasisSet.cpp
     Molecule.cpp
     Integral/IntegralEvaluator.cpp

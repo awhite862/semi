@@ -7,7 +7,8 @@
 #include <armadillo>
 #include <semi/Atom.h>
 #include <semi/Molecule.h>
-#include <semi/Basis.h>
+#include <semi/GTOBasis.h>
+#include <semi/STOBasis.h>
 #include <semi/BasisSet.h>
 #include "IntegralEvaluator.h"
 
@@ -26,6 +27,17 @@ double CalculateOverlapSamePosition(double tau, double rho, double kappa, double
 /** \brief Calcualtes overlap integral given identical zeta values. **/
 double CalculateOverlapSameZeta(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
 
+double CalculateCoreValenceInteraction(int *a, int *b);
+
+double CalculateElectrionRepulsionIntegral(int *a, int *b);
+
+double CalculateBasicIntegral(double zeta, double rho, int *a);
+
+double CalculateBasicCoulombIntegral(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
+double CalculateBasicCoulombIntegralFull(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
+double CalculateBasicCoulombIntegralSamePosition(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
+double CalculateBasicCoulombIntegralSameZeta(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
+
 /** \brief Calcualtes rotation matrix to the z axis. **/
 arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, double z2);
 
@@ -35,7 +47,7 @@ bool isReversed(int *a, int *b);
 /** \brief Tolerance constant. **/
 const double tolerance = 0.1;
 
-/**	\brief Calculates factorial given an integer recursively. **/
+/** \brief Calculates factorial given an integer recursively. **/
 int factorial(int n);
 
 } //namespace Semi
