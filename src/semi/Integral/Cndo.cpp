@@ -14,6 +14,16 @@ using namespace arma;
 
 namespace Semi {
 
+arma::mat calculateOverlapMatrixGTO(BasisSet<GTOBasis> b) {
+    arma::mat Smatrix(b.myBasis.size(), b.myBasis.size());
+    for (int k = 0; k < b.myBasis.size(); k++) {
+        for (int l = 0; l < b.myBasis.size(); l++) {
+            Smatrix(k, l) = Semi::calculateOverlapGTO(b.myBasis[k], b.myBasis[l]);
+        }
+    }
+    return Smatrix;
+}
+
 arma::mat calculateFockMatrix() {
 
 }
@@ -35,7 +45,7 @@ double calculateIonizationPotential(double charge, double l) {
 }
 
 std::vector<int> CalculateNumberValenceElectrons(double charge) {
-    std::vector<int> vals({0,0});
+    std::vector<int> vals({0, 0});
     if (charge > 4) {
         vals[1] = charge - 4 ;
     }
@@ -57,8 +67,8 @@ double calculateCoreHamiltonian(STOBasis a, STOBasis b) {
     int aOrbitalType [3] =  {a.n, a.l, a.m};
     int bOrbitalType [3] = {b.n, b.l, b.m};
     double gamma =  Semi::CalculateBasicCoulombIntegral(a.zeta, tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-    std::vector<int> v= CalculateNumberValenceElectrons(a.zeta);
-    double U = -(v[0] + v[1] - 1) * gamma - calculateIonizationPotential(a.zeta,a.l);
+    std::vector<int> v = CalculateNumberValenceElectrons(a.zeta);
+    double U = -(v[0] + v[1] - 1) * gamma - calculateIonizationPotential(a.zeta, a.l);
     return U;
 }
 

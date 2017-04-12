@@ -8,9 +8,49 @@
 #include <semi/STOBasis.h>
 #include <semi/BasisSet.h>
 #include "IntegralEvaluator.h"
+#include <math.h>
+
 using namespace arma;
 
 namespace Semi {
+
+double delta(double i, double j) {
+    return i == j ? 1 : 0;
+}
+
+
+double distance (double x1, double y1, double z1, double x2, double y2, double z2) {
+    return sqrt((pow((x1 - x2), 2) + pow((y1 - y2), 2) + pow((z1 - z2), 2)));
+}
+
+//nlm x = 1, y = -1, z = 0
+//colvec x =0, y=1, z=2
+double calculateOverlapGTO(GTOBasis a, GTOBasis b) {
+    double a_i, b_j;
+    switch (a.nlm.l) {
+    case 1: a_i = 0;
+    case -1: a_i = 1;
+    case 3: a_i = 2;
+    }
+    switch (b.nlm.l) {
+    case 1: b_j = 0;
+    case -1: b_j = 1;
+    case 3: b_j = 2;
+    }
+    if (a.nlm.l == 0 && b.nlm.l == 0) {
+        return a.N * b.N * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    }
+    else if (a.nlm.l == 0 && b.nlm.l == 0) {
+        return -1.0 * b.alpha / (a.alpha + b.alpha) * (a.r(a_i) - b.r(a_i)) *  a.N * b.N * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    }
+    else if (a.nlm.l == 0 && b.nlm.l == 0) {
+        return -1.0 * a.alpha / (a.alpha + b.alpha) * (b.r(b_j) - a.r(b_j)) *  a.N * b.N * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    }
+    else if (a.nlm.l == 0 && b.nlm.l == 0) {
+        return delta(a_i, b_j) / (2 * a.alpha + b.alpha) + (a.alpha * b.alpha) / pow(a.alpha + b.alpha, 2) * (a.r(a_i) - b.r(a_i)) * (b.r(b_j) - a.r(b_j)) * a.N * b.N * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    }
+}
+
 bool isReversed(int *a, int *b) {
     if ((b[0] == 0 && b[1] == 0 && a[0] == 1 && a[1] == 0) ||
             (b[0] == 1 && b[1] == 0 && a[0] == 1 && a[1] == 0) ||
@@ -341,5 +381,7 @@ double CalculateElectrionRepulsionIntegral(int *a, int *b) {
 int factorial(int n) {
     return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
+
+
 
 } //namespace Semi

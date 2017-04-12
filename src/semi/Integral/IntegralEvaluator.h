@@ -32,6 +32,7 @@ double CalculateCoreValenceInteraction(int *a, int *b);
 double CalculateElectrionRepulsionIntegral(int *a, int *b);
 
 double CalculateBasicIntegral(double zeta, double rho, int *a);
+double calculateOverlapGTO(GTOBasis a, GTOBasis b);
 
 double CalculateBasicCoulombIntegral(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
 double CalculateBasicCoulombIntegralFull(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
