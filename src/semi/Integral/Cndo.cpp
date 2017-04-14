@@ -83,9 +83,9 @@ arma::mat calculateTotalChargeDensity() {
 //P_uv
 arma::mat calculateChargeDensity(arma::mat c_v) {
     arma::mat density(c_v.n_cols, c_v.n_cols);
-    for (uint u = 0; u < c_v.n_cols; u++) {
-        for (uint v = 0; v < c_v.n_cols; v++) {
-            for (uint i = 0; i < c_v.n_cols; i++) {
+    for (unsigned u = 0; u < c_v.n_cols; u++) {
+        for (unsigned v = 0; v < c_v.n_cols; v++) {
+            for (unsigned i = 0; i < c_v.n_cols; i++) {
                 density(u, v) += 2 * (c_v(i, u) * c_v(i, v));
             }
         }
@@ -163,8 +163,8 @@ double calculateBondingParameter(double a, double b) {
 //S_uv
 arma::mat calculateOverlapMatrix(BasisSet<STOBasis> a) {
     arma::mat Smatrix(a.myBasis.size(), a.myBasis.size());
-    for (uint k = 0; k < a.myBasis.size(); k++) {
-        for (uint l = 0; l < k; l++) {
+    for (unsigned k = 0; k < a.myBasis.size(); k++) {
+        for (unsigned l = 0; l < k; l++) {
             if (k == l) { //diag
                 Smatrix(k, l) =  1;
             }
@@ -223,8 +223,8 @@ arma::mat calculateOverlapMatrix(BasisSet<STOBasis> a) {
             }
         }
     }
-    for (uint k = 0; k < a.myBasis.size(); k++) {
-        for (uint l = k; l < a.myBasis.size(); l++) {
+    for (unsigned k = 0; k < a.myBasis.size(); k++) {
+        for (unsigned l = k; l < a.myBasis.size(); l++) {
             Smatrix(k, l) = Smatrix(l, k);
         }
     }

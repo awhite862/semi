@@ -3,8 +3,9 @@ set(SRC
     STOBasis.cpp
     GTOBasis.cpp
     CGTOBasis.cpp
-	QNumber.cpp
+    QNumber.cpp
     BasisSet.cpp
+    get_sto_3g.cpp
     Molecule.cpp
     Integral/IntegralEvaluator.cpp
     Integral/Cndo.cpp

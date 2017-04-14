@@ -33,6 +33,8 @@ public:
         \param _elem atomic number.
         \param _nlm Quantum numbers nlm.
      **/
+    CGTOBasis(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem, std::vector<double> &_nVec, std::vector<double> &_alphaVec) :
+        nlm(_nlm), a(_a), b(_b), c(_c), r(_r), elem(_elem), nVec(_nVec), alphaVec(_alphaVec) { }
     CGTOBasis(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem);
 };
 
