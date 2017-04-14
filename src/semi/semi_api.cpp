@@ -1,4 +1,5 @@
 #include "semi_api.h"
+#include "run_huckel.h"
 
 namespace Semi {
 
@@ -19,6 +20,10 @@ void print_end_banner(std::ostream &os) {
 void run_semi(input in, output out, std::ostream &logger) {
 
     print_start_banner(logger);
+    
+    if (in.ctype == HUCKEL) {
+        run_huckel(in.mol, in.huckel_params, out);
+    }
 
     print_end_banner(logger);
 }

@@ -10,6 +10,7 @@ set(SRC
     Integral/IntegralEvaluator.cpp
     Integral/Cndo.cpp
     Huckel/huckel.cpp
+    run_huckel.cpp
     semi_utils.cpp
     semi_api.cpp
 )
