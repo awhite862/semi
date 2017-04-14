@@ -23,7 +23,6 @@ public:
     arma::colvec r; ///!< col vector representing location
     QNumber nlm; ///!< Quantum numbers nlm
     double elem; ///!< atomic number
-    int l; ///!< a+b+c
 
 public:
     /** \brief Constructor. 
@@ -34,7 +33,7 @@ public:
         \param _elem atomic number.
         \param _nlm Quantum numbers nlm.
      **/
-    CGTOBasis(double _a, double _b, double _c, arma::colvec _r, double _elem, QNumber _nlm);
+    CGTOBasis(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem);
 };
 
 } //namespace Semi

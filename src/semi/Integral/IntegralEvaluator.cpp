@@ -5,20 +5,25 @@ using namespace arma;
 namespace Semi {
 
 double calculateOverlapCGTO(CGTOBasis a, CGTOBasis b) {
-    std::cout << "cgto"<<std::endl;
+    //std::cout << "cgto" << std::endl;
     double overlap;
     for (int k = 0; k < 3; k++) {
         for (int i = 0; i < 3; i++) {
-            std::cout << a.a << " " << a.b << " " << a.c << " " << a.alphaVec[k] << " " <<std::endl;
-            a.r.print();
-            GTOBasis* tempA = new GTOBasis((int)a.a, (int)a.b, (int)a.c, a.alphaVec[k], a.r);
-            GTOBasis* tempB = new GTOBasis((int)b.a, (int)b.b, (int)b.c, b.alphaVec[k], b.r);
-            //overlap += a.nVec[k] * b.nVec[i] * calculateOverlapGTO(*tempA, *tempB);
+            // std::cout << a.a << " " << a.b << " " << a.c << " " << a.alphaVec[k] << " " << std::endl;
+            //a.r.print();
+            // std::cout << b.a << " " << b.b << " " << b.c << " " << b.alphaVec[i] << " " << std::endl;
+            //b.r.print();
+
+            GTOBasis* tempA = new GTOBasis(a.nlm, a.a, a.b, a.c, a.alphaVec[k], a.r);
+            GTOBasis* tempB = new GTOBasis(b.nlm, b.a, b.b, b.c, b.alphaVec[i], b.r);
+            //std::cout  << a.nVec[k] << " " << b.nVec[i] << std::endl;
+            overlap += a.nVec[k] * b.nVec[i] * calculateOverlapGTOUnnorm(*tempA, *tempB);
+            //std::cout << a.nVec[k] * b.nVec[i] * calculateOverlapGTO(*tempA, *tempB) << std::endl;;
         }
+        //std::cout << overlap << std::endl;
     }
     return overlap;
 }
-
 
 double distance (double x1, double y1, double z1, double x2, double y2, double z2) {
     return sqrt((pow((x1 - x2), 2) + pow((y1 - y2), 2) + pow((z1 - z2), 2)));
@@ -28,29 +33,75 @@ double distance (double x1, double y1, double z1, double x2, double y2, double z
 //colvec x =0, y=1, z=2
 double calculateOverlapGTO(GTOBasis a, GTOBasis b) {
     double a_i, b_j;
-    switch (a.l) {
-    case 1: a_i = 0;
-    case -1: a_i = 1;
-    case 3: a_i = 2;
+    if (a.a == 1) {
+        a_i = 0;
     }
-    switch (b.l) {
-    case 1: b_j = 0;
-    case -1: b_j = 1;
-    case 3: b_j = 2;
+    else if (a.b == 1) {
+        a_i = 1;
     }
-    if (a.l == 0 && b.l == 0) {
+    else if (a.c == 1) {
+        a_i = 2;
+    }
+    if (b.a == 1) {
+        b_j = 0;
+    }
+    else if (b.b == 1) {
+        b_j = 1;
+    }
+    else if (b.c == 1) {
+        b_j = 2;
+    }
+    if (a.nlm.l == 0 && b.nlm.l == 0) {
         return a.n * b.n * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
-    else if (a.l == 1 && b.l == 0) {
+    else if (a.nlm.l == 1 && b.nlm.l == 0) {
         return -1.0 * b.alpha / (a.alpha + b.alpha) * (a.r(a_i) - b.r(a_i)) *  a.n * b.n * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
-    else if (a.l == 0 && b.l == 1) {
+    else if (a.nlm.l == 0 && b.nlm.l == 1) {
         return -1.0 * a.alpha / (a.alpha + b.alpha) * (b.r(b_j) - a.r(b_j)) *  a.n * b.n * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
-    else if (a.l == 1 && b.l == 1) {
-        return delta(a_i, b_j) / (2 * a.alpha + b.alpha) + (a.alpha * b.alpha) / pow(a.alpha + b.alpha, 2) * (a.r(a_i) - b.r(a_i)) * (b.r(b_j) - a.r(b_j)) * a.n * b.n * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    else if (a.nlm.l == 1 && b.nlm.l == 1) {
+        std::cout << "test" << std::endl;
+        return (delta(a_i, b_j) / (2 * a.alpha + 2 * b.alpha) + (a.alpha * b.alpha) / pow(a.alpha + b.alpha, 2) * (a.r(a_i) - b.r(a_i)) * (b.r(b_j) - a.r(b_j))) * a.n * b.n * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
 }
+
+double calculateOverlapGTOUnnorm(GTOBasis a, GTOBasis b) {
+    double a_i, b_j;
+    if (a.a == 1) {
+        a_i = 0;
+    }
+    else if (a.b == 1) {
+        a_i = 1;
+    }
+    else if (a.c == 1) {
+        a_i = 2;
+    }
+    if (b.a == 1) {
+        b_j = 0;
+    }
+    else if (b.b == 1) {
+        b_j = 1;
+    }
+    else if (b.c == 1) {
+        b_j = 2;
+    }
+    if (a.nlm.l == 0 && b.nlm.l == 0) {
+        return pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    }
+    else if (a.nlm.l == 1 && b.nlm.l == 0) {
+        return -1.0 * b.alpha / (a.alpha + b.alpha) * (a.r(a_i) - b.r(a_i)) * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    }
+    else if (a.nlm.l == 0 && b.nlm.l == 1) {
+        return -1.0 * a.alpha / (a.alpha + b.alpha) * (b.r(b_j) - a.r(b_j)) * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    }
+    else if (a.nlm.l == 1 && b.nlm.l == 1) {
+        std::cout << "test" << std::endl;
+        return (delta(a_i, b_j) / (2 * a.alpha + 2 * b.alpha) + (a.alpha * b.alpha) / pow(a.alpha + b.alpha, 2) * (a.r(a_i) - b.r(a_i)) * (b.r(b_j) - a.r(b_j))) * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
+    }
+}
+
+
 
 bool isReversed(int *a, int *b) {
     if ((b[0] == 0 && b[1] == 0 && a[0] == 1 && a[1] == 0) ||
@@ -246,7 +297,8 @@ double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, dou
     throw std::runtime_error("Failed to catch case");
 }
 
-double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {if (std::abs(tau) < tolerance) {
+double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
+    if (std::abs(tau) < tolerance) {
         return calculateOverlapSTOSameZeta(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
     else if (std::abs(rho) < tolerance) {

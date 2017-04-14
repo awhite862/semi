@@ -22,6 +22,11 @@ std::string getElement(double charge) {
 int factorial(int n) {
     return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
+ 
+int doubleFactorial(int n){
+    return (n <= 1) ? 1 : factorial(n - 2) * n;
+}
+
 
 double delta(double i, double j) {
     return i == j ? 1 : 0;

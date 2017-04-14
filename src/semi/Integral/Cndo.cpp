@@ -67,11 +67,11 @@ double calculateCoreHamiltonian(STOBasis a, STOBasis b) {
     double kappa = 0.5 * (rho + 1 / rho);
     double rho_alpha = a.zeta * r;
     double rho_beta = b.zeta * r;
-    int aOrbitalType [3] =  {a.n, a.l, a.m};
-    int bOrbitalType [3] = {b.n, b.l, b.m};
+    int aOrbitalType [3] =  {a.nlm.n, a.nlm.l, a.nlm.m};
+    int bOrbitalType [3] = {b.nlm.n, b.nlm.l, b.nlm.m};
     double gamma =  Semi::calculateBasicCoulombIntegral(a.zeta, tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
     std::vector<int> v = calculateNumberValenceElectrons(a.zeta);
-    double U = -(v[0] + v[1] - 1) * gamma - calculateIonizationPotential(a.zeta, a.l);
+    double U = -(v[0] + v[1] - 1) * gamma - calculateIonizationPotential(a.zeta, a.nlm.l);
     return U;
 }
 
@@ -95,19 +95,19 @@ arma::mat calculateChargeDensity(arma::mat c_v) {
 
 //Gamma_uv integral
 double calculateElectronRepulsion(STOBasis a, STOBasis b) {
-    if (a.l != 0 || b.l != 0) {
+    if (a.nlm.l != 0 || b.nlm.l != 0) {
         return 0;
     }
-    else if (a.n == 1) {
+    else if (a.nlm.n == 1) {
         double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
         double rho = 0.5 * (a.zeta + a.zeta) * r;
-        int aOrbitalType [3] = {a.n, a.l, a.m};
+        int aOrbitalType [3] = {a.nlm.n, a.nlm.l, a.nlm.m};
         return a.zeta * Semi::calculateBasicIntegral(a.zeta, rho, aOrbitalType);
     }
-    else if (a.n == 2) {
+    else if (a.nlm.n == 2) {
         double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
         double rho = 0.5 * (a.zeta + a.zeta) * r;
-        int aOrbitalType [3] = {a.n, a.l, a.m};
+        int aOrbitalType [3] = {a.nlm.n, a.nlm.l, a.nlm.m};
         return a.zeta * Semi::calculateBasicIntegral(a.zeta, rho, aOrbitalType);
     }
     return 0;
@@ -115,19 +115,19 @@ double calculateElectronRepulsion(STOBasis a, STOBasis b) {
 
 //V_AB integral
 double calculateNucleurAttraction(STOBasis a, STOBasis b) {
-    if (a.l != 0 || b.l != 0) {
+    if (a.nlm.l != 0 || b.nlm.l != 0) {
         return 0;
     }
-    else if (a.n == 1) {
+    else if (a.nlm.n == 1) {
         double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
         double rho = 0.5 * (a.zeta + a.zeta) * r;
-        int aOrbitalType [3] = {a.n, a.l, a.m};
+        int aOrbitalType [3] = {a.nlm.n, a.nlm.l, a.nlm.m};
         return a.zeta * Semi::calculateBasicIntegral(a.zeta, rho, aOrbitalType);
     }
-    else if (a.n == 2) {
+    else if (a.nlm.n == 2) {
         double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
         double rho = 0.5 * (a.zeta + a.zeta) * r;
-        int aOrbitalType [3] = {a.n, a.l, a.m};
+        int aOrbitalType [3] = {a.nlm.n, a.nlm.l, a.nlm.m};
         return a.zeta * Semi::calculateBasicIntegral(a.zeta, rho, aOrbitalType);
     }
     return 0;
@@ -164,16 +164,12 @@ double calculateBondingParameter(double a, double b) {
 arma::mat calculateOverlapMatrix(BasisSet<STOBasis> a) {
     arma::mat Smatrix(a.myBasis.size(), a.myBasis.size());
     for (uint k = 0; k < a.myBasis.size(); k++) {
-        for (uint l = 0; l < a.myBasis.size(); l++) {
-            if (Smatrix(k, l) != 0) {
-                continue;
-            }
+        for (uint l = 0; l < k; l++) {
             if (k == l) { //diag
                 Smatrix(k, l) =  1;
             }
             else if (a.myBasis[k].id == a.myBasis[l].id) { //same atom
                 Smatrix(k, l) = 0;
-                Smatrix(l, k) = 0;
             }
             else {
                 double r = distance(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z);
@@ -183,72 +179,53 @@ arma::mat calculateOverlapMatrix(BasisSet<STOBasis> a) {
                 double kappa = 0.5 * (rho + 1 / rho);
                 double rho_alpha = a.myBasis[k].zeta * r;
                 double rho_beta = a.myBasis[l].zeta * r;
-                int aOrbitalType [3] =  {a.myBasis[k].n, a.myBasis[k].l, a.myBasis[k].m};
-                int bOrbitalType [3] = {a.myBasis[l].n, a.myBasis[l].l, a.myBasis[l].m};
-                if (a.myBasis[k].l == 0 && a.myBasis[l].l == 0) {
-                    Smatrix(k, l) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    Smatrix(l, k) = Smatrix(k, l);
-                }
-                else if (a.myBasis[k].l == 0 && a.myBasis[l].l == 1) {
-                    arma::mat temp(1, 3);
-                    temp(0, 0) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(0, 1) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(0, 2) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                int aOrbitalType [3] =  {a.myBasis[k].nlm.n, a.myBasis[k].nlm.l, a.myBasis[k].nlm.m};
+                int bOrbitalType [3] = {a.myBasis[l].nlm.n, a.myBasis[l].nlm.l, a.myBasis[l].nlm.m};
+                Smatrix(k, l) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                bool kbool = (k >= 2 && a.myBasis[k - 2].id == a.myBasis[k - 1].id && a.myBasis[k - 1].id == a.myBasis[k].id && a.myBasis[k - 2].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k - 1].nlm.l == a.myBasis[k].nlm.l);
+                bool lbool = (l >= 2 && a.myBasis[l - 2].id == a.myBasis[l - 1].id && a.myBasis[l - 1].id == a.myBasis[l].id && a.myBasis[l - 2].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l - 1].nlm.l == a.myBasis[l].nlm.l);
+                if (kbool && lbool) {
                     arma::mat rotationMatrix(3, 3);
                     rotationMatrix = findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z);
-                    temp = temp * rotationMatrix;
-                    Smatrix(k, l) = temp(0, 2);
-                    Smatrix(l, k) = temp(0, 2);
-                    Smatrix(k, l--) = temp(0, 1);
-                    Smatrix(l, k) = temp(0, 1);
-                    Smatrix(k, l--) = temp(0, 0);
-                    Smatrix(l, k) = temp(0, 0);
+                    arma::mat sub(3, 3);
+                    sub = Smatrix.submat(k - 2, l - 2, k, l);
+                    sub = sub * rotationMatrix;
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            Smatrix(k - 2 + i, l - 2 + j) = sub(i, j);
+                        }
+                    }
                 }
-                else if (a.myBasis[k].l == 1 && a.myBasis[l].l == 1) {
-                    arma::mat temp(3, 3);
-                    temp(0, 0) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(0, 1) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(0, 2) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-
-                    l -= 2; ;
-                    aOrbitalType[2] = a.myBasis[k++].m;
-                    bOrbitalType[2] = a.myBasis[l].m;
-                    temp(1, 0) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(1, 1) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(1, 2) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-
-                    l -= 2; ;
-                    aOrbitalType[2] = a.myBasis[k++].m;
-                    bOrbitalType[2] = a.myBasis[l].m;
-                    temp(2, 0) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(2, 1) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-                    bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(2, 2) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-
+                else if (kbool) {
                     arma::mat rotationMatrix(3, 3);
                     rotationMatrix = findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z);
-                    temp = temp * rotationMatrix;
-                    k -= 2; l -= 2;
-                    Smatrix(k, l) = temp(0, 0);
-                    Smatrix(k, l++) = temp(0, 1);
-                    Smatrix(k, l++) = temp(0, 2);
-                    l -= 2;
-                    Smatrix(k++, l) = temp(1, 0);
-                    Smatrix(k, l++) = temp(1, 1);
-                    Smatrix(k, l++) = temp(1, 2);
-                    l -= 2;
-                    Smatrix(k++, l) = temp(2, 0);
-                    Smatrix(k, l++) = temp(2, 1);
-                    Smatrix(k, l++) = temp(2, 2);
+                    arma::mat sub(3, 1);
+                    sub = Smatrix.submat(k - 2, l, k, l);
+                    sub = arma::trans(arma::trans(sub) * rotationMatrix);
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            Smatrix(k - 2 + i, l - 2 + j) = sub(i, j);
+                        }
+                    }
+                }
+                else if (lbool) {
+                    arma::mat rotationMatrix(3, 3);
+                    rotationMatrix = findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z);
+                    arma::mat sub(1, 3);
+                    sub = Smatrix.submat(k, l - 2, k, l);
+                    sub = sub * rotationMatrix;
+                    for (int i = 0; i < 3; i++) {
+                        for (int j = 0; j < 3; j++) {
+                            Smatrix(k - 2 + i, l - 2 + j) = sub(i, j);
+                        }
+                    }
                 }
             }
+        }
+    }
+    for (uint k = 0; k < a.myBasis.size(); k++) {
+        for (uint l = k; l < a.myBasis.size(); l++) {
+            Smatrix(k, l) = Smatrix(l, k);
         }
     }
     return Smatrix;

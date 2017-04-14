@@ -30,6 +30,9 @@ double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double 
 /** \brief calculates overlap integral for GTO basis from given parameters. **/
 double calculateOverlapGTO(GTOBasis a, GTOBasis b);
 
+/** \brief calculates overlap integral for GTO basis from given parameters. **/
+double calculateOverlapGTOUnnorm(GTOBasis a, GTOBasis b);
+
 /** \brief calculates overlap integral for CGTO basis from given parameters. **/
 double calculateOverlapCGTO(CGTOBasis a, CGTOBasis b);
 
@@ -59,9 +62,6 @@ arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, do
 
 /** \brief Determines if input for CaluculateOverlap is in wrong order. **/
 bool isReversed(int *a, int *b);
-
-/** \brief Tolerance constant. **/
-const double tolerance = 0.1;
 
 } //namespace Semi
 

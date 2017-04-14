@@ -11,8 +11,14 @@ std::string getElement(double charge);
 /** \brief Calculates factorial of n. **/
 int factorial(int n);
 
+/** \brief Calculates doublefactorial of n. **/
+int doubleFactorial(int n);
+
 /** \brief Calculates kronecker delta of i and j. **/
 double delta(double i, double j);
+
+/** \brief Tolerance constant. **/
+const double tolerance = 0.0000000001;
 
 } // namespace Semi
 

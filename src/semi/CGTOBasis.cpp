@@ -7,15 +7,13 @@
 #include "QNumber.h"
 
 namespace Semi {
-CGTOBasis::CGTOBasis(double _a, double _b, double _c, arma::colvec _r, double _elem, QNumber _nlm) {
+CGTOBasis::CGTOBasis(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem){
     a = _a;
     b = _b;
     c = _c;
     r = _r;
     elem = _elem;
     nlm = _nlm;
-
-    l = a + b + c;
 
     std::ifstream inputFile("sto-3g.txt");
     std::string line;
@@ -75,7 +73,7 @@ CGTOBasis::CGTOBasis(double _a, double _b, double _c, arma::colvec _r, double _e
     std::ostringstream oss;
     oss << nlm.n;
     std::string keys = name + oss.str() + "S";
-    if (nlm.l != 0) {
+    if (nlm.n != 1) {
         keys += "P";
     }
     double n;
@@ -83,12 +81,13 @@ CGTOBasis::CGTOBasis(double _a, double _b, double _c, arma::colvec _r, double _e
     std::vector<coeffs> coeffVector = stoMap[keys];
     for (int k = 0; k < 3; k++) {
         alphaVec.push_back(coeffVector[k].a);
-        n=1;
-        //n =  M_PI / (2 * coeffVector[k].a) * pow((factorial(factorial(2.0 * a - 1)) * factorial(factorial(2.0 * b - 1)) * factorial(factorial(2.0 * c - 1))) / (pow(2, 2 * l) * pow(coeffVector[k].a, l)), -1.0 / 2.0);
-        if (nlm.l = 0) {
+        n = pow(pow(M_PI / (2 * coeffVector[k].a), 3.0 / 2.0) * (doubleFactorial(2.0 * a - 1) * doubleFactorial(2.0 * b - 1) * doubleFactorial(2.0 * c - 1)) / (pow(2, 2 * nlm.l) * pow(coeffVector[k].a, nlm.l)), -1.0 / 2.0);
+        if (nlm.l == 0) {
             nVec.push_back(coeffVector[k].cs * n);
+            std::cout << coeffVector[k].a << " " << coeffVector[k].cs << " " << n << std::endl;
         }
         else {
+            std::cout <<"sp" << std::endl;
             nVec.push_back(coeffVector[k].cp * n);
         }
     }
