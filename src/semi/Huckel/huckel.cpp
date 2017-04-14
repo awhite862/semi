@@ -229,6 +229,8 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, s
     arma::mat c_basis = c_full * (invSqrt(y));
     arma::mat id = trans(c_basis) * Smatrix * c_basis;
 
+
+    //debugging
     /*  std::cout << "eigenvalue" << std::endl;
         eigval.print();
         std::cout << "eigenvalue size " << eigval.n_elem << std::endl;

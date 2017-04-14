@@ -1,8 +1,6 @@
 #ifndef ATOM_H
 #define ATOM_H
 
-#include <string>
-
 namespace Semi {
 /** \brief Class that represents an atom. **/
 class Atom {
@@ -21,9 +19,6 @@ public:
         \param _charge charge.
      **/
     Atom(double _x, double _y, double _z, double _charge, double _id);
-
-    /** \brief Determines string corresponding to an elements charge. **/
-    std::string getElement();
 };
 
 } //namespace Semi

@@ -19,7 +19,6 @@ public:
         \param _myMolecule Vector of atoms
      **/
     Molecule(std::vector<Atom> _myMolecule);
-
 };
 
 } //namespace Semi

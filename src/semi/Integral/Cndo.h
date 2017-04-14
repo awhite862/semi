@@ -1,7 +1,7 @@
 #ifndef CNDO_H
 #define CNDO_H
 
-#include <armadillo>
+#include "semi/Integral/IntegralEvaluator.h"
 
 namespace Semi {
 //U_uu

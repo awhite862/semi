@@ -1,8 +1,8 @@
-/** \brief Class that represents a basis. **/
 #ifndef STOBASIS_H
 #define STOBASIS_H
 
 namespace Semi {
+/** \brief Class that represents a STO Basis. **/
 class STOBasis {
 public:
     double zeta; ///!< zeta

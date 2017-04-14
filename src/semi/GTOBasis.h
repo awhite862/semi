@@ -1,30 +1,31 @@
-/** \brief Class that represents a basis. **/
 #ifndef GTOBASIS_H
 #define GTOBASIS_H
 
 #include "QNumber.h"
 #include <armadillo>
+#include "semi/semi_utils.h"
 
 namespace Semi {
+/** \brief Class that represents an GTO Basis. **/
 class GTOBasis {
 public:
-    QNumber nlm; ///!< zeta
-    double N; ///!< n quantum number
-    double alpha; ///!< l quantum number
-    arma::colvec r; ///!< m quantum number
+    double a; ///!< x power
+    double b; ///!< y power
+    double c; ///!< z power
+    double alpha; ///!< alpha
+    arma::colvec r; ///!< col vector representing a vector
+    int l; ///!< a + b + c
+    double n; ///!< normalization
 
 public:
     /** \brief Constructor.
-        \param _zeta zeta.
-        \param _n n quantum number.
-        \param _l l quantum number.
-        \param _m m quantum number.
-        \param _x x-position.
-        \param _y y-position.
-        \param _z z-position.
-        \param _id id.
+        \param _a x power.
+        \param _b y power.
+        \param _z z power.
+        \param _alpha alpha.
+        \param _r col vector representing a vector.
      **/
-    GTOBasis(QNumber _nlm, double _N, double _alpha, arma::colvec _r);
+    GTOBasis(double _a, double _b, double _c, double _alpha, arma::colvec _r);
 };
 
 } //namespace Semi

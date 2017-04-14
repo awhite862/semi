@@ -6,9 +6,13 @@
 #include <semi/STOBasis.h>
 #include <semi/Molecule.h>
 #include <semi/BasisSet.h>
+#include <semi/QNumber.h>
+#include <semi/CGTOBasis.h>
 #include <semi/Integral/IntegralEvaluator.h>
 #include <semi/Integral/Cndo.h>
 #include <semi/Huckel/huckel.h>
+#include <map>
+
 //#include <armadillo>
 using namespace Semi;
 /** \brief Basic compilation test for semi classes.*/
@@ -17,6 +21,11 @@ int run_compilation_test() {
     Semi::Basis * b = new Semi::Basis(1, 1, 1, 1, 1, 1, 1);
     Semi::Molecule * Molecule = new Semi::Molecule(std::vector<Semi::Atom> (4, *a));
     Semi::BasisSet * BasisSet = new Semi::BasisSet(std::vector<Semi::Basis> (4, *b));*/
+    arma::colvec r;
+    r << 1 << 1 << 1;
+    QNumber* q = new QNumber(1, 0, 0);
+    CGTOBasis(0, 0, 0, r, 1, *q);
+
 
     return 0;
 }
@@ -50,7 +59,7 @@ int run_sto_test() {
     b[0] = 1;
     b[1] = 0;
     b[2] = 0;
-    double first = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b);
+    double first = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     double normFirst = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualFirst;
 
     ///parameters for second overlap integral
@@ -61,7 +70,7 @@ int run_sto_test() {
     kappa = 0.5 * (tau + 1.0 / tau);
     rho_alpha = z1 * r;
     rho_beta = z2 * r;
-    double second = Semi::CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, a, b);
+    double second = Semi::calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     double normSecond = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualSecond;
 
     normFirst -= first;
@@ -102,16 +111,16 @@ int run_rotation_test() {
     arma::mat test3 = trans(rotated3) * rotated3;
     arma::mat test4 = trans(rotated4) * rotated4;
 
-    if(norm(test1 - arma::eye(3,3)) > tol | norm(test2 - arma::eye(3,3)) > tol | norm(test3 - arma::eye(3,3)) > tol | norm(test4 - arma::eye(3,3)) > tol) {
+    if (norm(test1 - arma::eye(3, 3)) > tol | norm(test2 - arma::eye(3, 3)) > tol | norm(test3 - arma::eye(3, 3)) > tol | norm(test4 - arma::eye(3, 3)) > tol) {
         return 1;
     }
 
     arma::vec vec5(3);
-    vec4(0) = 0;
+vec4(0) = 0; https: //www.youtube.com/user/Fantasyssmusic/videos
     vec4(1) = 0;
     vec4(2) = 5;
     arma::mat rotated5 = Semi::findRotation(0, 0, 5, 0, 0, 10);
-    rotated5.print();
+    //rotated5.print();
     return 0;
 }
 
@@ -141,10 +150,37 @@ int run_huckel_test() {
     Semi::calculateHuckel(SMatrix, 1, 0.2, xyzData, "c_v");
     return 0;
 }
+// 0 0 l
+
+// 1.0 0.01 0.001 abc
+// -1.0 -0.01 -0.001 abc
+
+// 10.0 10.0
+
+// 4.007837386698362180096159730696235475449195275225351306619521440472961255744995533476335816628324
+// 4.007837386698362180096159730696235475449195275225351306619521440472961255744995533476335816628324
+
+// 2.056994294456803574829111780821946482718902295308792506777564143425656498691520607978489E-9
+int run_cgto_test() {
+    arma::colvec ar;
+    ar << 0 << 0 << 0;
+    QNumber* aq = new QNumber(1, 0, 0);
+    CGTOBasis a = CGTOBasis(1, 0.01, 0.001, ar, 1, *aq);
+
+    arma::colvec br;
+    br << 10 << 0 << 0;
+    QNumber* bq = new QNumber(1, 0, 0);
+    CGTOBasis b = CGTOBasis(-1, -0.01, -0.001, br, 1, *bq);
+
+    //double ans = calculateOverlapCGTO(a, b);
+    // std::cout << ans << std::endl;
+
+    return 0;
+}
 
 /** Main method to run tests.
  */
 int main() {
-    double result = run_compilation_test() | run_sto_test() | run_rotation_test() | 0;
+    double result = run_compilation_test() | run_sto_test() | run_rotation_test() | run_cgto_test() | 0;
     return result;
 }

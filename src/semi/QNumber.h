@@ -17,7 +17,8 @@ public:
      **/
     QNumber(int _n, int _l, int _m);
 
-
+    /** \brief Default constructor.
+     **/
     QNumber();
 };
 

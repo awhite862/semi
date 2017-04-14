@@ -1,13 +1,4 @@
 #define ARMA_DONT_USE_WRAPPER
-#include <iostream>
-#include <vector>
-#include <armadillo>
-#include "semi/Atom.h"
-#include "semi/Molecule.h"
-#include "semi/GTOBasis.h"
-#include "semi/STOBasis.h"
-#include "semi/BasisSet.h"
-#include "semi/Integral/IntegralEvaluator.h"
 #include "semi/Integral/Cndo.h"
 
 using namespace arma;
@@ -23,6 +14,18 @@ arma::mat calculateOverlapMatrixGTO(BasisSet<GTOBasis> b) {
     }
     return Smatrix;
 }
+
+
+arma::mat calculateOverlapMatrixCGTO(BasisSet<CGTOBasis> b) {
+    arma::mat Smatrix(b.myBasis.size(), b.myBasis.size());
+    for (int k = 0; k < b.myBasis.size(); k++) {
+        for (int l = 0; l < b.myBasis.size(); l++) {
+            Smatrix(k, l) = Semi::calculateOverlapCGTO(b.myBasis[k], b.myBasis[l]);
+        }
+    }
+    return Smatrix;
+}
+
 
 arma::mat calculateFockMatrix() {
 
@@ -44,7 +47,7 @@ double calculateIonizationPotential(double charge, double l) {
     }
 }
 
-std::vector<int> CalculateNumberValenceElectrons(double charge) {
+std::vector<int> calculateNumberValenceElectrons(double charge) {
     std::vector<int> vals({0, 0});
     if (charge > 4) {
         vals[1] = charge - 4 ;
@@ -66,8 +69,8 @@ double calculateCoreHamiltonian(STOBasis a, STOBasis b) {
     double rho_beta = b.zeta * r;
     int aOrbitalType [3] =  {a.n, a.l, a.m};
     int bOrbitalType [3] = {b.n, b.l, b.m};
-    double gamma =  Semi::CalculateBasicCoulombIntegral(a.zeta, tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
-    std::vector<int> v = CalculateNumberValenceElectrons(a.zeta);
+    double gamma =  Semi::calculateBasicCoulombIntegral(a.zeta, tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+    std::vector<int> v = calculateNumberValenceElectrons(a.zeta);
     double U = -(v[0] + v[1] - 1) * gamma - calculateIonizationPotential(a.zeta, a.l);
     return U;
 }
@@ -99,13 +102,13 @@ double calculateElectronRepulsion(STOBasis a, STOBasis b) {
         double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
         double rho = 0.5 * (a.zeta + a.zeta) * r;
         int aOrbitalType [3] = {a.n, a.l, a.m};
-        return a.zeta * Semi::CalculateBasicIntegral(a.zeta, rho, aOrbitalType);
+        return a.zeta * Semi::calculateBasicIntegral(a.zeta, rho, aOrbitalType);
     }
     else if (a.n == 2) {
         double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
         double rho = 0.5 * (a.zeta + a.zeta) * r;
         int aOrbitalType [3] = {a.n, a.l, a.m};
-        return a.zeta * Semi::CalculateBasicIntegral(a.zeta, rho, aOrbitalType);
+        return a.zeta * Semi::calculateBasicIntegral(a.zeta, rho, aOrbitalType);
     }
     return 0;
 }
@@ -119,13 +122,13 @@ double calculateNucleurAttraction(STOBasis a, STOBasis b) {
         double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
         double rho = 0.5 * (a.zeta + a.zeta) * r;
         int aOrbitalType [3] = {a.n, a.l, a.m};
-        return a.zeta * Semi::CalculateBasicIntegral(a.zeta, rho, aOrbitalType);
+        return a.zeta * Semi::calculateBasicIntegral(a.zeta, rho, aOrbitalType);
     }
     else if (a.n == 2) {
         double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
         double rho = 0.5 * (a.zeta + a.zeta) * r;
         int aOrbitalType [3] = {a.n, a.l, a.m};
-        return a.zeta * Semi::CalculateBasicIntegral(a.zeta, rho, aOrbitalType);
+        return a.zeta * Semi::calculateBasicIntegral(a.zeta, rho, aOrbitalType);
     }
     return 0;
 }
@@ -183,16 +186,16 @@ arma::mat calculateOverlapMatrix(BasisSet<STOBasis> a) {
                 int aOrbitalType [3] =  {a.myBasis[k].n, a.myBasis[k].l, a.myBasis[k].m};
                 int bOrbitalType [3] = {a.myBasis[l].n, a.myBasis[l].l, a.myBasis[l].m};
                 if (a.myBasis[k].l == 0 && a.myBasis[l].l == 0) {
-                    Smatrix(k, l) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    Smatrix(k, l) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     Smatrix(l, k) = Smatrix(k, l);
                 }
                 else if (a.myBasis[k].l == 0 && a.myBasis[l].l == 1) {
                     arma::mat temp(1, 3);
-                    temp(0, 0) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(0, 0) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(0, 1) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(0, 1) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(0, 2) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(0, 2) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     arma::mat rotationMatrix(3, 3);
                     rotationMatrix = findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z);
                     temp = temp * rotationMatrix;
@@ -205,29 +208,29 @@ arma::mat calculateOverlapMatrix(BasisSet<STOBasis> a) {
                 }
                 else if (a.myBasis[k].l == 1 && a.myBasis[l].l == 1) {
                     arma::mat temp(3, 3);
-                    temp(0, 0) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(0, 0) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(0, 1) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(0, 1) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(0, 2) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(0, 2) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
 
                     l -= 2; ;
                     aOrbitalType[2] = a.myBasis[k++].m;
                     bOrbitalType[2] = a.myBasis[l].m;
-                    temp(1, 0) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(1, 0) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(1, 1) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(1, 1) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(1, 2) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(1, 2) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
 
                     l -= 2; ;
                     aOrbitalType[2] = a.myBasis[k++].m;
                     bOrbitalType[2] = a.myBasis[l].m;
-                    temp(2, 0) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(2, 0) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(2, 1) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(2, 1) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
                     bOrbitalType[2] = a.myBasis[l++].m;
-                    temp(2, 2) = CalculateOverlap(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+                    temp(2, 2) = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
 
                     arma::mat rotationMatrix(3, 3);
                     rotationMatrix = findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z);
