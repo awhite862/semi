@@ -3,16 +3,8 @@
 #define HUCKEL_H
 #include <armadillo>
 #include <vector>
-
+#include "semi/Molecule.h"
 namespace Semi {
-
-/** \brief Struct that stores xyz and element info. **/
-struct xyz {
-	double atom;
-	double x;
-	double y;
-	double z;
-};
 
 /** \brief Calculates the inverse square root of a matrix. **/
 arma::mat invSqrt(arma::mat A);
@@ -35,7 +27,7 @@ double kCalc(double k, double sigma, int i, int j);
 /** \brief Huckel approximation of initial guess given overlap matrix, xyz data and parameters.
  **  args controls the output matrix.
 **/
-arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vector<xyz> xyzData, std::string args);
+arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m, std::string args);
 
 } //namespace Semi
 #endif //huckel.h

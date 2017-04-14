@@ -118,7 +118,7 @@ double kCalc(double k, double sigma, int i, int j) {
     return 1.0 + (k + pow(delta, 2) - pow(delta, 4) * k);
 }
 
-arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, std::vector<xyz> xyzData, std::string args) {
+arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m, std::string args) {
     std::ifstream fin;
     int i = 0;
     std::string label;
@@ -136,8 +136,8 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, s
     }
     fin.close();
 
-    for (unsigned int k = 0; k < xyzData.size(); k++) {
-        atoms.push_back(xyzData[k].atom);
+    for (unsigned int k = 0; k < m.myMolecule.size(); k++) {
+        atoms.push_back(m.myMolecule[k].charge);
     }
 
     i = 0;
