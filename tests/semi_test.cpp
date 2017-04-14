@@ -106,7 +106,7 @@ int run_huckel_test() {
     arma::mat SMatrix;
     SMatrix.load("s.txt", arma::raw_ascii);
 
-    std::vector<Semi::xyz> xyzData;
+    Molecule m;
     std::ifstream fin;
     std::string line;
     int i = 0;
@@ -115,16 +115,13 @@ int run_huckel_test() {
         std::stringstream linestream(line);
         double elem, x, y, z;
         linestream >> elem >> x >> y >> z;
-        xyzData.push_back(Semi::xyz());
-        xyzData[i].atom = elem;
-        xyzData[i].x = x;
-        xyzData[i].y = y;
-        xyzData[i].z = z;
+        Atom* a = new Atom(x,y,z,elem,i);
+        m.myMolecule.push_back(*a);
         i++;
     }
     fin.close();
 
-    Semi::calculateHuckel(SMatrix, 1, 0.2, xyzData, "c_v");
+    Semi::calculateHuckel(SMatrix, 1, 0.2, m, "c_v");
     return 0;
 }
 // 0 0 l
@@ -262,10 +259,10 @@ int run_cgto_matrix_test(){
         std::cout << "sum: " << overlap_sum << std::endl;
     return 0;
 }
-
+f
 /** Main method to run tests.
  */
 int main() {
-    double result = run_compilation_test() | run_sto_test() | run_rotation_test() | run_cgto_matrix_test() | 0;
+    double result = run_compilation_test() | run_sto_test() | run_rotation_test() | run_huckel_test() | run_cgto_matrix_test() | 0;
     return result;
 }
