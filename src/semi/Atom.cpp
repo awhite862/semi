@@ -2,7 +2,7 @@
 
 namespace Semi {
 
-Atom::Atom(double _x, double _y, double _z, double _charge, double _id) {
+Atom::Atom(double _x, double _y, double _z, double _charge, unsigned _id) {
     x = _x;
     y = _y;
     z = _z;

@@ -11,6 +11,7 @@ set(SRC
     Integral/Cndo.cpp
     Huckel/huckel.cpp
     semi_utils.cpp
+    semi_api.cpp
 )
 
 add_library(libsemi ${SRC})
