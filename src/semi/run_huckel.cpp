@@ -1,5 +1,6 @@
 #include "run_huckel.h"
 #include "CGTOBasis.h"
+#include <semi/Integral/Cndo.h>
 
 namespace Semi {
 
@@ -26,6 +27,9 @@ void run_huckel(Molecule &mol, parameters &huckel_params, output &out) {
         }
     }
 
+    BasisSet<CGTOBasis> bset(vbasis);
+    arma::mat S = calculateOverlapMatrixCGTO(bset);
+    S.print("Here is S");
 }
 
 } // namespace Semi

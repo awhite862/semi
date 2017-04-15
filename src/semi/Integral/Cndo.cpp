@@ -4,6 +4,12 @@
 using namespace arma;
 
 namespace Semi {
+namespace {
+double distance (double x1, double y1, double z1, double x2, double y2, double z2) {
+    return sqrt((pow((x1 - x2), 2) + pow((y1 - y2), 2) + pow((z1 - z2), 2)));
+}
+} // unnamed namespace 
+
 
 arma::mat calculateOverlapMatrixGTO(BasisSet<GTOBasis> b) {
     arma::mat Smatrix(b.myBasis.size(), b.myBasis.size());
@@ -17,7 +23,7 @@ arma::mat calculateOverlapMatrixGTO(BasisSet<GTOBasis> b) {
 
 
 arma::mat calculateOverlapMatrixCGTO(BasisSet<CGTOBasis> b) {
-    arma::mat Smatrix(b.myBasis.size(), b.myBasis.size());
+    arma::mat Smatrix(b.myBasis.size(), b.myBasis.size()); Smatrix.fill(0.0);
     for (int k = 0; k < b.myBasis.size(); k++) {
         for (int l = 0; l < b.myBasis.size(); l++) {
             Smatrix(k, l) = Semi::calculateOverlapCGTO(b.myBasis[k], b.myBasis[l]);
@@ -229,10 +235,6 @@ arma::mat calculateOverlapMatrix(BasisSet<STOBasis> a) {
         }
     }
     return Smatrix;
-}
-
-double distance (double x1, double y1, double z1, double x2, double y2, double z2) {
-    return sqrt((pow((x1 - x2), 2) + pow((y1 - y2), 2) + pow((z1 - z2), 2)));
 }
 
 } //namespace Semi

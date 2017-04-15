@@ -10,7 +10,7 @@ GTOBasis::GTOBasis(QNumber _nlm, double _a, double _b, double _c, double _alpha,
 	alpha = _alpha;
 	r = _r;
 	n = pow(pow(M_PI / (2 * alpha), 3.0 / 2.0) * (doubleFactorial(2.0 * a - 1) * doubleFactorial(2.0 * b - 1) * doubleFactorial(2.0 * c - 1)) / (pow(2, 2 * nlm.l) * pow(alpha, nlm.l)), -1.0 / 2.0);
-	std::cout << "norm" << n << std::endl;
+	//std::cout << "norm" << n << std::endl;
 }
 
 } //namespace Semi

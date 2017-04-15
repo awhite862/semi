@@ -26,8 +26,9 @@ double calculateBondingParameter();
 arma::mat calculateOverlapMatrix();
 
 arma::mat calculateOverlapMatrixGTO(BasisSet<GTOBasis> b);
+arma::mat calculateOverlapMatrixCGTO(BasisSet<CGTOBasis> b);
 
-double distance (double x1, double y1, double z1, double x2, double y2, double z2);
+//double distance (double x1, double y1, double z1, double x2, double y2, double z2);
 
 }
 

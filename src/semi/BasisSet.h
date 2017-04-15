@@ -17,7 +17,9 @@ public:
 	/** \brief Constructor.
 	    \param _myBasis vector of basis.
 	 **/
-	BasisSet(std::vector<bType> _myBasis);
+	BasisSet(std::vector<bType> _myBasis) {
+            myBasis = _myBasis;
+        }
 };
 
 } //namespace Semi

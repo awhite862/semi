@@ -6,7 +6,7 @@ namespace Semi {
 
 double calculateOverlapCGTO(CGTOBasis a, CGTOBasis b) {
     //std::cout << "cgto" << std::endl;
-    double overlap;
+    double overlap = 0.0;
     for (int k = 0; k < 3; k++) {
         for (int i = 0; i < 3; i++) {
             // std::cout << a.a << " " << a.b << " " << a.c << " " << a.alphaVec[k] << " " << std::endl;
@@ -19,6 +19,8 @@ double calculateOverlapCGTO(CGTOBasis a, CGTOBasis b) {
             //std::cout  << a.nVec[k] << " " << b.nVec[i] << std::endl;
             overlap += a.nVec[k] * b.nVec[i] * calculateOverlapGTOUnnorm(*tempA, *tempB);
             //std::cout << a.nVec[k] * b.nVec[i] * calculateOverlapGTO(*tempA, *tempB) << std::endl;;
+            delete tempA;
+            delete tempB;
         }
         //std::cout << overlap << std::endl;
     }
@@ -61,7 +63,7 @@ double calculateOverlapGTO(GTOBasis a, GTOBasis b) {
         return -1.0 * a.alpha / (a.alpha + b.alpha) * (b.r(b_j) - a.r(b_j)) *  a.n * b.n * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
     else if (a.nlm.l == 1 && b.nlm.l == 1) {
-        std::cout << "test" << std::endl;
+        //std::cout << "test" << std::endl;
         return (delta(a_i, b_j) / (2 * a.alpha + 2 * b.alpha) + (a.alpha * b.alpha) / pow(a.alpha + b.alpha, 2) * (a.r(a_i) - b.r(a_i)) * (b.r(b_j) - a.r(b_j))) * a.n * b.n * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
 }
@@ -96,7 +98,7 @@ double calculateOverlapGTOUnnorm(GTOBasis a, GTOBasis b) {
         return -1.0 * a.alpha / (a.alpha + b.alpha) * (b.r(b_j) - a.r(b_j)) * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
     else if (a.nlm.l == 1 && b.nlm.l == 1) {
-        std::cout << "test" << std::endl;
+        //std::cout << "test" << std::endl;
         return (delta(a_i, b_j) / (2 * a.alpha + 2 * b.alpha) + (a.alpha * b.alpha) / pow(a.alpha + b.alpha, 2) * (a.r(a_i) - b.r(a_i)) * (b.r(b_j) - a.r(b_j))) * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
 }

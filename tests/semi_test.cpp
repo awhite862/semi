@@ -259,7 +259,7 @@ int run_cgto_matrix_test(){
         std::cout << "sum: " << overlap_sum << std::endl;
     return 0;
 }
-f
+
 /** Main method to run tests.
  */
 int main() {
