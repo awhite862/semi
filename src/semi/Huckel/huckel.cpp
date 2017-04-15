@@ -258,6 +258,7 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
         return c_v;
     }
     else if (!args.compare("c_full")) {
+        c_full.print("C_full");
         return c_full;
     }
     else if (!args.compare("c_basis")) {
