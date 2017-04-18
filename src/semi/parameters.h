@@ -46,7 +46,7 @@ public:
         \param key Key specifying parameter to set.
         \param value Value of parameter.
      **/
-    void add(std::string &key, std::string &value) {m_data[key] = value;}
+    void add(const std::string &key, const std::string &value) {m_data[key] = value;}
     
     /** \brief Get value of particular parameter
         \tparam Type of output.

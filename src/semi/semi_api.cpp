@@ -17,7 +17,7 @@ void print_end_banner(std::ostream &os) {
 }
 } // unnamed namespace
 
-void run_semi(input in, output out, std::ostream &logger) {
+void run_semi(input &in, output &out, std::ostream &logger) {
 
     print_start_banner(logger);
     

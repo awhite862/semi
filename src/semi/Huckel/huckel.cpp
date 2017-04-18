@@ -118,23 +118,58 @@ double kCalc(double k, double sigma, int i, int j) {
     return 1.0 + (k + pow(delta, 2) - pow(delta, 4) * k);
 }
 
+void get_VOIE(unsigned data, double &v1, double &v2, double &v3, double &v4, double &v5) {
+
+    switch (data) {
+        case 1:   v1 = 13.6; v2 = 0;    v3 = 0;    v4 = 0;    v5 = 0;       break; 
+        case 2:   v1 = 24.5; v2 = 0;    v3 = 0;    v4 = 0;    v5 = 0;       break;    
+        case 3:   v1 = 0;    v2 = 5.45; v3 = 3.5;  v4 = 0;    v5 = 0;       break;    
+        case 4:   v1 = 0;    v2 = 9.30; v3 = 6.0;  v4 = 0;    v5 = 0;       break;    
+        case 5:   v1 = 0;    v2 = 14.0; v3 = 8.30; v4 = 0;    v5 = 0;       break;   
+        case 6:   v1 = 0;    v2 = 19.5; v3 = 10.7; v4 = 0;    v5 = 0;       break;   
+        case 7:   v1 = 0;    v2 = 25.5; v3 = 13.1; v4 = 0;    v5 = 0;       break;   
+        case 8:   v1 = 0;    v2 = 32.3; v3 = 15.9; v4 = 0;    v5 = 0;       break;   
+        case 9:   v1 = 0;    v2 = 40.4; v3 = 18.7; v4 = 0;    v5 = 0;       break;   
+        case 10:  v1 = 0;    v2 = 48.5; v3 = 21.5; v4 = 0;    v5 = 0;       break;   
+        case 11:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 5.21; v5 = 0;       break;   
+        case 12:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 7.68; v5 = 0;       break;   
+        case 13:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 11.3; v5 = 5.95;    break;
+        case 14:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 15.0; v5 = 7.81;    break;
+        case 15:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 18.7; v5 = 10.2;    break;
+        case 16:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 20.7; v5 = 11.7;    break;
+        case 17:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 25.3; v5 = 13.8;    break;
+    }
+}
+
+#define EV_TO_HARTREE 27.21138602 
+
 arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m, std::string args) {
     std::ifstream fin;
     int i = 0;
     std::string label;
     std::string line;
 
-    fin.open("VOIE.txt");
-    while (std::getline(fin, line)) {
-        std::stringstream linestream(line);
-        double data, val1, val2, val3, val4, val5;
-        linestream >> data >> val1 >> val2 >> val3 >> val4 >> val5;
-        voieData.push_back(voie());
-        voieData[i].atom = data; voieData[i].oneS = val1; voieData[i].twoS = val2;
-        voieData[i].twoP = val3; voieData[i].threeS = val4; voieData[i].threeP = val5;
-        i++;
+    //fin.open("VOIE.txt");
+    //while (std::getline(fin, line)) {
+    //    std::stringstream linestream(line);
+    //    double data, val1, val2, val3, val4, val5;
+    //    linestream >> data >> val1 >> val2 >> val3 >> val4 >> val5;
+    //    voieData.push_back(voie());
+    //    voieData[i].atom = data; voieData[i].oneS = val1; voieData[i].twoS = val2;
+    //    voieData[i].twoP = val3; voieData[i].threeS = val4; voieData[i].threeP = val5;
+    //    i++;
+    //}
+    //fin.close();
+    {
+        for (size_t i = 0; i < 18; i++) {
+            double scale = EV_TO_HARTREE;
+            double val1, val2, val3, val4, val5;
+            get_VOIE(i, val1, val2, val3, val4, val5);
+            voieData.push_back(voie());
+            voieData[i].atom = i; voieData[i].oneS = val1 / scale; voieData[i].twoS = val2 / scale;
+            voieData[i].twoP = val3 / scale; voieData[i].threeS = val4 / scale; voieData[i].threeP = val5 / scale;
+        }
     }
-    fin.close();
 
     for (unsigned int k = 0; k < m.myMolecule.size(); k++) {
         atoms.push_back(m.myMolecule[k].charge);
@@ -190,6 +225,7 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
             }
         }
     }
+    Hhuckel.print("Here is H");
 
     arma::mat eigvec;
     arma::vec eigval;

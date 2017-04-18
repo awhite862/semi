@@ -6,7 +6,7 @@
 
 namespace Semi {
 
-void run_semi(input in, output out, std::ostream &logger);
+void run_semi(input &in, output &out, std::ostream &logger);
 
 } // namespace Semi
 
