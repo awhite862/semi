@@ -116,8 +116,8 @@ int run_huckel_test() {
         std::stringstream linestream(line);
         double elem, x, y, z;
         linestream >> elem >> x >> y >> z;
-        Atom* a = new Atom(x, y, z, elem, i);
-        m.myMolecule.push_back(*a);
+        Atom a(x, y, z, elem, i);
+        m.myMolecule.push_back(a);
         double scale = 1.88973;
         std::vector<double> r(3);
         r[0] = x * scale;

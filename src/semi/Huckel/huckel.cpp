@@ -204,9 +204,14 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
     }
     Hhuckel.print("Here is H");
 
+
+    //Shuckel.print("S-matrix");
+    arma::mat X = invSqrt(Shuckel);
+    arma::mat Hprime = X * Hhuckel * X;
     arma::mat eigvec;
     arma::vec eigval;
-    eig_sym(eigval, eigvec, inv(Shuckel) * Hhuckel);
+    eig_sym(eigval, eigvec, Hprime);
+    eigvec = X * eigvec;
 
     unsigned int numpi = 0;
     for (unsigned int i = 0; i < m.myMolecule.size(); i++) {
@@ -245,31 +250,34 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
     std::cout << "Eigenvectors" << std::endl;
     for (int k = 0; k < eigval.size(); k++) {
         if (eigval(k) > 0)
-            std::cout << "Energy = a + " << eigval(k) << " b" << std::endl;
+            std::cout << "Energy = " << "+" << eigval(k) << std::endl;
         else
-            std::cout << "Energy = a - " << (-1.00 * eigval(k)) << " b" << std::endl;
+            std::cout << "Energy = " << "-" << (-1.00 * eigval(k)) << std::endl;
     }
 
     double counter = eigval.size() - 1;
     bool flag = false;
     double energy = 0;
-    for (int k = 0; k < numpi; k++) {
-        energy += eigval(counter);
-        if (flag) {
-            counter--;
-            flag = false;
-        }
-        else {
-            flag = true;
-        }
+    //for (int k = 0; k < numpi; k++) {
+    //    energy += eigval(counter);
+    //    if (flag) {
+    //        counter--;
+    //        flag = false;
+    //    }
+    //    else {
+    //        flag = true;
+    //    }
+    //}
+    for (int k = 0; k < num_orbitals; k++) {
+        energy += 2.0 * eigval(k);
     }
-    std::cout << "Total Energy: " << numpi << " a + " << energy << " b" << std::endl;
+    std::cout << "Total Energy: " << energy << std::endl;
     eigvec.print("Eigenvectors");
 
-    arma::mat test1 = inv(Shuckel)*Hhuckel;
-    test1.print("1");
-    arma::mat test2 = eigvec*diagmat(eigval)*inv(eigvec);
-    test2.print("2");
+    //arma::mat test1 = Hhuckel;
+    //test1.print("1");
+    //arma::mat test2 = eigvec*diagmat(eigval)*inv(eigvec);
+    //test2.print("2");
     if (!args.compare("c_v")) {
         return c_v;
     }
