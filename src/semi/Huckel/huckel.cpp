@@ -263,8 +263,13 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
             flag = true;
         }
     }
-
     std::cout << "Total Energy: " << numpi << " a + " << energy << " b" << std::endl;
+    eigvec.print("Eigenvectors");
+
+    arma::mat test1 = inv(Shuckel)*Hhuckel;
+    test1.print("1");
+    arma::mat test2 = eigvec*diagmat(eigval)*inv(eigvec);
+    test2.print("2");
     if (!args.compare("c_v")) {
         return c_v;
     }

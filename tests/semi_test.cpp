@@ -104,7 +104,7 @@ int run_rotation_test() {
 /** \brief Test for huckel theory initial guess.*/
 int run_huckel_test() {
     arma::mat SMatrix;
-    SMatrix.load("s.txt", arma::raw_ascii);
+    //SMatrix.load("s.txt", arma::raw_ascii);
 
     Molecule m;
     std::ifstream fin;
@@ -141,12 +141,12 @@ int run_huckel_test() {
     fin.close();
 
     //SMatrix.print("Here is s loaded");
-    Semi::calculateHuckel(SMatrix, 1, 0.2, Molecule(m.myMolecule), "c_v");
+    //Semi::calculateHuckel(SMatrix, 1, 0.2, Molecule(m.myMolecule), "c_v");
 
     BasisSet<CGTOBasis> bset(vbasis);
 
     arma::mat S = calculateOverlapMatrixCGTO(bset);
-    //S.print("Here is s calc");
+    S.print("Here is s calc");
     Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), "c_v");
     return 0;
 }
