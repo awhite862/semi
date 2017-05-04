@@ -22,6 +22,6 @@ public:
     QNumber();
 };
 
-} //namespace Semi
+} // namespace Semi
 
-#endif //QNUMBER_H
+#endif // QNUMBER_H

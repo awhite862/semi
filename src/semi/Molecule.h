@@ -21,6 +21,6 @@ public:
     Molecule(std::vector<Atom> _myMolecule);
 };
 
-} //namespace Semi
+} // namespace Semi
 
-#endif //MOLECULE_H
+#endif // MOLECULE_H

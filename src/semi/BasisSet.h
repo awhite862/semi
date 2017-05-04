@@ -14,6 +14,10 @@ public:
 	std::vector<bType> myBasis; ///!< vector representing basis
 
 public:
+    /** \brief Default constructor.
+     **/
+    BasisSet() { }
+
 	/** \brief Constructor.
 	    \param _myBasis vector of basis.
 	 **/

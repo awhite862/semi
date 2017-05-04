@@ -15,7 +15,7 @@ void print_end_banner(std::ostream &os) {
     os << " ----------------------------------------------------- " << std::endl
        << " ----------------------------------------------------- " << std::endl;
 }
-} // unnamed namespace
+} //unnamed namespace
 
 void run_semi(input &in, output &out, std::ostream &logger) {
 
@@ -28,4 +28,4 @@ void run_semi(input &in, output &out, std::ostream &logger) {
     print_end_banner(logger);
 }
 
-} // namespace Semi
+} //namespace Semi

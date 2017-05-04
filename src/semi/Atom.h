@@ -25,6 +25,6 @@ public:
     Atom(double _x, double _y, double _z, double _charge, unsigned _id);
 };
 
-} //namespace Semi
+} // namespace Semi
 
-#endif //ATOM_H
+#endif // ATOM_H

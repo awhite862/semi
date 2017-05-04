@@ -11,15 +11,15 @@
 using namespace Semi;
 /** \brief Basic compilation test for semi classes.*/
 int run_compilation_test() {
-/*    Atom* a = new Atom(1, 1, 1, 1, 1);
-    Molecule* m = new Molecule(std::vector<Semi::Atom> (4, *a));
+    /*    Atom* a = new Atom(1, 1, 1, 1, 1);
+        Molecule* m = new Molecule(std::vector<Semi::Atom> (4, *a));
 
-    arma::colvec r;
-    r << 1 << 1 << 1;
-    QNumber* q = new QNumber(1, 1, 0);
-    STOBasis* sto = new STOBasis(1, 1, 1, 1, 1, 1, 1, 1);
-    GTOBasis* gto = new GTOBasis(1, 1, 1, 1, r);
-    //CGTOBasis* cgto = new CGTOBasis(0, 0, 0, r, 1, *q);*/
+        arma::colvec r;
+        r << 1 << 1 << 1;
+        QNumber* q = new QNumber(1, 1, 0);
+        STOBasis* sto = new STOBasis(1, 1, 1, 1, 1, 1, 1, 1);
+        GTOBasis* gto = new GTOBasis(1, 1, 1, 1, r);
+        //CGTOBasis* cgto = new CGTOBasis(0, 0, 0, r, 1, *q);*/
 
     return 0;
 }
@@ -54,7 +54,7 @@ int run_sto_test() {
     double second = Semi::calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     double normSecond = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualSecond;
 
-    return !(abs(normFirst-first) < tolerance || abs(normSecond-second) < tolerance);
+    return !(abs(normFirst - first) < tolerance || abs(normSecond - second) < tolerance);
 }
 
 /** \brief Test for rotation matrix in overlap integrals.*/
@@ -110,20 +110,48 @@ int run_huckel_test() {
     std::ifstream fin;
     std::string line;
     int i = 0;
-    fin.open("benzene.txt");
+    std::vector<CGTOBasis> vbasis;
+    fin.open("methane.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
         double elem, x, y, z;
         linestream >> elem >> x >> y >> z;
-        Atom* a = new Atom(x,y,z,elem,i);
+        Atom* a = new Atom(x, y, z, elem, i);
         m.myMolecule.push_back(*a);
+        double scale = 1.88973;
+        std::vector<double> r(3);
+        r[0] = x * scale;
+        r[1] = y * scale;
+        r[2] = z * scale;
+
+        double charge = elem;
+        QNumber q1s(1, 0, 0);
+        vbasis.push_back(CGTOBasis(q1s, 0, 0, 0, r, charge));
+        if (charge - 0.1 > 2) {
+            QNumber q2s(2, 0, 0);
+            QNumber q2p(2, 1, 0);
+            vbasis.push_back(CGTOBasis(q2s, 0, 0, 0, r, charge));
+            vbasis.push_back(CGTOBasis(q2p, 1, 0, 0, r, charge));
+            vbasis.push_back(CGTOBasis(q2p, 0, 1, 0, r, charge));
+            vbasis.push_back(CGTOBasis(q2p, 0, 0, 1, r, charge));
+        }
+
         i++;
     }
     fin.close();
 
-    Semi::calculateHuckel(SMatrix, 1, 0.2, m, "c_v");
+    //SMatrix.print("Here is s loaded");
+    Semi::calculateHuckel(SMatrix, 1, 0.2, Molecule(m.myMolecule), "c_v");
+
+    BasisSet<CGTOBasis> bset(vbasis);
+
+    arma::mat S = calculateOverlapMatrixCGTO(bset);
+    //S.print("Here is s calc");
+    Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), "c_v");
     return 0;
 }
+
+
 // 0 0 l
 
 // 1.0 0.01 0.001 abc
@@ -143,7 +171,7 @@ int run_cgto_test() {
     // CGTOBasis a = CGTOBasis(*aq, 0, 0, 0, ar, 1);
 
     // arma::colvec br;
-    // br << -1 << -0.01 << -0.001;
+    // br << -1 << -0.01 << -0.001;fhuckel
     // QNumber* bq = new QNumber(1, 0, 0);
     // CGTOBasis b = CGTOBasis(*bq, 0, 0, 0, br, 1);
 
@@ -159,7 +187,7 @@ int run_cgto_test() {
     GTOBasis b = GTOBasis(*bq, 0, 0, 0, 10, br);
 
     double ans = calculateOverlapGTO(a, b);
-    
+
     arma::colvec ar2;
     ar2 << 1 << 0.01 << 0.001;
     QNumber* aq2 = new QNumber(1, 1, 0);
@@ -171,7 +199,7 @@ int run_cgto_test() {
     GTOBasis b2 = GTOBasis(*bq2, 1, 0, 0, 10, br2);
 
     double ans2 = calculateOverlapGTO(a2, b2);
-    
+
     arma::colvec ar3;
     ar3 << 10 << 1 << 0.1;
     QNumber* aq3 = new QNumber(1, 1, 0);
@@ -183,13 +211,13 @@ int run_cgto_test() {
     GTOBasis b3 = GTOBasis(*bq3, 1, 0, 0, 0.05, br3);
 
     double ans3  = calculateOverlapGTO(a3, b3);
-    std::cout << ans << std::endl;
-    std::cout << ans2 << std::endl;
-    std::cout << ans3 << std::endl;
+    // std::cout << ans << std::endl;
+    // std::cout << ans2 << std::endl;
+    // std::cout << ans3 << std::endl;
     return 0;
 }
 
-int run_cgto_matrix_test(){
+int run_cgto_matrix_test() {
     arma::colvec ar;
     ar << 1 << 0.01 << 0.001;
     QNumber* aq = new QNumber(1, 0, 0);
@@ -198,7 +226,7 @@ int run_cgto_matrix_test(){
     arma::colvec br;
     br << 1 << 0.01 << 0.001;
     QNumber* bq = new QNumber(1, 0, 0);
-    GTOBasis b = GTOBasis(*bq, 0, 0, 0, 0.6239137, br);        
+    GTOBasis b = GTOBasis(*bq, 0, 0, 0, 0.6239137, br);
 
     arma::colvec cr;
     cr << 1 << 0.01 << 0.001;
@@ -221,43 +249,22 @@ int run_cgto_matrix_test(){
     QNumber* fq = new QNumber(1, 0, 0);
     GTOBasis f = GTOBasis(*fq, 0, 0, 0, 0.1688554, fr);
 
-    CGTOBasis abc = CGTOBasis(*aq, 0,0,0, ar, 1);
+    CGTOBasis abc = CGTOBasis(*aq, 0, 0, 0, ar, 1);
 
-    CGTOBasis def = CGTOBasis(*dq, 0,0,0, dr, 1);
+    CGTOBasis def = CGTOBasis(*dq, 0, 0, 0, dr, 1);
     double overlap = calculateOverlapCGTO(abc, def);
     double overlap_sum = 0
-        + calculateOverlapGTO(a,d) * 0.15432897 * 0.15432897
-        + calculateOverlapGTO(a,e) * 0.15432897 * 0.53532814
-        + calculateOverlapGTO(a,f) * 0.15432897 * 0.44463454
-        + calculateOverlapGTO(b,d) * 0.53532814 * 0.15432897
-        + calculateOverlapGTO(b,e) * 0.53532814 * 0.53532814
-        + calculateOverlapGTO(b,f) * 0.53532814 * 0.44463454
-        + calculateOverlapGTO(c,d) * 0.44463454 * 0.15432897
-        + calculateOverlapGTO(c,e) * 0.44463454 * 0.53532814
-        + calculateOverlapGTO(c,f) * 0.44463454 * 0.44463454;
+                         + calculateOverlapGTO(a, d) * 0.15432897 * 0.15432897
+                         + calculateOverlapGTO(a, e) * 0.15432897 * 0.53532814
+                         + calculateOverlapGTO(a, f) * 0.15432897 * 0.44463454
+                         + calculateOverlapGTO(b, d) * 0.53532814 * 0.15432897
+                         + calculateOverlapGTO(b, e) * 0.53532814 * 0.53532814
+                         + calculateOverlapGTO(b, f) * 0.53532814 * 0.44463454
+                         + calculateOverlapGTO(c, d) * 0.44463454 * 0.15432897
+                         + calculateOverlapGTO(c, e) * 0.44463454 * 0.53532814
+                         + calculateOverlapGTO(c, f) * 0.44463454 * 0.44463454;
 
-
-
-        std::cout << "sum" << std::endl;
-        std::cout << calculateOverlapGTO(a,d) * 0.15432897 * 0.15432897 << std::endl;
-        std::cout << calculateOverlapGTO(a,e) * 0.15432897 * 0.53532814 << std::endl;
-        std::cout << calculateOverlapGTO(a,f) * 0.15432897 * 0.44463454 << std::endl;
-        std::cout << calculateOverlapGTO(b,d) * 0.53532814 * 0.15432897 << std::endl;
-        std::cout << calculateOverlapGTO(b,e) * 0.53532814 * 0.53532814 << std::endl;
-        std::cout << calculateOverlapGTO(b,f) * 0.53532814 * 0.44463454 << std::endl;
-        std::cout << calculateOverlapGTO(c,d) * 0.44463454 * 0.15432897 << std::endl;
-        std::cout << calculateOverlapGTO(c,e) * 0.44463454 * 0.53532814 << std::endl;
-        std::cout << calculateOverlapGTO(c,f) * 0.44463454 * 0.44463454 << std::endl;
-
-
-
-
-
-
-
-        std::cout << "norm: " << overlap << std::endl;
-        std::cout << "sum: " << overlap_sum << std::endl;
-    return 0;
+    return abs(overlap - overlap_sum) > tolerance;
 }
 
 /** Main method to run tests.

@@ -2,27 +2,10 @@
 #include <iostream>
 #include <vector>
 #include <armadillo>
+#include <semi/semi_utils.h>
 #include "huckel.h"
 namespace Semi {
 
-struct voie {
-    double atom;
-    double oneS;
-    double twoS;
-    double twoP;
-    double threeS;
-    double threeP;
-};
-
-struct myOrbital {
-    double atom;
-    std::string orbital;
-};
-
-std::vector<double> atoms;
-std::vector<voie> voieData;
-std::vector<myOrbital> allOrbitalData;
-std::vector<myOrbital> valenceOrbitalData;
 
 arma::mat invSqrt(arma::mat A) {
     arma::vec eigval;
@@ -34,7 +17,7 @@ arma::mat invSqrt(arma::mat A) {
     return ans;
 }
 
-double fetchVOIE(double atom, std::string orbital) {
+double fetchVOIE(double atom, std::string orbital, std::vector<voie> voieData) {
     double H1;
     for (unsigned int k = 0; k < voieData.size(); k++) {
         if (voieData[k].atom == atom) {
@@ -111,87 +94,74 @@ int numValence(int atom) {
     return 0;
 }
 
-double kCalc(double k, double sigma, int i, int j) {
-    double num = (fetchVOIE(valenceOrbitalData[i].atom, valenceOrbitalData[i].orbital) - fetchVOIE(valenceOrbitalData[j].atom, valenceOrbitalData[j].orbital));
-    double dem = (fetchVOIE(valenceOrbitalData[i].atom, valenceOrbitalData[i].orbital) + fetchVOIE(valenceOrbitalData[j].atom, valenceOrbitalData[j].orbital));
+double kCalc(double k, double sigma, int i, int j, std::vector<myOrbital> valenceOrbitalData, std::vector<voie> voieData) {
+    double num = (fetchVOIE(valenceOrbitalData[i].atom.charge, valenceOrbitalData[i].orbital, voieData) - fetchVOIE(valenceOrbitalData[j].atom.charge, valenceOrbitalData[j].orbital, voieData));
+    double dem = (fetchVOIE(valenceOrbitalData[i].atom.charge, valenceOrbitalData[i].orbital, voieData) + fetchVOIE(valenceOrbitalData[j].atom.charge, valenceOrbitalData[j].orbital, voieData));
     double delta = num / dem;
-    return 1.0 + (k + pow(delta, 2) - pow(delta, 4) * k);
+    double dist = distance(valenceOrbitalData[i].atom.x, valenceOrbitalData[i].atom.y, valenceOrbitalData[i].atom.z, valenceOrbitalData[j].atom.x, valenceOrbitalData[j].atom.y, valenceOrbitalData[j].atom.z);
+    double radii = zetaCalc(valenceOrbitalData[i].atom.charge) + zetaCalc(valenceOrbitalData[j].atom.charge);
+    return (1.0 + k + pow(delta, 2) - pow(delta, 4)) * exp(sigma * (dist - radii));
 }
 
 void get_VOIE(unsigned data, double &v1, double &v2, double &v3, double &v4, double &v5) {
 
     switch (data) {
-        case 1:   v1 = 13.6; v2 = 0;    v3 = 0;    v4 = 0;    v5 = 0;       break; 
-        case 2:   v1 = 24.5; v2 = 0;    v3 = 0;    v4 = 0;    v5 = 0;       break;    
-        case 3:   v1 = 0;    v2 = 5.45; v3 = 3.5;  v4 = 0;    v5 = 0;       break;    
-        case 4:   v1 = 0;    v2 = 9.30; v3 = 6.0;  v4 = 0;    v5 = 0;       break;    
-        case 5:   v1 = 0;    v2 = 14.0; v3 = 8.30; v4 = 0;    v5 = 0;       break;   
-        case 6:   v1 = 0;    v2 = 19.5; v3 = 10.7; v4 = 0;    v5 = 0;       break;   
-        case 7:   v1 = 0;    v2 = 25.5; v3 = 13.1; v4 = 0;    v5 = 0;       break;   
-        case 8:   v1 = 0;    v2 = 32.3; v3 = 15.9; v4 = 0;    v5 = 0;       break;   
-        case 9:   v1 = 0;    v2 = 40.4; v3 = 18.7; v4 = 0;    v5 = 0;       break;   
-        case 10:  v1 = 0;    v2 = 48.5; v3 = 21.5; v4 = 0;    v5 = 0;       break;   
-        case 11:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 5.21; v5 = 0;       break;   
-        case 12:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 7.68; v5 = 0;       break;   
-        case 13:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 11.3; v5 = 5.95;    break;
-        case 14:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 15.0; v5 = 7.81;    break;
-        case 15:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 18.7; v5 = 10.2;    break;
-        case 16:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 20.7; v5 = 11.7;    break;
-        case 17:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 25.3; v5 = 13.8;    break;
+    case 1:   v1 = 13.6; v2 = 0;    v3 = 0;    v4 = 0;    v5 = 0;       break;
+    case 2:   v1 = 24.5; v2 = 0;    v3 = 0;    v4 = 0;    v5 = 0;       break;
+    case 3:   v1 = 0;    v2 = 5.45; v3 = 3.5;  v4 = 0;    v5 = 0;       break;
+    case 4:   v1 = 0;    v2 = 9.30; v3 = 6.0;  v4 = 0;    v5 = 0;       break;
+    case 5:   v1 = 0;    v2 = 14.0; v3 = 8.30; v4 = 0;    v5 = 0;       break;
+    case 6:   v1 = 0;    v2 = 19.5; v3 = 10.7; v4 = 0;    v5 = 0;       break;
+    case 7:   v1 = 0;    v2 = 25.5; v3 = 13.1; v4 = 0;    v5 = 0;       break;
+    case 8:   v1 = 0;    v2 = 32.3; v3 = 15.9; v4 = 0;    v5 = 0;       break;
+    case 9:   v1 = 0;    v2 = 40.4; v3 = 18.7; v4 = 0;    v5 = 0;       break;
+    case 10:  v1 = 0;    v2 = 48.5; v3 = 21.5; v4 = 0;    v5 = 0;       break;
+    case 11:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 5.21; v5 = 0;       break;
+    case 12:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 7.68; v5 = 0;       break;
+    case 13:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 11.3; v5 = 5.95;    break;
+    case 14:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 15.0; v5 = 7.81;    break;
+    case 15:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 18.7; v5 = 10.2;    break;
+    case 16:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 20.7; v5 = 11.7;    break;
+    case 17:  v1 = 0;    v2 = 0;    v3 = 0;    v4 = 25.3; v5 = 13.8;    break;
     }
 }
 
-#define EV_TO_HARTREE 27.21138602 
+#define EV_TO_HARTREE 27.21138602
 
 arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m, std::string args) {
-    std::ifstream fin;
     int i = 0;
-    std::string label;
-    std::string line;
 
-    //fin.open("VOIE.txt");
-    //while (std::getline(fin, line)) {
-    //    std::stringstream linestream(line);
-    //    double data, val1, val2, val3, val4, val5;
-    //    linestream >> data >> val1 >> val2 >> val3 >> val4 >> val5;
-    //    voieData.push_back(voie());
-    //    voieData[i].atom = data; voieData[i].oneS = val1; voieData[i].twoS = val2;
-    //    voieData[i].twoP = val3; voieData[i].threeS = val4; voieData[i].threeP = val5;
-    //    i++;
-    //}
-    //fin.close();
-    {
-        for (size_t i = 0; i < 18; i++) {
-            double scale = EV_TO_HARTREE;
-            double val1, val2, val3, val4, val5;
-            get_VOIE(i, val1, val2, val3, val4, val5);
-            voieData.push_back(voie());
-            voieData[i].atom = i; voieData[i].oneS = val1 / scale; voieData[i].twoS = val2 / scale;
-            voieData[i].twoP = val3 / scale; voieData[i].threeS = val4 / scale; voieData[i].threeP = val5 / scale;
-        }
-    }
-
-    for (unsigned int k = 0; k < m.myMolecule.size(); k++) {
-        atoms.push_back(m.myMolecule[k].charge);
+    std::vector<voie> voieData;
+    std::vector<myOrbital> allOrbitalData;
+    std::vector<myOrbital> valenceOrbitalData;
+    //get voie
+    for (size_t i = 0; i < 18; i++) {
+        double scale = EV_TO_HARTREE;
+        double val1, val2, val3, val4, val5;
+        get_VOIE(i, val1, val2, val3, val4, val5);
+        voieData.push_back(voie());
+        voieData[i].atom = i; voieData[i].oneS = val1 / scale; voieData[i].twoS = val2 / scale;
+        voieData[i].twoP = val3 / scale; voieData[i].threeS = val4 / scale; voieData[i].threeP = val5 / scale;
     }
 
     i = 0;
-    for (unsigned int k = 0; k < atoms.size(); k++) {
-        std::vector<std::string> orbital_no_atom = fetchOrbitals(atoms[k]);
+    //add orbitals for all atoms
+    for (unsigned int k = 0; k < m.myMolecule.size(); k++) {
+        std::vector<std::string> orbital_no_atom = fetchOrbitals(m.myMolecule[k].charge);
         for (unsigned int j = 0; j < orbital_no_atom.size(); j++) {
             allOrbitalData.push_back(myOrbital());
-            allOrbitalData[i].atom = atoms[k];
+            allOrbitalData[i].atom = Atom(m.myMolecule[k].x, m.myMolecule[k].y, m.myMolecule[k].z, m.myMolecule[k].charge, k);
             allOrbitalData[i].orbital = orbital_no_atom[j];
             i++;
         }
     }
 
     i = 0;
-    for (unsigned int k = 0; k < atoms.size(); k++) {
-        std::vector<std::string> valence_orbital_no_atom = fetchValenceOrbitals(atoms[k]);
+    for (unsigned int k = 0; k < m.myMolecule.size(); k++) {
+        std::vector<std::string> valence_orbital_no_atom = fetchValenceOrbitals(m.myMolecule[k].charge);
         for (unsigned int j = 0; j < valence_orbital_no_atom.size(); j++) {
             valenceOrbitalData.push_back(myOrbital());
-            valenceOrbitalData[i].atom = atoms[k];
+            valenceOrbitalData[i].atom = Atom(m.myMolecule[k].x, m.myMolecule[k].y, m.myMolecule[k].z, m.myMolecule[k].charge, k);
             valenceOrbitalData[i].orbital = valence_orbital_no_atom[j];
             i++;
         }
@@ -199,9 +169,16 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
 
     std::vector<double> keep;
     unsigned int size = sqrt(Smatrix.size());
-    for (unsigned int i = 0; i < size; i++) {
-        std::vector<std::string> v = fetchValenceOrbitals(allOrbitalData[i].atom);
-        if ((find(v.begin(), v.end(), allOrbitalData[i].orbital) != v.end())) {
+    if (valenceOrbitalData.size() != size) {
+        for (unsigned int i = 0; i < size; i++) {
+            std::vector<std::string> v = fetchValenceOrbitals(allOrbitalData[i].atom.charge);
+            if ((find(v.begin(), v.end(), allOrbitalData[i].orbital) != v.end())) {
+                keep.push_back(i);
+            }
+        }
+    }
+    else { 
+        for (unsigned int i = 0; i < size; i++) {
             keep.push_back(i);
         }
     }
@@ -218,10 +195,10 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
     for (unsigned int i = 0; i < keep.size(); i++) {
         for (unsigned int j = 0; j < keep.size(); j++) {
             if (i != j) {
-                Hhuckel(i, j) = -0.5 * kCalc(kValue, sigmaValue, i, j) * Shuckel(i, j) * (fetchVOIE(valenceOrbitalData[i].atom, valenceOrbitalData[i].orbital) + fetchVOIE(valenceOrbitalData[j].atom, valenceOrbitalData[j].orbital));
+                Hhuckel(i, j) = -0.5 * kCalc(kValue, sigmaValue, i, j, valenceOrbitalData, voieData) * Shuckel(i, j) * (fetchVOIE(valenceOrbitalData[i].atom.charge, valenceOrbitalData[i].orbital, voieData) + fetchVOIE(valenceOrbitalData[j].atom.charge, valenceOrbitalData[j].orbital, voieData));
             }
             else {
-                Hhuckel(i, i) = -fetchVOIE(valenceOrbitalData[i].atom, valenceOrbitalData[i].orbital);
+                Hhuckel(i, i) = -fetchVOIE(valenceOrbitalData[i].atom.charge, valenceOrbitalData[i].orbital, voieData);
             }
         }
     }
@@ -229,11 +206,11 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
 
     arma::mat eigvec;
     arma::vec eigval;
-    eig_sym(eigval, eigvec, Hhuckel);
+    eig_sym(eigval, eigvec, inv(Shuckel) * Hhuckel);
 
     unsigned int numpi = 0;
-    for (unsigned int i = 0; i < atoms.size(); i++) {
-        numpi += numValence(atoms[i]);
+    for (unsigned int i = 0; i < m.myMolecule.size(); i++) {
+        numpi += numValence(m.myMolecule[i].charge);
     }
 
     unsigned int num_orbitals = numpi / 2;
@@ -265,36 +242,33 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
     arma::mat c_basis = c_full * (invSqrt(y));
     arma::mat id = trans(c_basis) * Smatrix * c_basis;
 
+    std::cout << "Eigenvectors" << std::endl;
+    for (int k = 0; k < eigval.size(); k++) {
+        if (eigval(k) > 0)
+            std::cout << "Energy = a + " << eigval(k) << " b" << std::endl;
+        else
+            std::cout << "Energy = a - " << (-1.00 * eigval(k)) << " b" << std::endl;
+    }
 
-    //debugging
-    /*  std::cout << "eigenvalue" << std::endl;
-        eigval.print();
-        std::cout << "eigenvalue size " << eigval.n_elem << std::endl;
-        std::cout << "eigenstd::vector" << std::endl;
-        eigvec.print();
-        std::cout << "eigenstd::vector size " << eigvec.n_elem << std::endl;
-        std::cout << "numpi" << numpi << std::endl;
-        std::cout << "number of valence" << std::endl;
-        std::cout << valenceOrbitalData.size() << std::endl;
-        std::cout << "number of filled orbitals" << std::endl;
-        std::cout << num_orbitals << std::endl;
-        std::cout << "c_v size " << c_v.n_elem << std::endl;
-        c_v.print();
-        std::cout << "c_full" << c_full.n_elem << std::endl;
-        c_full.print();
-        std::cout << "y" << std::endl;
-        y.print();
-        std::cout << "basis matrix" << std::endl;
-        c_basis.print();
-        std::cout << "identity matrix check" << std::endl;
-        id.print();
-    */
+    double counter = eigval.size() - 1;
+    bool flag = false;
+    double energy = 0;
+    for (int k = 0; k < numpi; k++) {
+        energy += eigval(counter);
+        if (flag) {
+            counter--;
+            flag = false;
+        }
+        else {
+            flag = true;
+        }
+    }
 
+    std::cout << "Total Energy: " << numpi << " a + " << energy << " b" << std::endl;
     if (!args.compare("c_v")) {
         return c_v;
     }
     else if (!args.compare("c_full")) {
-        c_full.print("C_full");
         return c_full;
     }
     else if (!args.compare("c_basis")) {
