@@ -2,7 +2,6 @@
 #define PARAMETERS_H
 
 #include <map>
-//#include <string>
 #include <sstream>
 
 namespace Semi {

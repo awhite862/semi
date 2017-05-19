@@ -1,31 +1,21 @@
 #define ARMA_DONT_USE_WRAPPER
 #include "IntegralEvaluator.h"
-#include <semi/semi_utils.h>
 using namespace arma;
 
 namespace Semi {
 
 double calculateOverlapCGTO(CGTOBasis a, CGTOBasis b) {
-    //std::cout << "cgto" << std::endl;
     double overlap = 0.0;
     for (int k = 0; k < 3; k++) {
         for (int i = 0; i < 3; i++) {
-            GTOBasis* tempA = new GTOBasis(a.nlm, a.a, a.b, a.c, a.alphaVec[k], a.r);
-            GTOBasis* tempB = new GTOBasis(b.nlm, b.a, b.b, b.c, b.alphaVec[i], b.r);
-            //std::cout << a.nVec[k] * b.nVec[i] * calculateOverlapGTOUnnorm(*tempA, *tempB) << " ";
-            overlap += a.nVec[k] * b.nVec[i] * calculateOverlapGTOUnnorm(*tempA, *tempB);
-            delete tempA;
-            delete tempB;
+            GTOBasis tempA(a.nlm, a.a, a.b, a.c, a.alphaVec[k], a.r);
+            GTOBasis tempB(b.nlm, b.a, b.b, b.c, b.alphaVec[i], b.r);
+            overlap += a.nVec[k] * b.nVec[i] * calculateOverlapGTOUnnorm(tempA, tempB);
         }
-        //std::cout << overlap << std::endl;
     }
-    //std::cout << overlap << std::endl;
     return overlap;
 }
 
-
-//nlm x = 1, y = -1, z = 0
-//colvec x =0, y=1, z=2
 double calculateOverlapGTO(GTOBasis a, GTOBasis b) {
     double a_i, b_j;
     if (a.a == 1) {
@@ -81,19 +71,15 @@ double calculateOverlapGTOUnnorm(GTOBasis a, GTOBasis b) {
         b_j = 2;
     }
     if (a.nlm.l == 0 && b.nlm.l == 0) {
-        //std::cout << "ss ";
         return pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
     else if (a.nlm.l == 1 && b.nlm.l == 0) {
-    //   std::cout << "ps ";
         return -1.0 * b.alpha / (a.alpha + b.alpha) * (a.r(a_i) - b.r(a_i)) * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
     else if (a.nlm.l == 0 && b.nlm.l == 1) {
-       // std::cout << "sp ";
         return -1.0 * a.alpha / (a.alpha + b.alpha) * (b.r(b_j) - a.r(b_j)) * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
     else if (a.nlm.l == 1 && b.nlm.l == 1) {
-        //std::cout << "pp ";
         return (delta(a_i, b_j) / (2 * a.alpha + 2 * b.alpha) + (a.alpha * b.alpha) / pow(a.alpha + b.alpha, 2) * (a.r(a_i) - b.r(a_i)) * (b.r(b_j) - a.r(b_j))) * pow(M_PI / (a.alpha + b.alpha), 3.0 / 2.0) * exp((-a.alpha * b.alpha) / (a.alpha + b.alpha) * pow(distance(a.r(0), a.r(1), a.r(2), b.r(0), b.r(1), b.r(2)), 2));
     }
 }
@@ -426,7 +412,5 @@ double calculateCoreValenceInteraction(int *a, int *b) { //V_AB
 double calculateElectrionRepulsionIntegral(int *a, int *b) {
 
 }
-
-
 
 } //namespace Semi

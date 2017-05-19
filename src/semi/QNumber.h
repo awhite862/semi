@@ -19,7 +19,8 @@ public:
 
     /** \brief Default constructor.
      **/
-    QNumber();
+    QNumber() : n(0), l(0), m(0) {}
+
 };
 
 } // namespace Semi

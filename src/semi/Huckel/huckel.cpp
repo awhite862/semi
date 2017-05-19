@@ -4,6 +4,7 @@
 #include <armadillo>
 #include <semi/semi_utils.h>
 #include "huckel.h"
+#include <tuple>
 namespace Semi {
 
 
@@ -128,13 +129,11 @@ void get_VOIE(unsigned data, double &v1, double &v2, double &v3, double &v4, dou
 
 #define EV_TO_HARTREE 27.21138602
 
-arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m, std::string args) {
+std::tuple <arma::mat, arma::mat, std::vector<myOrbital>> constructHuckelHamiltonian(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m) {
     int i = 0;
-
     std::vector<voie> voieData;
     std::vector<myOrbital> allOrbitalData;
     std::vector<myOrbital> valenceOrbitalData;
-    //get voie
     for (size_t i = 0; i < 18; i++) {
         double scale = EV_TO_HARTREE;
         double val1, val2, val3, val4, val5;
@@ -145,7 +144,6 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
     }
 
     i = 0;
-    //add orbitals for all atoms
     for (unsigned int k = 0; k < m.myMolecule.size(); k++) {
         std::vector<std::string> orbital_no_atom = fetchOrbitals(m.myMolecule[k].charge);
         for (unsigned int j = 0; j < orbital_no_atom.size(); j++) {
@@ -177,7 +175,7 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
             }
         }
     }
-    else { 
+    else {
         for (unsigned int i = 0; i < size; i++) {
             keep.push_back(i);
         }
@@ -204,8 +202,10 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
     }
     Hhuckel.print("Here is H");
 
+    return std::make_tuple(Hhuckel, Shuckel, valenceOrbitalData);
+}
 
-    //Shuckel.print("S-matrix");
+arma::mat solveHuckelMatrix(arma::mat Hhuckel, arma::mat Shuckel, arma::mat Smatrix, Molecule m, std::vector<myOrbital> valenceOrbitalData) {
     arma::mat X = invSqrt(Shuckel);
     arma::mat Hprime = X * Hhuckel * X;
     arma::mat eigvec;
@@ -228,6 +228,7 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
     arma::mat c_v(valenceOrbitalData.size(), num_orbitals);
     c_v = eigvec.cols(0, num_orbitals - 1);
 
+    unsigned int size = sqrt(Smatrix.size());
     arma::mat c_full(size, size - valenceOrbitalData.size() + num_orbitals);
     for (unsigned int k = 0; k < size; k++) {
         for (unsigned int i = 0; i < size - valenceOrbitalData.size() + num_orbitals; i++) {
@@ -243,11 +244,8 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
         }
     }
 
-    arma::mat y = trans(c_full) * Smatrix * c_full;
-    arma::mat c_basis = c_full * (invSqrt(y));
-    arma::mat id = trans(c_basis) * Smatrix * c_basis;
 
-    std::cout << "Eigenvectors" << std::endl;
+    std::cout << "Orbital Energies" << std::endl;
     for (int k = 0; k < eigval.size(); k++) {
         if (eigval(k) > 0)
             std::cout << "Energy = " << "+" << eigval(k) << std::endl;
@@ -255,37 +253,23 @@ arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, M
             std::cout << "Energy = " << "-" << (-1.00 * eigval(k)) << std::endl;
     }
 
-    double counter = eigval.size() - 1;
-    bool flag = false;
     double energy = 0;
-    //for (int k = 0; k < numpi; k++) {
-    //    energy += eigval(counter);
-    //    if (flag) {
-    //        counter--;
-    //        flag = false;
-    //    }
-    //    else {
-    //        flag = true;
-    //    }
-    //}
     for (int k = 0; k < num_orbitals; k++) {
         energy += 2.0 * eigval(k);
     }
     std::cout << "Total Energy: " << energy << std::endl;
-    eigvec.print("Eigenvectors");
-
-    //arma::mat test1 = Hhuckel;
-    //test1.print("1");
-    //arma::mat test2 = eigvec*diagmat(eigval)*inv(eigvec);
-    //test2.print("2");
-    if (!args.compare("c_v")) {
-        return c_v;
-    }
-    else if (!args.compare("c_full")) {
-        return c_full;
-    }
-    else if (!args.compare("c_basis")) {
-        return c_basis;
-    }
 }
+
+arma::mat constructCBasis(arma::mat c_full, arma::mat Smatrix) {
+    arma::mat y = trans(c_full) * Smatrix * c_full;
+    arma::mat c_basis = c_full * (invSqrt(y));
+    arma::mat id = trans(c_basis) * Smatrix * c_basis;
+    return c_basis;
+}
+arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m, std::string args) {
+    auto t = constructHuckelHamiltonian(Smatrix, kValue, sigmaValue, m);
+    arma::mat a= std::get<0>(t);
+    solveHuckelMatrix(std::get<0>(t), std::get<1>(t), Smatrix, m, std::get<2>(t));
+}
+
 }

@@ -1,25 +1,17 @@
 /** \brief A test class for semi.*/
 #include <armadillo>
 #include <cstdlib>
-#include <fstream>
 #include <semi/Integral/IntegralEvaluator.h>
-#include <semi/Integral/Cndo.h>
-#include <semi/Huckel/huckel.h>
 #include <semi/semi_utils.h>
-#include <map>
 
 using namespace Semi;
 /** \brief Basic compilation test for semi classes.*/
 int run_compilation_test() {
-    /*    Atom* a = new Atom(1, 1, 1, 1, 1);
-        Molecule* m = new Molecule(std::vector<Semi::Atom> (4, *a));
-
-        arma::colvec r;
-        r << 1 << 1 << 1;
-        QNumber* q = new QNumber(1, 1, 0);
-        STOBasis* sto = new STOBasis(1, 1, 1, 1, 1, 1, 1, 1);
-        GTOBasis* gto = new GTOBasis(1, 1, 1, 1, r);
-        //CGTOBasis* cgto = new CGTOBasis(0, 0, 0, r, 1, *q);*/
+    Atom a(1, 1, 1, 1, 1);
+    Molecule m(std::vector<Semi::Atom> (4, a));
+    arma::colvec r;
+    r << 1 << 1 << 1;
+    QNumber q(1, 1, 0);
 
     return 0;
 }
@@ -30,11 +22,9 @@ int run_compilation_test() {
  *  2nd test zeta values 0.2, 1, evaluates to 0.121087705563123644 un-normalized
  */
 int run_sto_test() {
-    ///Unnormalized values
     double actualFirst = 0.214596340683341354;
     double actualSecond = 1.121087705563123644;
 
-    ///paramaters for the first overlap integral
     double r = 1, z1 = 1, z2 = 1;
     double tau = (z1 - z2) / (z1 + z2);
     double rho = 0.5 * (z1 + z2) * r;
@@ -45,7 +35,6 @@ int run_sto_test() {
     double first = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     double normFirst = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualFirst;
 
-    ///parameters for second overlap integral
     z1 = 0.2; z2 = 1;
     tau = (z1 - z2) / (z1 + z2);
     rho = 0.5 * (z1 + z2) * r;
@@ -94,182 +83,12 @@ int run_rotation_test() {
     vec4(2) = 5;
     arma::mat rotated5 = Semi::findRotation(0, 0, 5, 0, 0, 10);
 
-    if (norm(test1 - arma::eye(3, 3)) > tolerance | norm(test2 - arma::eye(3, 3)) > tolerance | norm(test3 - arma::eye(3, 3)) > tolerance | norm(test4 - arma::eye(3, 3)) > tolerance | norm(rotated5 - arma::eye(3, 3)) > tolerance) {
-        return 1;
-    }
-
-    return 0;
-}
-
-/** \brief Test for huckel theory initial guess.*/
-int run_huckel_test() {
-    arma::mat SMatrix;
-    //SMatrix.load("s.txt", arma::raw_ascii);
-
-    Molecule m;
-    std::ifstream fin;
-    std::string line;
-    int i = 0;
-    std::vector<CGTOBasis> vbasis;
-    fin.open("methane.txt");
-    while (std::getline(fin, line)) {
-        std::stringstream linestream(line);
-        double elem, x, y, z;
-        linestream >> elem >> x >> y >> z;
-        Atom a(x, y, z, elem, i);
-        m.myMolecule.push_back(a);
-        double scale = 1.88973;
-        std::vector<double> r(3);
-        r[0] = x * scale;
-        r[1] = y * scale;
-        r[2] = z * scale;
-
-        double charge = elem;
-        QNumber q1s(1, 0, 0);
-        vbasis.push_back(CGTOBasis(q1s, 0, 0, 0, r, charge));
-        if (charge - 0.1 > 2) {
-            QNumber q2s(2, 0, 0);
-            QNumber q2p(2, 1, 0);
-            vbasis.push_back(CGTOBasis(q2s, 0, 0, 0, r, charge));
-            vbasis.push_back(CGTOBasis(q2p, 1, 0, 0, r, charge));
-            vbasis.push_back(CGTOBasis(q2p, 0, 1, 0, r, charge));
-            vbasis.push_back(CGTOBasis(q2p, 0, 0, 1, r, charge));
-        }
-
-        i++;
-    }
-    fin.close();
-
-    //SMatrix.print("Here is s loaded");
-    //Semi::calculateHuckel(SMatrix, 1, 0.2, Molecule(m.myMolecule), "c_v");
-
-    BasisSet<CGTOBasis> bset(vbasis);
-
-    arma::mat S = calculateOverlapMatrixCGTO(bset);
-    S.print("Here is s calc");
-    Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), "c_v");
-    return 0;
-}
-
-
-// 0 0 l
-
-// 1.0 0.01 0.001 abc
-// -1.0 -0.01 -0.001 abc
-
-// 10.0 10.0
-
-// 4.007837386698362180096159730696235475449195275225351306619521440472961255744995533476335816628324
-// 4.007837386698362180096159730696235475449195275225351306619521440472961255744995533476335816628324
-
-// 2.056994294456803574829111780821946482718902295308792506777564143425656498691520607978489E-9
-/** \brief Test CGTO overlap.*/
-int run_cgto_test() {
-    // arma::colvec ar;
-    // ar << 1 << 0.01 << 0.001;
-    // QNumber* aq = new QNumber(1, 0, 0);
-    // CGTOBasis a = CGTOBasis(*aq, 0, 0, 0, ar, 1);
-
-    // arma::colvec br;
-    // br << -1 << -0.01 << -0.001;fhuckel
-    // QNumber* bq = new QNumber(1, 0, 0);
-    // CGTOBasis b = CGTOBasis(*bq, 0, 0, 0, br, 1);
-
-    // double ans = calculateOverlapCGTO(a, b);
-    arma::colvec ar;
-    ar << 1 << 0.01 << 0.001;
-    QNumber* aq = new QNumber(1, 0, 0);
-    GTOBasis a = GTOBasis(*aq, 0, 0, 0, 10, ar);
-
-    arma::colvec br;
-    br << -1 << -0.01 << -0.001;
-    QNumber* bq = new QNumber(1, 0, 0);
-    GTOBasis b = GTOBasis(*bq, 0, 0, 0, 10, br);
-
-    double ans = calculateOverlapGTO(a, b);
-
-    arma::colvec ar2;
-    ar2 << 1 << 0.01 << 0.001;
-    QNumber* aq2 = new QNumber(1, 1, 0);
-    GTOBasis a2 = GTOBasis(*aq2, 1, 0, 0, 10, ar2);
-
-    arma::colvec br2;
-    br2 << -1 << -0.01 << -0.001;
-    QNumber* bq2 = new QNumber(1, 1, 0);
-    GTOBasis b2 = GTOBasis(*bq2, 1, 0, 0, 10, br2);
-
-    double ans2 = calculateOverlapGTO(a2, b2);
-
-    arma::colvec ar3;
-    ar3 << 10 << 1 << 0.1;
-    QNumber* aq3 = new QNumber(1, 1, 0);
-    GTOBasis a3 = GTOBasis(*aq3, 1, 0, 0, 0.01, ar3);
-
-    arma::colvec br3;
-    br3 << -10 << -1 << -0.1;
-    QNumber* bq3 = new QNumber(1, 1, 0);
-    GTOBasis b3 = GTOBasis(*bq3, 1, 0, 0, 0.05, br3);
-
-    double ans3  = calculateOverlapGTO(a3, b3);
-    // std::cout << ans << std::endl;
-    // std::cout << ans2 << std::endl;
-    // std::cout << ans3 << std::endl;
-    return 0;
-}
-
-int run_cgto_matrix_test() {
-    arma::colvec ar;
-    ar << 1 << 0.01 << 0.001;
-    QNumber* aq = new QNumber(1, 0, 0);
-    GTOBasis a = GTOBasis(*aq, 0, 0, 0, 3.4252509, ar);
-
-    arma::colvec br;
-    br << 1 << 0.01 << 0.001;
-    QNumber* bq = new QNumber(1, 0, 0);
-    GTOBasis b = GTOBasis(*bq, 0, 0, 0, 0.6239137, br);
-
-    arma::colvec cr;
-    cr << 1 << 0.01 << 0.001;
-    QNumber* cq = new QNumber(1, 0, 0);
-    GTOBasis c = GTOBasis(*cq, 0, 0, 0, 0.1688554, cr);
-
-    arma::colvec dr;
-    dr << 2 << 0.01 << 0.001;
-    QNumber* dq = new QNumber(1, 0, 0);
-    GTOBasis d = GTOBasis(*dq, 0, 0, 0, 3.4252509, dr);
-
-    arma::colvec er;
-    er << 2 << 0.01 << 0.001;
-    QNumber* eq = new QNumber(1, 0, 0);
-    GTOBasis e = GTOBasis(*eq, 0, 0, 0, 0.6239137, er);
-
-
-    arma::colvec fr;
-    fr << 2 << 0.01 << 0.001;
-    QNumber* fq = new QNumber(1, 0, 0);
-    GTOBasis f = GTOBasis(*fq, 0, 0, 0, 0.1688554, fr);
-
-    CGTOBasis abc = CGTOBasis(*aq, 0, 0, 0, ar, 1);
-
-    CGTOBasis def = CGTOBasis(*dq, 0, 0, 0, dr, 1);
-    double overlap = calculateOverlapCGTO(abc, def);
-    double overlap_sum = 0
-                         + calculateOverlapGTO(a, d) * 0.15432897 * 0.15432897
-                         + calculateOverlapGTO(a, e) * 0.15432897 * 0.53532814
-                         + calculateOverlapGTO(a, f) * 0.15432897 * 0.44463454
-                         + calculateOverlapGTO(b, d) * 0.53532814 * 0.15432897
-                         + calculateOverlapGTO(b, e) * 0.53532814 * 0.53532814
-                         + calculateOverlapGTO(b, f) * 0.53532814 * 0.44463454
-                         + calculateOverlapGTO(c, d) * 0.44463454 * 0.15432897
-                         + calculateOverlapGTO(c, e) * 0.44463454 * 0.53532814
-                         + calculateOverlapGTO(c, f) * 0.44463454 * 0.44463454;
-
-    return abs(overlap - overlap_sum) > tolerance;
+    return (norm(test1 - arma::eye(3, 3)) > tolerance | norm(test2 - arma::eye(3, 3)) > tolerance | norm(test3 - arma::eye(3, 3)) > tolerance | norm(test4 - arma::eye(3, 3)) > tolerance | norm(rotated5 - arma::eye(3, 3)) > tolerance);
 }
 
 /** Main method to run tests.
  */
 int main() {
-    double result = run_compilation_test() | run_sto_test() | run_rotation_test() | run_huckel_test() | run_cgto_matrix_test() | 0;
+    double result = run_compilation_test() | run_rotation_test() | 0;
     return result;
 }

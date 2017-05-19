@@ -42,6 +42,10 @@ double kCalc(double k, double sigma, int i, int j, std::vector<myOrbital> valenc
  **  args controls the output matrix.
 **/
 arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m, std::string args);
+std::tuple <arma::mat, arma::mat, std::vector<myOrbital>> constructHuckelHamiltonian(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m);
+arma::mat solveHuckelMatrix(arma::mat Hhuckel, arma::mat Shuckel);
+arma::mat constructCBasis(arma::mat c_full, arma::mat Smatrix);
+arma::mat calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecule m, std::string args);
 
 } //namespace Semi
 #endif //huckel.h

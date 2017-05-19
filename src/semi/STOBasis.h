@@ -1,6 +1,6 @@
 #ifndef STOBASIS_H
 #define STOBASIS_H
-#include "semi/QNumber.h"
+#include <semi/QNumber.h>
 
 namespace Semi {
 /** \brief Class that represents a STO Basis. **/
@@ -12,7 +12,7 @@ public:
     double y; ///!< y-position
     double z; ///!< z-position
     double id; ///!< id
-    
+
 public:
     /** \brief Constructor.
         \param _zeta zeta.

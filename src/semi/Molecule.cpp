@@ -6,4 +6,4 @@ Molecule::Molecule(std::vector<Atom> _myMolecule) {
 	myMolecule = _myMolecule;
 }
 
-} //namespace Semi
+} // namespace Semi

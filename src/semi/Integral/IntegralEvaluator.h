@@ -2,7 +2,6 @@
 #define IntegralEvaluator_H
 
 #include <iostream>
-#include <vector>
 #include <armadillo>
 #include <semi/Atom.h>
 #include <semi/Molecule.h>

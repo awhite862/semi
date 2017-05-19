@@ -1,5 +1,5 @@
 #define ARMA_DONT_USE_WRAPPER
-#include "semi/Integral/Cndo.h"
+#include "Cndo.h"
 
 using namespace arma;
 
@@ -15,18 +15,15 @@ arma::mat calculateOverlapMatrixGTO(BasisSet<GTOBasis> b) {
     return Smatrix;
 }
 
-
 arma::mat calculateOverlapMatrixCGTO(BasisSet<CGTOBasis> b) {
     arma::mat Smatrix(b.myBasis.size(), b.myBasis.size()); Smatrix.fill(0.0);
     for (int k = 0; k < b.myBasis.size(); k++) {
         for (int l = 0; l < b.myBasis.size(); l++) {
-            //std::cout << k << " " << l << std::endl;
             Smatrix(k, l) = Semi::calculateOverlapCGTO(b.myBasis[k], b.myBasis[l]);
         }
     }
     return Smatrix;
 }
-
 
 arma::mat calculateFockMatrix() {
 
@@ -166,10 +163,10 @@ arma::mat calculateOverlapMatrix(BasisSet<STOBasis> a) {
     arma::mat Smatrix(a.myBasis.size(), a.myBasis.size());
     for (unsigned k = 0; k < a.myBasis.size(); k++) {
         for (unsigned l = 0; l < k; l++) {
-            if (k == l) { //diag
+            if (k == l) {
                 Smatrix(k, l) =  1;
             }
-            else if (a.myBasis[k].id == a.myBasis[l].id) { //same atom
+            else if (a.myBasis[k].id == a.myBasis[l].id) {
                 Smatrix(k, l) = 0;
             }
             else {

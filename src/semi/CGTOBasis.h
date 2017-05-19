@@ -2,7 +2,7 @@
 #define CGTOBASIS_H
 
 #include <armadillo>
-#include "QNumber.h"
+#include <semi/QNumber.h>
 
 namespace Semi {
 /** \brief Struct used to read in sto-3g data from EMSL . **/
@@ -37,7 +37,7 @@ public:
     CGTOBasis(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem, std::vector<double> &_nVec, std::vector<double> &_alphaVec) :
         nlm(_nlm), a(_a), b(_b), c(_c), r(_r), elem(_elem), nVec(_nVec), alphaVec(_alphaVec) { }
 
-    /** \brief Constructor.
+    /** \brief Constructor that requires minimum number of values to initiate cgto basis and calculates the rest.
         \param _a x power.
         \param _b y power.
         \param _c z power.

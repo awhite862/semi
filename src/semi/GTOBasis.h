@@ -1,9 +1,9 @@
 #ifndef GTOBASIS_H
 #define GTOBASIS_H
 
-#include "QNumber.h"
 #include <armadillo>
-#include "semi/semi_utils.h"
+#include <semi/QNumber.h>
+#include <semi/semi_utils.h>
 
 namespace Semi {
 /** \brief Class that represents an GTO Basis. **/
@@ -28,6 +28,6 @@ public:
     GTOBasis(QNumber _nlm, double _a, double _b, double _c, double _alpha, arma::colvec _r);
 };
 
-} //namespace Semi
+} // namespace Semi
 
-#endif //GTOBASIS_H
+#endif // GTOBASIS_H

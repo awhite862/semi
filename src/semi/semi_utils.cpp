@@ -1,6 +1,5 @@
 #include "semi_utils.h"
-#include "semi/Atom.h"
-#include <cstdlib> // for EXIT_FAILURE
+#include <cstdlib>
 #include <stdexcept>
 namespace Semi {
 std::string getElement(double charge) {
@@ -34,7 +33,7 @@ double zetaCalc(double charge){
     case 9: return 2.6;
     case 10: return 2.925;
     }
-    throw std::runtime_error("Element out of range");
+    throw std::runtime_error("Element out of range: " + std::to_string(temp));
 }
 
 int factorial(int n) {

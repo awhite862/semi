@@ -2,7 +2,7 @@
 #define MOLECULE_H
 
 #include <vector>
-#include "Atom.h"
+#include <semi/Atom.h>
 
 namespace Semi {
 /** \brief Class that represents a molecule by using an vector of atoms. **/

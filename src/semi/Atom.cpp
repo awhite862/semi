@@ -10,4 +10,4 @@ Atom::Atom(double _x, double _y, double _z, double _charge, unsigned _id) {
     id = _id;
 }
 
-} //namespace Semi
+} // namespace Semi

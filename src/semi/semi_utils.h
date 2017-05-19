@@ -2,7 +2,6 @@
 #define SEMI_UTILS_H
 
 #include <string>
-#include "semi/Atom.h"
 #include <cmath>
 namespace Semi {
 /** \brief Determines string corresponding to an elements charge. **/

@@ -1,6 +1,7 @@
 #include "get_sto_3g.h"
-
+#include <iostream>
 namespace Semi {
+
 void get_sto_3g(std::string &name, QNumber &qn, std::vector<double> &nVec, std::vector<double> &alphaVec) {
     if (name == "H" && qn.n == 1 && qn.l == 0) {
         alphaVec[0] = 3.4252509;   nVec[0] =  0.15432897;
@@ -128,8 +129,8 @@ void get_sto_3g(std::string &name, QNumber &qn, std::vector<double> &nVec, std::
         alphaVec[2] = 0.6232293;    nVec[2] =  0.70011547;
     }
     else {
-        //throw std::runtime_error("Element out of range");
+        throw std::runtime_error("Element out of range");
     }
 }
 
-} // namespace Semi
+} //namespace Semi
