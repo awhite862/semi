@@ -1,18 +1,19 @@
 #ifndef IntegralEvaluator_H
 #define IntegralEvaluator_H
 
+#include "semi/Structure/Molecule.h"
+#include "semi/Basis/BasisSet.h"
+#include "semi/Basis/CGTOFunction.h"
+#include "semi/Basis/GTOFunction.h"
+#include "semi/Basis/STOFunction.h"
+#include "semi/semi_utils.h"
 #include <iostream>
 #include <armadillo>
-#include <semi/Atom.h>
-#include <semi/Molecule.h>
-#include <semi/BasisSet.h>
-#include <semi/CGTOBasis.h>
-#include <semi/GTOBasis.h>
-#include <semi/STOBasis.h>
-#include <semi/semi_utils.h>
 
 namespace Semi {
 /** \brief Class that evaluates overlap integrals. **/
+
+double calculateOverlapSTO(STOFunction a, STOFunction b);
 
 /** \brief calculates overlap integral for STO basis from given parameters. **/
 double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
@@ -27,13 +28,13 @@ double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, dou
 double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
 
 /** \brief calculates overlap integral for GTO basis from given parameters. **/
-double calculateOverlapGTO(GTOBasis a, GTOBasis b);
+double calculateOverlapGTO(GTOFunction a, GTOFunction b);
 
 /** \brief calculates overlap integral for GTO basis from given parameters. **/
-double calculateOverlapGTOUnnorm(GTOBasis a, GTOBasis b);
+double calculateOverlapGTOUnnorm(GTOFunction a, GTOFunction b);
 
 /** \brief calculates overlap integral for CGTO basis from given parameters. **/
-double calculateOverlapCGTO(CGTOBasis a, CGTOBasis b);
+double calculateOverlapCGTO(CGTOFunction a, CGTOFunction b);
 
 /** \brief calculates coulomb integral from given parameters. **/
 double calculateBasicCoulombIntegral(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);

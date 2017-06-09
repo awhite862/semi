@@ -1,6 +1,6 @@
 #ifndef HUCKELMETHOD_H
 #define HUCKELMETHOD_H
-#include "semi/Structure/Molcule.h"
+#include "semi/Structure/Molecule.h"
 #include <armadillo>
 namespace Semi {
 /** \brief Class that represents approxiamtes initial guess via Huckel theory. **/

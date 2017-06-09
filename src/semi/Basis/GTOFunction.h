@@ -1,8 +1,8 @@
 #ifndef GTOFUNCTION_H
 #define GTOFUNCTION_H
 
-#include <semi/QNumber.h>
-#include <semi/semi_utils.h>
+#include "semi/Structure/QNumber.h"
+#include "semi/semi_utils.h"
 #include <armadillo>
 
 namespace Semi {

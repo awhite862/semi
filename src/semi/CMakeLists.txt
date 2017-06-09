@@ -1,16 +1,16 @@
 set(SRC
-    Atom.cpp
-    STOBasis.cpp
-    GTOBasis.cpp
-    CGTOBasis.cpp
-    QNumber.cpp
-    get_sto_3g.cpp
-    Molecule.cpp
-    Integral/IntegralEvaluator.cpp
-    Integral/Cndo.cpp
+    Basis/GTOFunction.cpp
+    Basis/CGTOFunction.cpp
+    Basis/STOFunction.cpp
+    Basis/get_sto_3g.cpp
     Huckel/HuckelConstructor.cpp
     Huckel/HuckelSolver.cpp
     Huckel/HuckelMethod.cpp
+    Integral/Cndo.cpp
+    Integral/IntegralEvaluator.cpp
+    Structure/Atom.cpp
+    Structure/QNumber.cpp
+    Structure/Molecule.cpp
     run_huckel.cpp
     semi_utils.cpp
     semi_api.cpp

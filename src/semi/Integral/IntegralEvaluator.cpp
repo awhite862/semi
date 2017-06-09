@@ -1,22 +1,24 @@
 #define ARMA_DONT_USE_WRAPPER
 #include "IntegralEvaluator.h"
+#include "semi/semi_utils.h"
+#include <math.h> 
 using namespace arma;
 
 namespace Semi {
 
-double calculateOverlapCGTO(CGTOBasis a, CGTOBasis b) {
+double calculateOverlapCGTO(CGTOFunction a, CGTOFunction b) {
     double overlap = 0.0;
     for (int k = 0; k < 3; k++) {
         for (int i = 0; i < 3; i++) {
-            GTOBasis tempA(a.nlm, a.a, a.b, a.c, a.alphaVec[k], a.r);
-            GTOBasis tempB(b.nlm, b.a, b.b, b.c, b.alphaVec[i], b.r);
+            GTOFunction tempA(a.nlm, a.a, a.b, a.c, a.alphaVec[k], a.r);
+            GTOFunction tempB(b.nlm, b.a, b.b, b.c, b.alphaVec[i], b.r);
             overlap += a.nVec[k] * b.nVec[i] * calculateOverlapGTOUnnorm(tempA, tempB);
         }
     }
     return overlap;
 }
 
-double calculateOverlapGTO(GTOBasis a, GTOBasis b) {
+double calculateOverlapGTO(GTOFunction a, GTOFunction b) {
     double a_i, b_j;
     if (a.a == 1) {
         a_i = 0;
@@ -50,7 +52,7 @@ double calculateOverlapGTO(GTOBasis a, GTOBasis b) {
     }
 }
 
-double calculateOverlapGTOUnnorm(GTOBasis a, GTOBasis b) {
+double calculateOverlapGTOUnnorm(GTOFunction a, GTOFunction b) {
     double a_i, b_j;
     if (a.a == 1) {
         a_i = 0;
@@ -177,9 +179,10 @@ double calculateOverlapSTOFull(double tau, double rho, double kappa, double rho_
                   + pow(1.0 + kappa, 2) * (24.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta) + 12.0 * (1.0 - kappa) * pow(rho_beta, 2) + pow(rho_beta, 3)) * exp(-rho_beta));
     }
     if (isReversed(a, b)) {
-        return calculateOverlapSTOFull(-tau, rho, -kappa, rho_alpha, rho_beta, a, b);
+        return calculateOverlapSTOFull(-tau, rho, -kappa, rho_beta, rho_alpha, b, a);
     }
-    throw std::runtime_error("Failed to catch case");
+    return 0;
+    //throw std::runtime_error("Failed to catch case");
 }
 
 double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) { //Tau = 0
@@ -226,26 +229,27 @@ double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double 
         return  (1.0 + rho + 2.0 / 5 * pow(rho, 2) + 1.0 / 15 * pow(rho, 3)) * exp(-rho);
     }
     if (isReversed(a, b)) {
-        return calculateOverlapSTOSameZeta(-tau, rho, -kappa, rho_alpha, rho_beta, a, b);
+        return calculateOverlapSTOSameZeta(-tau, rho, -kappa, rho_alpha, rho_beta, b, a);
     }
-    throw std::runtime_error("Failed to catch case");
+    return 0;
+    //throw std::runtime_error("Failed to catch case");
 }
 
 double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) { //Rho = 0
     if (a[0] == 0 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //0s1s
-        return 1.0 / pow(2, 0.5) * pow(1.0 + rho, 0.5) * pow(1.0 - rho, 1.5);
+        return 1.0 / pow(2, 0.5) * pow(1.0 + tau, 0.5) * pow(1.0 - tau, 1.5);
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
-        return pow(1.0 + rho, 1.5) * pow(1.0 - rho, 1.5);
+        return pow(1.0 + tau, 1.5) * pow(1.0 - tau, 1.5);
     }
     if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //0s2s
-        return pow(6, -0.5) * pow(1.0 + rho, 0.5) * pow(1.0 - rho, 2.5);
+        return pow(6, -0.5) * pow(1.0 + tau, 0.5) * pow(1.0 - tau, 2.5);
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
-        return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + rho, 1.5) * pow(1.0 - rho, 2.5);
+        return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
-        return pow(1.0 + rho, 2.5) * pow(1.0 - rho, 2.5);
+        return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
     }
     if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //0s2pz
         return 0;
@@ -263,33 +267,51 @@ double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, dou
         return 0;
     }
     if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
-        return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + rho, 1.5) * pow(1.0 - rho, 2.5);
+        return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
     }
     if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
-        return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + rho, 1.5) * pow(1.0 - rho, 2.5);
+        return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
     }
     if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
-        return pow(1.0 + rho, 2.5) * pow(1.0 - rho, 2.5);
+        return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
     }
     if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
-        return pow(1.0 + rho, 2.5) * pow(1.0 - rho, 2.5);
+        return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
     }
     if (isReversed(a, b)) {
-        return calculateOverlapSTOSamePosition(-tau, rho, -kappa, rho_alpha, rho_beta, a, b);
+        return calculateOverlapSTOSamePosition(-tau, rho, -kappa, rho_alpha, rho_beta, b, a);
     }
-    throw std::runtime_error("Failed to catch case");
+    return 0;
+    //throw std::runtime_error("Failed to catch case");
 }
 
 double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
-    if (std::abs(tau) < tolerance) {
+    if (fabs(tau) < tolerance) {
         return calculateOverlapSTOSameZeta(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
-    else if (std::abs(rho) < tolerance) {
+    else if (fabs(rho) < tolerance) {
         return calculateOverlapSTOSamePosition(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
     else {
         return calculateOverlapSTOFull(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
+}
+
+double calculateOverlapSTO(STOFunction a, STOFunction b) {
+
+    /** \brief Basic Overlap Integral test.
+     *  Overlap of 2 1s orbitals, centered at (0, 0, 0), (1, 0, 0)
+     *  1st test zeta values 1, 1, evaluates to 0.214596340683341354 un-normalized
+     *  2nd test zeta values 0.2, 1, evaluates to 0.121087705563123644 un-normalized
+     */
+    double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
+    double tau = (a.zeta - b.zeta) / (a.zeta + b.zeta);
+    double rho = 0.5 * (a.zeta + b.zeta) * r;
+    double kappa = 0.5 * (tau + 1 / tau);
+    double rho_alpha = a.zeta * r, rho_beta = b.zeta * r;
+    int avec[3] = {a.nlm.n, a.nlm.l, a.nlm.m};
+    int bvec[3] = {b.nlm.n, b.nlm.l, b.nlm.m};
+    return calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, avec, bvec);
 }
 
 arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, double z2) {
@@ -324,12 +346,12 @@ arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, do
     mat rotationMatrix(3, 3);
     rotationMatrix = zRotation * xzRotation;
 
-    double tol = 0.0000000001;
-    if (x < tol && y < tol && z > tol) {
-        rotationMatrix = arma::eye(3, 3);
-    }
-    else if (x > tol && y < tol && z > tol) {
-        rotationMatrix = xzRotation;
+    for (int k = 0; k < 3; k++) {
+        for (int i = 0; i < 3; i++) {
+            if (isnan(rotationMatrix(k, i))) {
+                rotationMatrix = arma::eye(3, 3);
+            }
+        }
     }
     return rotationMatrix;
 }

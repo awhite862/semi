@@ -1,10 +1,10 @@
 /** \brief A test class for semi.*/
 #include <armadillo>
 #include <cstdlib>
-#include <semi/Integral/Cndo.h>
-#include <semi/Integral/IntegralEvaluator.h>
-#include "semi/QNumber.h"
-#include <semi/semi_utils.h>
+#include "semi/Integral/Cndo.h"
+#include "semi/Integral/IntegralEvaluator.h"
+#include "semi/Structure/QNumber.h"
+#include "semi/semi_utils.h"
 
 using namespace Semi;
 /** \brief Basic compilation test for semi classes.*/
@@ -50,7 +50,7 @@ int run_sto_test() {
 
 
 int run_sto_matrix_test() {
-    BasisSet<STOBasis> a;
+    BasisSet<STOFunction> a;
     double f = 0.0629;
     //double f = .629118;
     QNumber q1s(1, 0, 0);
@@ -58,16 +58,16 @@ int run_sto_matrix_test() {
     QNumber q2px(2, 1, 1);   
     QNumber q2py(2, 1, -1);  
     QNumber q2pz(2, 1, 0);  
-    a.myBasis.push_back(STOBasis(q1s, 6, 0, 0, 0, 0));
-    a.myBasis.push_back(STOBasis(q2s, 6, 0, 0, 0, 0));
-    a.myBasis.push_back(STOBasis(q2px, 6, 0, 0, 0, 0));
-    a.myBasis.push_back(STOBasis(q2py, 6, 0, 0, 0, 0));
-    a.myBasis.push_back(STOBasis(q2pz, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOFunction(q1s, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOFunction(q2s, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOFunction(q2px, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOFunction(q2py, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOFunction(q2pz, 6, 0, 0, 0, 0));
 
-    a.myBasis.push_back(STOBasis(q1s, 1, f, f, f, 1));
-    a.myBasis.push_back(STOBasis(q1s, 1, f, -f, -f, 2));
-    a.myBasis.push_back(STOBasis(q1s, 1, -f, -f, f, 3));
-    a.myBasis.push_back(STOBasis(q1s, 1, -f, f, -f, 4));
+    a.myBasis.push_back(STOFunction(q1s, 1, f, f, f, 1));
+    a.myBasis.push_back(STOFunction(q1s, 1, f, -f, -f, 2));
+    a.myBasis.push_back(STOFunction(q1s, 1, -f, -f, f, 3));
+    a.myBasis.push_back(STOFunction(q1s, 1, -f, f, -f, 4));
     arma::mat sol =  Semi::calculateOverlapMatrix(a);
     sol.print();
 }

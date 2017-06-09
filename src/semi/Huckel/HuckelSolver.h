@@ -1,5 +1,6 @@
 #ifndef HUCKELSOLVER_H
 #define HUCKELSOLVER_H
+#include "HuckelMethod.h"
 #include "semi/Structure/Molecule.h"
 #include "semi/semi_utils.h"
 #include <armadillo>

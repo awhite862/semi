@@ -1,7 +1,7 @@
 #ifndef SEMI_RUN_HUCKEL_H
 #define SEMI_RUN_HUCKEL_H
 
-#include "Molecule.h"
+#include "Structure/Molecule.h"
 #include "parameters.h"
 #include "semi_output.h"
 

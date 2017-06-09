@@ -2,7 +2,7 @@
 #define SEMI_INPUT_H
 
 #include "parameters.h"
-#include "Molecule.h"
+#include "semi/Structure/Molecule.h"
 
 namespace Semi {
 

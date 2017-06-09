@@ -1,5 +1,4 @@
 #include "HuckelConstructor.h"
-#include <armadillo>
 namespace Semi {
 
 #define EV_TO_HARTREE 27.21138602

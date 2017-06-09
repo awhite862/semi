@@ -2,11 +2,11 @@
 #include <armadillo>
 #include <cstdlib>
 #include <fstream>
-#include <semi/Integral/IntegralEvaluator.h>
-#include <semi/Integral/Cndo.h>
-#include <semi/CGTOBasis.h>
-#include <semi/Huckel/HuckelMethod.h>
-#include <semi/semi_utils.h>
+#include "semi/Integral/IntegralEvaluator.h"
+#include "semi/Integral/Cndo.h"
+#include "semi/Basis/CGTOFunction.h"
+#include "semi/Huckel/HuckelMethod.h"
+#include "semi/semi_utils.h"
 #include <map>
 
 
@@ -20,7 +20,7 @@ int run_huckel_test() {
     Molecule m;
     std::ifstream fin;
     std::string line;
-    std::vector<CGTOBasis> vbasis;
+    std::vector<CGTOFunction> vbasis;
     fin.open("methane.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
@@ -35,14 +35,14 @@ int run_huckel_test() {
         r[2] = z * scale;
         double charge = elem;
         QNumber q1s(1, 0, 0);
-        vbasis.push_back(CGTOBasis(q1s, 0, 0, 0, r, charge));
+        vbasis.push_back(CGTOFunction(q1s, 0, 0, 0, r, charge));
         if (charge - 0.1 > 2) {
             QNumber q2s(2, 0, 0);
             QNumber q2p(2, 1, 0);
-            vbasis.push_back(CGTOBasis(q2s, 0, 0, 0, r, charge));
-            vbasis.push_back(CGTOBasis(q2p, 1, 0, 0, r, charge));
-            vbasis.push_back(CGTOBasis(q2p, 0, 1, 0, r, charge));
-            vbasis.push_back(CGTOBasis(q2p, 0, 0, 1, r, charge));
+            vbasis.push_back(CGTOFunction(q2s, 0, 0, 0, r, charge));
+            vbasis.push_back(CGTOFunction(q2p, 1, 0, 0, r, charge));
+            vbasis.push_back(CGTOFunction(q2p, 0, 1, 0, r, charge));
+            vbasis.push_back(CGTOFunction(q2p, 0, 0, 1, r, charge));
         }
         i++;
     }
@@ -50,9 +50,10 @@ int run_huckel_test() {
 
     //Semi::calculateHuckel(SMatrix, 1, 0.2, Molecule(m.myMolecule), "c_v");
 
-    BasisSet<CGTOBasis> bset(vbasis);
+    BasisSet<CGTOFunction> bset(vbasis);
     arma::mat S = calculateOverlapMatrixCGTO(bset);
-    Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule));
+    arma::mat sol;
+    Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), sol);
     return 0;
 }
 

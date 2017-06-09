@@ -1,5 +1,5 @@
 #include "CGTOFunction.h"
-#include "semi/get_sto_3g.h"
+#include "get_sto_3g.h"
 #include "semi/semi_utils.h"
 #include <math.h>
 

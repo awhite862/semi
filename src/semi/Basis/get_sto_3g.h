@@ -1,6 +1,6 @@
 #include <string>
 #include <vector>
-#include <semi/QNumber.h>
+#include "semi/Structure/QNumber.h"
 
 namespace Semi {
 

@@ -1,6 +1,6 @@
 #ifndef STOFUNCTION_H
 #define STOFUNCTION_H
-#include "semi/QNumber.h"
+#include "semi/Structure/QNumber.h"
 
 namespace Semi {
 /** \brief Class that represents a STO Basis. **/

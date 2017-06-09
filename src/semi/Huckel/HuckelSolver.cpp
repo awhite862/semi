@@ -1,5 +1,5 @@
-#include <armadillo>
-#include "semi/Huckel/HuckelSolver.h"
+#include "HuckelSolver.h"
+
 namespace Semi {
 void solveHuckelMatrixWithOverlap(arma::mat Hhuckel, arma::mat Shuckel, arma::mat Smatrix, Molecule m, std::vector<myOrbital> valenceOrbitalData, arma::mat &solMatrix) {
     arma::mat X = invSqrt(Shuckel);
@@ -109,7 +109,7 @@ void solveHuckelMatrix(arma::mat Hhuckel, arma::mat Smatrix, Molecule m, std::ve
     }
     std::cout << "Total Energy: " << energy << std::endl;
 
-    solMatrix = *c_full;
+    solMatrix = c_full;
 }
 
 int numValence(int atom) {

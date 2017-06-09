@@ -23,10 +23,11 @@ double calculateNucleurAttraction();
 double calculateBondingParameter();
 
 //S_uv
-arma::mat calculateOverlapMatrix();
+arma::mat calculateOverlapMatrix(BasisSet<STOFunction> a);
 
-arma::mat calculateOverlapMatrixGTO(BasisSet<GTOBasis> b);
-arma::mat calculateOverlapMatrixCGTO(BasisSet<CGTOBasis> b);
+
+arma::mat calculateOverlapMatrixGTO(BasisSet<GTOFunction> b);
+arma::mat calculateOverlapMatrixCGTO(BasisSet<CGTOFunction> b);
 
 //double distance (double x1, double y1, double z1, double x2, double y2, double z2);
 

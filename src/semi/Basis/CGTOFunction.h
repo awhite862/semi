@@ -1,7 +1,7 @@
 #ifndef CGTOFUNCTION_H
 #define CGTOFUNCTION_H
 
-#include <semi/QNumber.h>
+#include "semi/Structure/QNumber.h"
 #include <armadillo>
 
 namespace Semi {
@@ -45,7 +45,7 @@ public:
         \param _elem atomic number.
         \param _nlm Quantum numbers nlm.
      **/
-    CGTOBasis(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem);
+    CGTOFunction(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem);
 };
 
 } // namespace Semi
