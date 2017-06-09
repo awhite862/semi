@@ -1,14 +1,11 @@
-#include "CGTOBasis.h"
-#include <armadillo>
-#include <iostream>
+#include "CGTOFunction.h"
+#include "semi/get_sto_3g.h"
+#include "semi/semi_utils.h"
 #include <math.h>
-#include <semi/GTOBasis.h>
-#include <semi/get_sto_3g.h>
-#include <semi/semi_utils.h>
 
 namespace Semi {
 
-CGTOBasis::CGTOBasis(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem) {
+CGTOFunction::CGTOFunction(QNumber _nlm, double _a, double _b, double _c, arma::colvec _r, double _elem) {
     a = _a;
     b = _b;
     c = _c;
@@ -29,4 +26,4 @@ CGTOBasis::CGTOBasis(QNumber _nlm, double _a, double _b, double _c, arma::colvec
     }
 }
 
-} //namespace Semi
+} // namespace Semi

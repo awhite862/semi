@@ -8,7 +8,9 @@ set(SRC
     Molecule.cpp
     Integral/IntegralEvaluator.cpp
     Integral/Cndo.cpp
-    Huckel/huckel.cpp
+    Huckel/HuckelConstructor.cpp
+    Huckel/HuckelSolver.cpp
+    Huckel/HuckelMethod.cpp
     run_huckel.cpp
     semi_utils.cpp
     semi_api.cpp

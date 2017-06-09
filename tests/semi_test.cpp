@@ -1,7 +1,9 @@
 /** \brief A test class for semi.*/
 #include <armadillo>
 #include <cstdlib>
+#include <semi/Integral/Cndo.h>
 #include <semi/Integral/IntegralEvaluator.h>
+#include "semi/QNumber.h"
 #include <semi/semi_utils.h>
 
 using namespace Semi;
@@ -32,7 +34,7 @@ int run_sto_test() {
     double rho_alpha = z1 * r, rho_beta = z2 * r;
     int a[3] = {1, 0, 0};
     int b[3] = {1, 0, 0};
-    double first = calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, a, b);
+    double first = Semi::calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     double normFirst = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualFirst;
 
     z1 = 0.2; z2 = 1;
@@ -44,6 +46,30 @@ int run_sto_test() {
     double normSecond = pow(2 * z1, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) *  pow(2 * z2, 1 + 0.5) * pow(Semi::factorial(2 * 1), -0.5) * actualSecond;
 
     return !(abs(normFirst - first) < tolerance || abs(normSecond - second) < tolerance);
+}
+
+
+int run_sto_matrix_test() {
+    BasisSet<STOBasis> a;
+    double f = 0.0629;
+    //double f = .629118;
+    QNumber q1s(1, 0, 0);
+    QNumber q2s(2, 0, 0);
+    QNumber q2px(2, 1, 1);   
+    QNumber q2py(2, 1, -1);  
+    QNumber q2pz(2, 1, 0);  
+    a.myBasis.push_back(STOBasis(q1s, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOBasis(q2s, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOBasis(q2px, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOBasis(q2py, 6, 0, 0, 0, 0));
+    a.myBasis.push_back(STOBasis(q2pz, 6, 0, 0, 0, 0));
+
+    a.myBasis.push_back(STOBasis(q1s, 1, f, f, f, 1));
+    a.myBasis.push_back(STOBasis(q1s, 1, f, -f, -f, 2));
+    a.myBasis.push_back(STOBasis(q1s, 1, -f, -f, f, 3));
+    a.myBasis.push_back(STOBasis(q1s, 1, -f, f, -f, 4));
+    arma::mat sol =  Semi::calculateOverlapMatrix(a);
+    sol.print();
 }
 
 /** \brief Test for rotation matrix in overlap integrals.*/
@@ -89,6 +115,6 @@ int run_rotation_test() {
 /** Main method to run tests.
  */
 int main() {
-    double result = run_compilation_test() | run_rotation_test() | 0;
+    double result = run_compilation_test() | run_rotation_test() | run_sto_matrix_test() | 0;
     return result;
 }

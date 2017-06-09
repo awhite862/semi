@@ -5,7 +5,7 @@
 #include <semi/Integral/IntegralEvaluator.h>
 #include <semi/Integral/Cndo.h>
 #include <semi/CGTOBasis.h>
-#include <semi/Huckel/huckel.h>
+#include <semi/Huckel/HuckelMethod.h>
 #include <semi/semi_utils.h>
 #include <map>
 
@@ -52,7 +52,7 @@ int run_huckel_test() {
 
     BasisSet<CGTOBasis> bset(vbasis);
     arma::mat S = calculateOverlapMatrixCGTO(bset);
-    Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), "c_v");
+    Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule));
     return 0;
 }
 

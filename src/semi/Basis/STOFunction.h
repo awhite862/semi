@@ -1,10 +1,10 @@
-#ifndef STOBASIS_H
-#define STOBASIS_H
-#include <semi/QNumber.h>
+#ifndef STOFUNCTION_H
+#define STOFUNCTION_H
+#include "semi/QNumber.h"
 
 namespace Semi {
 /** \brief Class that represents a STO Basis. **/
-class STOBasis {
+class STOFunction {
 public:
     double zeta; ///!< zeta
     QNumber nlm; ///!< quantum numbers
@@ -24,9 +24,9 @@ public:
         \param _z z-position.
         \param _id id.
      **/
-    STOBasis(QNumber _nlm, double _zeta, double _x, double _y, double _z, double id);
+    STOFunction(QNumber _nlm, double _zeta, double _x, double _y, double _z, double id);
 };
 
-} //namespace Semi
+} // namespace Semi
 
-#endif //STOBASIS_H
+#endif // STOFUNCTION_H

@@ -3,6 +3,7 @@
 
 #include <string>
 #include <cmath>
+#include <armadillo>
 namespace Semi {
 /** \brief Determines string corresponding to an elements charge. **/
 std::string getElement(double charge);
@@ -21,7 +22,11 @@ double delta(double i, double j);
 /** \brief Tolerance constant. **/
 const double tolerance = 0.0000000001;
 
+/** \brief Calculates distance between points represented by (x1, y1, z1) and (x2, y2, z2). **/
 double distance (double x1, double y1, double z1, double x2, double y2, double z2);
+
+/** \brief Calculates the inverse square root of a matrix. **/
+arma::mat invSqrt(arma::mat A);
 
 } // namespace Semi
 

@@ -1,7 +1,7 @@
 #include "run_huckel.h"
 #include "CGTOBasis.h"
 #include <semi/Integral/Cndo.h>
-#include <semi/Huckel/huckel.h>
+#include <semi/Huckel/HuckelMethod.h>
 
 namespace Semi {
 
@@ -29,8 +29,8 @@ void run_huckel(Molecule &mol, parameters &huckel_params, output &out) {
     BasisSet<CGTOBasis> bset(vbasis);
     arma::mat S = calculateOverlapMatrixCGTO(bset);
     double kValue = huckel_params.get_value<double>("k");
-    double sigmaValue = huckel_params.get_value<double>("sigma");
-    arma::mat C = calculateHuckel(S, kValue, sigmaValue, mol, "c_full");
+    double deltaValue = huckel_params.get_value<double>("delta");
+    arma::mat C = calculateHuckel(S, kValue, deltaValue, mol);
     out.C = C;
 }
 

@@ -1,12 +1,13 @@
 #ifndef BASISSET_H
 #define BASISSET_H
 
+#include "GTOFunction.h"
+#include "STOFunction.h"
+#include "CGTOFunction.h"
 #include <vector>
-#include "GTOBasis.h"
-#include "STOBasis.h"
-#include "CGTOBasis.h"
 
 namespace Semi {
+
 template<typename bType>
 /** \brief Class that represents a basis set by using an vector of basis. **/
 class BasisSet {

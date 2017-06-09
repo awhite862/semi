@@ -1,13 +1,13 @@
-#ifndef GTOBASIS_H
-#define GTOBASIS_H
+#ifndef GTOFUNCTION_H
+#define GTOFUNCTION_H
 
-#include <armadillo>
 #include <semi/QNumber.h>
 #include <semi/semi_utils.h>
+#include <armadillo>
 
 namespace Semi {
-/** \brief Class that represents an GTO Basis. **/
-class GTOBasis {
+/** \brief Class that represents an GTO Basis Function. **/
+class GTOFunction {
 public:
     QNumber nlm; ///!< Quantum numbers nlm
     double a; ///!< x power
@@ -25,9 +25,9 @@ public:
         \param _alpha alpha.
         \param _r col vector representing a vector.
      **/
-    GTOBasis(QNumber _nlm, double _a, double _b, double _c, double _alpha, arma::colvec _r);
+    GTOFunction(QNumber _nlm, double _a, double _b, double _c, double _alpha, arma::colvec _r);
 };
 
 } // namespace Semi
 
-#endif // GTOBASIS_H
+#endif // GTOFUNCTION_H

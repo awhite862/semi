@@ -52,4 +52,14 @@ double delta(double i, double j) {
     return i == j ? 1 : 0;
 }
 
+arma::mat invSqrt(arma::mat A) {
+    arma::vec eigval;
+    arma::mat eigvec;
+    eig_sym(eigval, eigvec, inv(A));
+    arma::mat eigvalmatrix = diagmat(eigval);
+    eigvalmatrix = sqrt(eigvalmatrix);
+    arma::mat ans = eigvec * eigvalmatrix * inv(eigvec);
+    return ans;
+}
+
 } // namespace Semi

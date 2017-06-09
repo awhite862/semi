@@ -1,8 +1,8 @@
 #ifndef MOLECULE_H
 #define MOLECULE_H
 
+#include "Atom.h"
 #include <vector>
-#include <semi/Atom.h>
 
 namespace Semi {
 /** \brief Class that represents a molecule by using an vector of atoms. **/
@@ -19,6 +19,8 @@ public:
         \param _myMolecule Vector of atoms
      **/
     Molecule(std::vector<Atom> _myMolecule);
+
+    double getNuclearEnergy();
 };
 
 } // namespace Semi

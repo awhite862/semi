@@ -4,7 +4,6 @@
 #include <fstream>
 #include <semi/Integral/IntegralEvaluator.h>
 #include <semi/Integral/Cndo.h>
-#include <semi/Huckel/huckel.h>
 #include <semi/semi_utils.h>
 #include <semi/CGTOBasis.h>
 #include <semi/GTOBasis.h>
