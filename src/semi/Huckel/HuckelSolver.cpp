@@ -2,7 +2,8 @@
 
 namespace Semi {
 void solveHuckelMatrixWithOverlap(arma::mat Hhuckel, arma::mat Shuckel, arma::mat Smatrix, Molecule m, std::vector<myOrbital> valenceOrbitalData, arma::mat &solMatrix) {
-    arma::mat X = invSqrt(Shuckel);
+    arma::mat X;
+    invSqrt(Shuckel, X);
     arma::mat Hprime = X * Hhuckel * X;
     arma::mat eigvec;
     arma::vec eigval;
@@ -54,7 +55,7 @@ void solveHuckelMatrixWithOverlap(arma::mat Hhuckel, arma::mat Shuckel, arma::ma
         energy += 2.0 * eigval(k);
     }
     std::cout << "Total Energy: " << energy << std::endl;
-    
+
     solMatrix = c_full;
 }
 
@@ -108,8 +109,9 @@ void solveHuckelMatrix(arma::mat Hhuckel, arma::mat Smatrix, Molecule m, std::ve
         energy += 2.0 * eigval(k);
     }
     std::cout << "Total Energy: " << energy << std::endl;
-
-    solMatrix = c_full;
+    eigvec.print("eigvec");
+    c_full.print("cfull");
+    solMatrix = eigvec;
 }
 
 int numValence(int atom) {

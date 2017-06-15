@@ -1,7 +1,7 @@
 #define ARMA_DONT_USE_WRAPPER
 #include "IntegralEvaluator.h"
 #include "semi/semi_utils.h"
-#include <math.h> 
+#include <math.h>
 using namespace arma;
 
 namespace Semi {
@@ -298,12 +298,6 @@ double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alph
 }
 
 double calculateOverlapSTO(STOFunction a, STOFunction b) {
-
-    /** \brief Basic Overlap Integral test.
-     *  Overlap of 2 1s orbitals, centered at (0, 0, 0), (1, 0, 0)
-     *  1st test zeta values 1, 1, evaluates to 0.214596340683341354 un-normalized
-     *  2nd test zeta values 0.2, 1, evaluates to 0.121087705563123644 un-normalized
-     */
     double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
     double tau = (a.zeta - b.zeta) / (a.zeta + b.zeta);
     double rho = 0.5 * (a.zeta + b.zeta) * r;
@@ -379,6 +373,10 @@ double calculateBasicCoulombIntegralFull(double zeta, double tau, double rho, do
         return (zeta / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 4.0 * (1.0 - kappa - pow(kappa, 2.0)) + 1.0 / 12.0 * (1.0 - 2.0 * kappa) * rho_alpha) * exp(-2 * rho_alpha)
                                - (1.0 + pow(kappa, 2.0)) * (1.0 / 4.0 * (3.0 - 3.0 * kappa - pow(kappa, 2.0)) + 1.0 / 3.0 * (2.0 - kappa) * rho_beta + 1.0 / 6.0 * pow(rho_beta, 2)) * exp(-2 * rho_beta));
     }
+    if (a[0] == 2 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s2s
+        return (zeta / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 4.0 * (1.0 - kappa - pow(kappa, 2.0)) + 1.0 / 12.0 * (1.0 - 2.0 * kappa) * rho_beta) * exp(-2 * rho_beta)
+                               - (1.0 + pow(kappa, 2.0)) * (1.0 / 4.0 * (3.0 - 3.0 * kappa - pow(kappa, 2.0)) + 1.0 / 3.0 * (2.0 - kappa) * rho_alpha + 1.0 / 6.0 * pow(rho_alpha, 2)) * exp(-2 * rho_alpha));
+    }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
         return (zeta / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 12.0 * (6.0 - kappa - 8 * pow(kappa, 2.0) - 4.0 * pow(kappa, 3.0)) + 1.0 / 3.0 * (1.0 - kappa - pow(kappa, 2)) * rho_alpha + 1.0 / 18.0 * (1 - 2 * kappa) * pow(rho_alpha, 2)) * exp(-2 * rho_alpha)
                                - (1.0 + pow(1 - kappa, 2.0)) * (1.0 / 12.0 * (6.0 + kappa - 8 * pow(kappa, 2.0) + 4.0 * pow(kappa, 3.0)) + 1.0 / 3.0 * (1.0 + kappa + pow(kappa, 2)) * rho_beta + 1.0 / 18.0 * (1 + 2 * kappa) * pow(rho_beta, 2)) * exp(-2 * rho_beta));
@@ -389,12 +387,19 @@ double calculateBasicCoulombIntegralFull(double zeta, double tau, double rho, do
 //[1Sa,1Sb] tau = 0
 double calculateBasicCoulombIntegralSameZeta(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
+        std::cout << " A " << std::endl;
         return (zeta / rho) * (1.0 - (1.0 + 11.0 / 8.0 * rho + 3.0 / 4.0 * pow(rho, 2.0) + 1.0 / 6.0 * pow(rho, 3.0)) * exp(-2.0 * rho));
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
+        std::cout << "b" << std::endl;
+        return (zeta / rho) * (1.0 - (1.0 + 71.0 / 48.0 * rho + 23.0 / 24.0 * pow(rho, 2.0) + 1.0 / 3.0 * pow(rho, 3.0) + 1.0 / 18.0 * pow(rho, 3)) * exp(-2.0 * rho));
+    }
+    if (a[0] == 2 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s2s
+        std::cout << "b" << std::endl;
         return (zeta / rho) * (1.0 - (1.0 + 71.0 / 48.0 * rho + 23.0 / 24.0 * pow(rho, 2.0) + 1.0 / 3.0 * pow(rho, 3.0) + 1.0 / 18.0 * pow(rho, 3)) * exp(-2.0 * rho));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
+        std::cout << " c" << std::endl;
         return (zeta / rho) * (1.0 - (1.0 + 37.0 / 24.0 * rho + 13.0 / 12.0 * pow(rho, 2.0) + 4.0 / 9.0 * pow(rho, 3.0) + 1.0 / 9.0 * pow(rho, 3) + 2.0 / 135.0 * pow(rho, 4)) * exp(-2.0 * rho));
     }
     return 0;
@@ -408,6 +413,9 @@ double calculateBasicCoulombIntegralSamePosition(double zeta, double tau, double
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
         return 1.0 / 48.0 * (1.0 - pow(tau, 2.0)) * (25.0 - 7 * tau - 5 * pow(tau, 2.0) + 3 * pow(tau, 3)) * zeta;
     }
+    if (a[0] == 2 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s2s
+        return 1.0 / 48.0 * (1.0 - pow(-tau, 2.0)) * (25.0 - 7 * -tau - 5 * pow(-tau, 2.0) + 3 * pow(-tau, 3)) * zeta;
+    }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
         return 1.0 / 24.0 * (1.0 - pow(tau, 2.0)) * (11.0 - 4 * pow(tau, 2.0) + pow(tau, 4)) * zeta;
     }
@@ -415,13 +423,15 @@ double calculateBasicCoulombIntegralSamePosition(double zeta, double tau, double
 }
 
 double calculateBasicCoulombIntegral(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
-    if (std::abs(tau) < tolerance) {
+    if (std::abs(rho) < tolerance) {
+        std::cout << "pos" << std::endl;
+        return calculateBasicCoulombIntegralSamePosition(zeta, tau, rho, kappa, rho_alpha, rho_beta, a, b);
+    } else if (std::abs(tau) < tolerance) {
+        std::cout << "zeta" << std::endl;
         return calculateBasicCoulombIntegralSameZeta(zeta, tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
-    else if (std::abs(rho) < tolerance) {
-        return calculateBasicCoulombIntegralSamePosition(zeta, tau, rho, kappa, rho_alpha, rho_beta, a, b);
-    }
     else {
+        std::cout << "full" << std::endl;
         return calculateBasicCoulombIntegralFull(zeta, tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
 }

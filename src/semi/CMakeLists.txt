@@ -6,6 +6,7 @@ set(SRC
     Huckel/HuckelConstructor.cpp
     Huckel/HuckelSolver.cpp
     Huckel/HuckelMethod.cpp
+    Huckel/HuckelBasis.cpp
     Integral/Cndo.cpp
     Integral/IntegralEvaluator.cpp
     Structure/Atom.cpp

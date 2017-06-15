@@ -2,6 +2,7 @@
 #include "HuckelMethod.h"
 #include "HuckelSolver.h"
 #include "HuckelConstructor.h"
+#include "HuckelBasis.h"
 #include "semi/semi_utils.h"
 #include <vector>
 namespace Semi {
@@ -18,7 +19,8 @@ void calculateHuckel(arma::mat Smatrix, double kValue, double sigmaValue, Molecu
     std::vector<myOrbital> valenceOrbitalData;
 
     constructHuckelHamiltonian(Smatrix, kValue, sigmaValue, m, Hhuckel, Shuckel, valenceOrbitalData);
-    solveHuckelMatrixWithOverlap(Hhuckel, Shuckel, Smatrix, m, valenceOrbitalData, solMatrix);
+    //solveHuckelMatrixWithOverlap(Hhuckel, Shuckel, Smatrix, m, valenceOrbitalData, solMatrix);
+    solveHuckelMatrix(Hhuckel, Smatrix, m, valenceOrbitalData, solMatrix);
 }
 
 }

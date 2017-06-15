@@ -5,27 +5,30 @@
 
 namespace Semi {
 //U_uu
-double calculateCoreHamiltonian();
+double calculateCoreHamiltonian(STOFunction a, STOFunction b);
 
 //P_AA
-arma::mat calculateTotalChargeDensity();
+double calculateTotalChargeDensity(arma::mat density, double id, BasisSet<STOFunction> a) ;
 
 //P_uv
-arma::mat calculateChargeDensity();
+arma::mat calculateChargeDensity(arma::mat c_v);
 
 //Gamma_uv
-double calculateElectronRepulsion();
+double calculateElectronRepulsion(STOFunction a, STOFunction b);
 
 //V_AB
-double calculateNucleurAttraction();
+double calculateNucleurAttraction(STOFunction a, STOFunction b);
 
 //B_AB
-double calculateBondingParameter();
+double calculateBondingParameter(double a, double b) ;
 
 //S_uv
 arma::mat calculateOverlapMatrix(BasisSet<STOFunction> a);
 
+void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &fock);
 
+arma::mat calculateOverlapMatrixSTO(BasisSet<STOFunction> b);
+void calculateFockMatrix(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &fock);
 arma::mat calculateOverlapMatrixGTO(BasisSet<GTOFunction> b);
 arma::mat calculateOverlapMatrixCGTO(BasisSet<CGTOFunction> b);
 

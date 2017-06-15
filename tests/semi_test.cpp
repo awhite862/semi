@@ -1,10 +1,16 @@
 /** \brief A test class for semi.*/
 #include <armadillo>
 #include <cstdlib>
-#include "semi/Integral/Cndo.h"
+#include <armadillo>
+#include <cstdlib>
+#include <fstream>
 #include "semi/Integral/IntegralEvaluator.h"
-#include "semi/Structure/QNumber.h"
+#include "semi/Integral/Cndo.h"
+#include "semi/Basis/CGTOFunction.h"
+#include "semi/Huckel/HuckelMethod.h"
 #include "semi/semi_utils.h"
+#include <map>
+
 
 using namespace Semi;
 /** \brief Basic compilation test for semi classes.*/
@@ -70,6 +76,7 @@ int run_sto_matrix_test() {
     a.myBasis.push_back(STOFunction(q1s, 1, -f, f, -f, 4));
     arma::mat sol =  Semi::calculateOverlapMatrix(a);
     sol.print();
+    return 0;
 }
 
 /** \brief Test for rotation matrix in overlap integrals.*/

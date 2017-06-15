@@ -2,9 +2,10 @@ set(TESTS
     arma_test
     io_utils_test
     framework_test
-    huckel_test
     semi_test
     cgto_test
+    huckel_test
+    cndo_test
 )
 
 #find_package( BLAS REQUIRED )

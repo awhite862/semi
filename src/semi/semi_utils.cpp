@@ -19,7 +19,7 @@ std::string getElement(double charge) {
     throw std::runtime_error("Element out of range");
 }
 
-double zetaCalc(double charge){
+double zetaCalc(double charge) {
     int temp = (int) (charge + 0.1);
     switch ((int) temp) {
     case 1: return 1.0;
@@ -39,8 +39,8 @@ double zetaCalc(double charge){
 int factorial(int n) {
     return (n == 1 || n == 0) ? 1 : factorial(n - 1) * n;
 }
- 
-int doubleFactorial(int n){
+
+int doubleFactorial(int n) {
     return (n <= 1) ? 1 : factorial(n - 2) * n;
 }
 
@@ -52,14 +52,14 @@ double delta(double i, double j) {
     return i == j ? 1 : 0;
 }
 
-arma::mat invSqrt(arma::mat A) {
+void invSqrt(arma::mat A, arma::mat &sol) {
     arma::vec eigval;
     arma::mat eigvec;
     eig_sym(eigval, eigvec, inv(A));
     arma::mat eigvalmatrix = diagmat(eigval);
     eigvalmatrix = sqrt(eigvalmatrix);
     arma::mat ans = eigvec * eigvalmatrix * inv(eigvec);
-    return ans;
+    sol = ans;
 }
 
 } // namespace Semi

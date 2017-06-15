@@ -20,7 +20,7 @@ int run_huckel_test() {
     Molecule m;
     std::ifstream fin;
     std::string line;
-    std::vector<CGTOFunction> vbasis;
+    std::vector<STOFunction> vbasis;
     fin.open("methane.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
@@ -35,14 +35,16 @@ int run_huckel_test() {
         r[2] = z * scale;
         double charge = elem;
         QNumber q1s(1, 0, 0);
-        vbasis.push_back(CGTOFunction(q1s, 0, 0, 0, r, charge));
+        vbasis.push_back(STOFunction(q1s, charge, r[0], r[1], r[2], i));
         if (charge - 0.1 > 2) {
             QNumber q2s(2, 0, 0);
-            QNumber q2p(2, 1, 0);
-            vbasis.push_back(CGTOFunction(q2s, 0, 0, 0, r, charge));
-            vbasis.push_back(CGTOFunction(q2p, 1, 0, 0, r, charge));
-            vbasis.push_back(CGTOFunction(q2p, 0, 1, 0, r, charge));
-            vbasis.push_back(CGTOFunction(q2p, 0, 0, 1, r, charge));
+            QNumber q2px(2, 1, 1);
+            QNumber q2py(2, 1, -1);
+            QNumber q2pz(2, 1, 0);
+            vbasis.push_back(STOFunction(q2s, charge, r[0], r[1], r[2], i));
+            vbasis.push_back(STOFunction(q2px, charge, r[0], r[1], r[2], i));
+            vbasis.push_back(STOFunction(q2py, charge, r[0], r[1], r[2], i));
+            vbasis.push_back(STOFunction(q2pz, charge, r[0], r[1], r[2], i));
         }
         i++;
     }
@@ -50,11 +52,23 @@ int run_huckel_test() {
 
     //Semi::calculateHuckel(SMatrix, 1, 0.2, Molecule(m.myMolecule), "c_v");
 
-    BasisSet<CGTOFunction> bset(vbasis);
-    arma::mat S = calculateOverlapMatrixCGTO(bset);
+    BasisSet<STOFunction> bset(vbasis);
+    arma::mat S = calculateOverlapMatrixSTO(bset);
     arma::mat sol;
     Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), sol);
-    sol.print();
+
+    vbasis.erase(vbasis.begin() + 0);
+    BasisSet<STOFunction> bset2(vbasis);
+    arma::mat S2 = calculateOverlapMatrixSTO(bset2);
+
+    std::cout << bset.myBasis.size() << std::endl;
+
+    arma::mat fock(bset2.myBasis.size(), bset2.myBasis.size());
+    calculateFockMatrix(bset2, sol, S2, fock);
+    fock.ones();
+    sol.ones();
+    SCF(bset2, sol, S2, fock);
+
     return 0;
 }
 

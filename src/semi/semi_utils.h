@@ -26,7 +26,7 @@ const double tolerance = 0.0000000001;
 double distance (double x1, double y1, double z1, double x2, double y2, double z2);
 
 /** \brief Calculates the inverse square root of a matrix. **/
-arma::mat invSqrt(arma::mat A);
+void invSqrt(arma::mat A, arma::mat &sol);
 
 } // namespace Semi
 
