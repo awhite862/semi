@@ -229,7 +229,7 @@ double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double 
         return  (1.0 + rho + 2.0 / 5 * pow(rho, 2) + 1.0 / 15 * pow(rho, 3)) * exp(-rho);
     }
     if (isReversed(a, b)) {
-        return calculateOverlapSTOSameZeta(-tau, rho, -kappa, rho_alpha, rho_beta, b, a);
+        return calculateOverlapSTOSameZeta(-tau, rho, -kappa, rho_beta, rho_alpha, b, a);
     }
     return 0;
     //throw std::runtime_error("Failed to catch case");
@@ -279,7 +279,7 @@ double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, dou
         return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
     }
     if (isReversed(a, b)) {
-        return calculateOverlapSTOSamePosition(-tau, rho, -kappa, rho_alpha, rho_beta, b, a);
+        return calculateOverlapSTOSamePosition(-tau, rho, -kappa, rho_beta, rho_alpha, b, a);
     }
     return 0;
     //throw std::runtime_error("Failed to catch case");
@@ -364,75 +364,91 @@ double calculateBasicIntegral(double zeta, double rho, int *a) {
 }
 
 //[1Sa,1Sb]
-double calculateBasicCoulombIntegralFull(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
+double calculateBasicCoulombIntegralFull(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
-        return (zeta / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 4.0 * (2.0 + kappa) + 1.0 / 4.0 * rho_alpha) * exp(-2.0 * rho_alpha)
-                               - (1.0 + pow(kappa, 2.0)) * (1.0 / 4.0 * (2.0 - kappa) + 1.0 / 4.0 * rho_beta) * exp(-2.0 * rho_beta));
+        std::cout << "11" << std::endl;
+        return (zeta_a / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 4.0 * (2.0 + kappa) + 1.0 / 4.0 * rho_alpha) * exp(-2.0 * rho_alpha)
+                                 - (1.0 + pow(kappa, 2.0)) * (1.0 / 4.0 * (2.0 - kappa) + 1.0 / 4.0 * rho_beta) * exp(-2.0 * rho_beta));
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
-        return (zeta / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 4.0 * (1.0 - kappa - pow(kappa, 2.0)) + 1.0 / 12.0 * (1.0 - 2.0 * kappa) * rho_alpha) * exp(-2 * rho_alpha)
-                               - (1.0 + pow(kappa, 2.0)) * (1.0 / 4.0 * (3.0 - 3.0 * kappa - pow(kappa, 2.0)) + 1.0 / 3.0 * (2.0 - kappa) * rho_beta + 1.0 / 6.0 * pow(rho_beta, 2)) * exp(-2 * rho_beta));
+        std::cout << "12" << std::endl;
+        std::cout << kappa << " " << zeta_a << " " << zeta_b << " " << rho_alpha << " " << rho_beta << std::endl;
+        return (zeta_a / rho) * (1.0 - pow(1.0 - kappa, 3.0) * (1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) + 1.0 / 8.0 * kappa * rho_alpha) * exp(-2 * rho_alpha)
+                                 - pow(1.0 + kappa, 2.0) * (1.0 / 16.0 * (15.0 - 22.0 * kappa - 15.0 * pow(kappa, 2.0) - 4.0 * pow(kappa, 3.0))
+                                         + 3.0 / 8.0 * (3.0 - 3.0 * kappa + pow(kappa, 2.0)) * rho_beta + 1.0 / 4.0 * (2.0 - kappa) * pow(rho_beta, 2.0) + 1.0 / 12.0 * pow(rho_beta, 3.0)) * exp(-2.0 * rho_beta));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s2s
-        return (zeta / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 4.0 * (1.0 - kappa - pow(kappa, 2.0)) + 1.0 / 12.0 * (1.0 - 2.0 * kappa) * rho_beta) * exp(-2 * rho_beta)
-                               - (1.0 + pow(kappa, 2.0)) * (1.0 / 4.0 * (3.0 - 3.0 * kappa - pow(kappa, 2.0)) + 1.0 / 3.0 * (2.0 - kappa) * rho_alpha + 1.0 / 6.0 * pow(rho_alpha, 2)) * exp(-2 * rho_alpha));
+        std::cout << "21" << std::endl;
+        std::cout << kappa << " " << zeta_a << " " << zeta_b << " " << rho_alpha << " " << rho_beta << std::endl;
+
+        return (zeta_b / rho) * (1.0 - pow(1.0 - kappa, 3.0) * (1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) + 1.0 / 8.0 * kappa * rho_beta) * exp(-2 * rho_beta)
+                                 - pow(1.0 + kappa, 2.0) * (1.0 / 16.0 * (15.0 - 22.0 * kappa - 15.0 * pow(kappa, 2.0) - 4.0 * pow(kappa, 3.0))
+                                         + 3.0 / 8.0 * (3.0 - 3.0 * kappa + pow(kappa, 2.0)) * rho_alpha + 1.0 / 4.0 * (2.0 - kappa) * pow(rho_alpha, 2.0) + 1.0 / 12.0 * pow(rho_alpha, 3.0)) * exp(-2.0 * rho_alpha));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
-        return (zeta / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 12.0 * (6.0 - kappa - 8 * pow(kappa, 2.0) - 4.0 * pow(kappa, 3.0)) + 1.0 / 3.0 * (1.0 - kappa - pow(kappa, 2)) * rho_alpha + 1.0 / 18.0 * (1 - 2 * kappa) * pow(rho_alpha, 2)) * exp(-2 * rho_alpha)
-                               - (1.0 + pow(1 - kappa, 2.0)) * (1.0 / 12.0 * (6.0 + kappa - 8 * pow(kappa, 2.0) + 4.0 * pow(kappa, 3.0)) + 1.0 / 3.0 * (1.0 + kappa + pow(kappa, 2)) * rho_beta + 1.0 / 18.0 * (1 + 2 * kappa) * pow(rho_beta, 2)) * exp(-2 * rho_beta));
+        std::cout << "22" << std::endl;
+        return (zeta_a / rho) * (1.0 - pow(1 - kappa, 3.0) * (1.0 / 16.0 * (8.0 - kappa - 27.0 * pow(kappa, 2.0) - 30.0 * pow(kappa, 3.0) - 10.0 * pow(kappa, 4.0))
+                                 + 1.0 / 32.0 * (11.0 - 19.0 * kappa - 44.0 * pow(kappa, 2) - 20 * pow(kappa, 3)) * rho_alpha
+                                 + 1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) * pow(rho_alpha, 2)) * exp(-2 * rho_alpha)
+                                 - pow(1 + kappa, 3.0) * (1.0 / 16.0 * (8.0 + kappa - 27.0 * pow(kappa, 2.0) + 30.0 * pow(kappa, 3.0) - 10 * pow(kappa, 4))
+                                         + 1.0 / 32.0 * (11.0 + 19.0 * kappa - 44.0 * pow(kappa, 2.0) + 20.0 * pow(kappa, 3)) * rho_beta
+                                         + 1.0 / 16.0 * (1.0 + 5.0 * kappa - 4.0 * pow(kappa, 2.0)) * pow(rho_beta, 2) + 1.0 / 24.0 * kappa * pow(rho_beta, 3)) * exp(-2 * rho_beta));
     }
     return 0;
 }
 
 //[1Sa,1Sb] tau = 0
-double calculateBasicCoulombIntegralSameZeta(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
+double calculateBasicCoulombIntegralSameZeta(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
-        std::cout << " A " << std::endl;
-        return (zeta / rho) * (1.0 - (1.0 + 11.0 / 8.0 * rho + 3.0 / 4.0 * pow(rho, 2.0) + 1.0 / 6.0 * pow(rho, 3.0)) * exp(-2.0 * rho));
+        return (zeta_a / rho) * (1.0 - (1.0 + 11.0 / 8.0 * rho + 3.0 / 4.0 * pow(rho, 2.0) + 1.0 / 6.0 * pow(rho, 3.0)) * exp(-2.0 * rho));
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
-        std::cout << "b" << std::endl;
-        return (zeta / rho) * (1.0 - (1.0 + 71.0 / 48.0 * rho + 23.0 / 24.0 * pow(rho, 2.0) + 1.0 / 3.0 * pow(rho, 3.0) + 1.0 / 18.0 * pow(rho, 3)) * exp(-2.0 * rho));
+        return (zeta_a / rho) * (1.0 - (1.0 + 25.0 / 16.0 * rho + 9.0 / 8.0 * pow(rho, 2.0) + 23.0 / 48.0 * pow(rho, 3.0) + 1.0 / 8.0 * pow(rho, 4.0) + 1.0 / 60.0 * pow(rho, 5.0)) * exp(-2.0 * rho));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s2s
-        std::cout << "b" << std::endl;
-        return (zeta / rho) * (1.0 - (1.0 + 71.0 / 48.0 * rho + 23.0 / 24.0 * pow(rho, 2.0) + 1.0 / 3.0 * pow(rho, 3.0) + 1.0 / 18.0 * pow(rho, 3)) * exp(-2.0 * rho));
+        return (zeta_b / rho) * (1.0 - (1.0 + 25.0 / 16.0 * rho + 9.0 / 8.0 * pow(rho, 2.0) + 23.0 / 48.0 * pow(rho, 3.0) + 1.0 / 8.0 * pow(rho, 4.0) + 1.0 / 60.0 * pow(rho, 5.0)) * exp(-2.0 * rho));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
-        std::cout << " c" << std::endl;
-        return (zeta / rho) * (1.0 - (1.0 + 37.0 / 24.0 * rho + 13.0 / 12.0 * pow(rho, 2.0) + 4.0 / 9.0 * pow(rho, 3.0) + 1.0 / 9.0 * pow(rho, 3) + 2.0 / 135.0 * pow(rho, 4)) * exp(-2.0 * rho));
+        return (zeta_a / rho) * (1.0 - (1.0 + 419.0 / 256.0 * rho + 163.0 / 128.0 * pow(rho, 2.0) + 119.0 / 192.0 * pow(rho, 3.0) + 5.0 / 24.0 * pow(rho, 4) + 1.0 / 20.0 * pow(rho, 5) + 1.0 / 120.0 * pow(rho, 6) + 1.0 / 1260.0 * pow(rho, 7)) * exp(-2.0 * rho));
     }
     return 0;
 }
 
 //[1Sa,1Sb] rho = 0
-double calculateBasicCoulombIntegralSamePosition(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
+double calculateBasicCoulombIntegralSamePosition(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
-        return 1.0 / 8.0 * (1.0 - pow(tau, 2.0)) * (5.0 - pow(tau, 2.0)) * zeta;
+        std::cout << "11" << std::endl;
+        return 1.0 / 8.0 * (1.0 - pow(tau, 2.0)) * (5.0 - pow(tau, 2.0)) * zeta_a;
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
-        return 1.0 / 48.0 * (1.0 - pow(tau, 2.0)) * (25.0 - 7 * tau - 5 * pow(tau, 2.0) + 3 * pow(tau, 3)) * zeta;
+        std::cout << "12" << std::endl;
+        return 1.0 / 32.0 * (1.0 - pow(tau, 2.0)) * (14.0 - 7 * tau - 3.0 * pow(tau, 2.0) + pow(tau, 3)) * zeta_a;
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s2s
-        return 1.0 / 48.0 * (1.0 - pow(-tau, 2.0)) * (25.0 - 7 * -tau - 5 * pow(-tau, 2.0) + 3 * pow(-tau, 3)) * zeta;
+        std::cout << "21" << std::endl;
+        return 1.0 / 32.0 * (1.0 - pow(-tau, 2.0)) * (14.0 - 7 * -tau - 3.0 * pow(-tau, 2.0) + pow(-tau, 3)) * zeta_b;
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
-        return 1.0 / 24.0 * (1.0 - pow(tau, 2.0)) * (11.0 - 4 * pow(tau, 2.0) + pow(tau, 4)) * zeta;
+        std::cout << "22" << std::endl;
+        std::cout << tau << " " << zeta_a << " " << zeta_b << std::endl;
+        return 1.0 / 256.0 * (1.0 - pow(tau, 2.0)) * (93.0 - 47 * pow(tau, 2.0) + 23 * pow(tau, 4) - 5 * pow(tau, 6)) * zeta_a;
     }
     return 0;
 }
 
-double calculateBasicCoulombIntegral(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
+double calculateBasicCoulombIntegral(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
     if (std::abs(rho) < tolerance) {
-        std::cout << "pos" << std::endl;
-        return calculateBasicCoulombIntegralSamePosition(zeta, tau, rho, kappa, rho_alpha, rho_beta, a, b);
+        std::cout << "A" << std::endl;
+        return calculateBasicCoulombIntegralSamePosition(zeta_a, zeta_b, tau, rho, kappa, rho_alpha, rho_beta, a, b);
     } else if (std::abs(tau) < tolerance) {
-        std::cout << "zeta" << std::endl;
-        return calculateBasicCoulombIntegralSameZeta(zeta, tau, rho, kappa, rho_alpha, rho_beta, a, b);
+        std::cout << "b" << std::endl;
+
+        return calculateBasicCoulombIntegralSameZeta(zeta_a, zeta_b, tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
     else {
-        std::cout << "full" << std::endl;
-        return calculateBasicCoulombIntegralFull(zeta, tau, rho, kappa, rho_alpha, rho_beta, a, b);
+        std::cout << "c" << std::endl;
+
+        return calculateBasicCoulombIntegralFull(zeta_a, zeta_b, tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
 }
 

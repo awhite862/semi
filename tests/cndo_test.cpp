@@ -61,12 +61,11 @@ int run_huckel_test() {
     BasisSet<STOFunction> bset2(vbasis);
     arma::mat S2 = calculateOverlapMatrixSTO(bset2);
 
-    std::cout << bset.myBasis.size() << std::endl;
-
     arma::mat fock(bset2.myBasis.size(), bset2.myBasis.size());
-    calculateFockMatrix(bset2, sol, S2, fock);
-    fock.ones();
-    sol.ones();
+    //calculateFockMatrix(bset2, sol, S2, fock);
+    sol = sol.cols(0,3);
+
+    //sol.ones();
     SCF(bset2, sol, S2, fock);
 
     return 0;

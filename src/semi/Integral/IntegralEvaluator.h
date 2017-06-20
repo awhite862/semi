@@ -37,16 +37,16 @@ double calculateOverlapGTOUnnorm(GTOFunction a, GTOFunction b);
 double calculateOverlapCGTO(CGTOFunction a, CGTOFunction b);
 
 /** \brief calculates coulomb integral from given parameters. **/
-double calculateBasicCoulombIntegral(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
+double calculateBasicCoulombIntegral(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
 
 /** \brief calculates coulomb integral for different positions and zeta values. **/
-double calculateBasicCoulombIntegralFull(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
+double calculateBasicCoulombIntegralFull(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
 
 /** \brief Calcualtes coulomb integral given the integrals are centered at same position. **/
-double calculateBasicCoulombIntegralSamePosition(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
+double calculateBasicCoulombIntegralSamePosition(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
 
 /** \brief Calcualtes coulomb integral given the integrals are centered at same position. **/
-double calculateBasicCoulombIntegralSameZeta(double zeta, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
+double calculateBasicCoulombIntegralSameZeta(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
 
 /** \brief Calcualtes core valence integral. **/
 double calculateCoreValenceInteraction(int *a, int *b);
@@ -55,7 +55,7 @@ double calculateCoreValenceInteraction(int *a, int *b);
 double calculateElectrionRepulsionIntegral(int *a, int *b);
 
 /** \brief Calcualtes basic integral. **/
-double calculateBasicIntegral(double zeta, double rho, int *a);
+double calculateBasicIntegral(double zeta_a, double zeta_b, double rho, int *a);
 
 /** \brief Calcualtes rotation matrix to the z axis. **/
 arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, double z2);
