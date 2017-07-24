@@ -58,7 +58,7 @@ double calculateElectrionRepulsionIntegral(int *a, int *b);
 double calculateBasicIntegral(double zeta_a, double zeta_b, double rho, int *a);
 
 /** \brief Calcualtes rotation matrix to the z axis. **/
-arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, double z2);
+void findRotation(double x1, double y1, double z1, double x2, double y2, double z2, arma::mat &rotation);
 
 /** \brief Determines if input for CaluculateOverlap is in wrong order. **/
 bool isReversed(int *a, int *b);

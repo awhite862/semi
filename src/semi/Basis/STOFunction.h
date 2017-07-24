@@ -6,6 +6,7 @@ namespace Semi {
 /** \brief Class that represents a STO Basis. **/
 class STOFunction {
 public:
+    double charge;
     double zeta; ///!< zeta
     QNumber nlm; ///!< quantum numbers
     double x; ///!< x-position

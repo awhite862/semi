@@ -21,7 +21,7 @@ CGTOFunction::CGTOFunction(QNumber _nlm, double _a, double _b, double _c, arma::
     for (int k = 0; k < 3; k++) {
         double n = pow(pow(M_PI / (2 * alphaVec[k]), 3.0 / 2.0)
                        * (doubleFactorial(2.0 * a - 1) * doubleFactorial(2.0 * b - 1)
-                          * doubleFactorial(2.0 * c - 1)) / (pow(2, 2 * nlm.l) * pow(alphaVec[k], nlm.l)), -1.0 / 2.0);
+                          * doubleFactorial(2.0 * c - 1)) / (pow(2, 2.0 * nlm.l) * pow(alphaVec[k], nlm.l)), -1.0 / 2.0);
         nVec[k] *= n;
     }
 }

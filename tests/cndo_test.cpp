@@ -21,21 +21,19 @@ int run_huckel_test() {
     std::ifstream fin;
     std::string line;
     std::vector<STOFunction> vbasis;
-    fin.open("methane.txt");
+    fin.open("bh.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
         double elem, x, y, z;
         linestream >> elem >> x >> y >> z;
         Atom a(x, y, z, elem, i);
         m.myMolecule.push_back(a);
-        double scale = 1.88973;
+        double scale = 1.;
         std::vector<double> r(3);
         r[0] = x * scale;
         r[1] = y * scale;
         r[2] = z * scale;
         double charge = elem;
-        QNumber q1s(1, 0, 0);
-        vbasis.push_back(STOFunction(q1s, charge, r[0], r[1], r[2], i));
         if (charge - 0.1 > 2) {
             QNumber q2s(2, 0, 0);
             QNumber q2px(2, 1, 1);
@@ -46,27 +44,91 @@ int run_huckel_test() {
             vbasis.push_back(STOFunction(q2py, charge, r[0], r[1], r[2], i));
             vbasis.push_back(STOFunction(q2pz, charge, r[0], r[1], r[2], i));
         }
+        else {
+            QNumber q1s(1, 0, 0);
+            vbasis.push_back(STOFunction(q1s, charge, r[0], r[1], r[2], i));
+        }
         i++;
     }
     fin.close();
 
-    //Semi::calculateHuckel(SMatrix, 1, 0.2, Molecule(m.myMolecule), "c_v");
+    ///////////////////////////////////////////////////////////////////////////////
+    std::vector<CGTOFunction> vbasisprime;
+    fin.open("bh.txt");
+    while (std::getline(fin, line)) {
+        std::stringstream linestream(line);
+        double elem, x, y, z;
+        linestream >> elem >> x >> y >> z;
+        Atom a(x, y, z, elem, i);
+        double scale = 1;
+        std::vector<double> r(3);
+        r[0] = x * scale;
+        r[1] = y * scale;
+        r[2] = z * scale;
+        double charge = elem;
+        if (charge - 0.1 > 2) {
+            QNumber q2s(2, 0, 0);
+            QNumber q2px(2, 1, 1);
+            QNumber q2py(2, 1, -1);
+            QNumber q2pz(2, 1, 0);
+            vbasisprime.push_back(CGTOFunction(q2s, 0, 0, 0, r, charge));
+            vbasisprime.push_back(CGTOFunction(q2px, 1, 0, 0, r, charge));
+            vbasisprime.push_back(CGTOFunction(q2py, 0, 1, 0, r, charge));
+            vbasisprime.push_back(CGTOFunction(q2pz, 0, 0, 1, r, charge));
+        }
+        else {
+            QNumber q1s(1, 0, 0);
+            vbasisprime.push_back(CGTOFunction(q1s, 0, 0, 0, r, charge));
+        }
+        i++;
+    }
+    fin.close();
 
+    BasisSet<CGTOFunction> bsetprime(vbasisprime);
+    arma::mat Sprime;
+    calculateOverlapMatrixCGTO(bsetprime, Sprime);
+    ///////////////////////////////////////////////////////////////////////
     BasisSet<STOFunction> bset(vbasis);
-    arma::mat S = calculateOverlapMatrixSTO(bset);
+    arma::mat S;
+    calculateOverlapMatrixSTO(bset, S);
+    //arma::mat Srot = calculateOverlapMatrix(bset);
+
+
     arma::mat sol;
     Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), sol);
+    sol.print("sol");
 
-    vbasis.erase(vbasis.begin() + 0);
-    BasisSet<STOFunction> bset2(vbasis);
-    arma::mat S2 = calculateOverlapMatrixSTO(bset2);
+    arma::mat fock;
 
-    arma::mat fock(bset2.myBasis.size(), bset2.myBasis.size());
-    //calculateFockMatrix(bset2, sol, S2, fock);
-    sol = sol.cols(0,3);
+    // Sprime(0, 4) = 0.4873;
+    // Sprime(4, 0) = 0.4873;
+    // Sprime(3, 4) = 0.5172;
+    // Sprime(4, 3) = 0.5172;
+    //Sprime.eye(4,4);
 
-    //sol.ones();
-    SCF(bset2, sol, S2, fock);
+    Sprime.print("Overlap matrix");
+    sol.zeros();
+    sol.print("coeffs");
+    SCF(bset, sol, S, fock);
+
+
+
+
+
+    arma::mat colbyeigvec;
+    colbyeigvec.load("colby.txt", arma::raw_ascii);
+    //colbyeigvec.print("colby");
+
+    arma::mat colbyeigval;
+    colbyeigval.load("colby2.txt", arma::raw_ascii);
+    //colbyeigval.print("colby");
+
+    arma::mat temp;
+    temp = colbyeigvec * diagmat(colbyeigval) * inv(colbyeigvec);
+    temp.print("fock");
+    //Sprime.print("Overlap matrix cgto");
+
+    //S.print("Overlap matrix sto");
 
     return 0;
 }

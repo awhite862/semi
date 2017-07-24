@@ -51,10 +51,12 @@ int run_huckel_test() {
     //Semi::calculateHuckel(SMatrix, 1, 0.2, Molecule(m.myMolecule), "c_v");
 
     BasisSet<CGTOFunction> bset(vbasis);
-    arma::mat S = calculateOverlapMatrixCGTO(bset);
+    arma::mat S;
+    calculateOverlapMatrixCGTO(bset, S);
+    S.print("overlap");
     arma::mat sol;
     Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), sol);
-    sol.print();
+    //sol.print();
     return 0;
 }
 

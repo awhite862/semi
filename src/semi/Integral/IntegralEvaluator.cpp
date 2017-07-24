@@ -109,6 +109,7 @@ bool isReversed(int *a, int *b) {
 }
 
 double calculateOverlapSTOFull(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
+    std::cout << "tau: " << tau << " rho: " << rho << " kappa: " << kappa << " a: " << rho_alpha << " b: " << rho_beta << std::endl;
     if (a[0] == 0 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //0s1s
         return (pow((1.0 - pow(tau, 2)), 0.5) / (pow(2, 0.5) * tau * rho))
                * (-(1.0 - kappa) * exp(-rho_alpha) + ((1.0 - kappa) + rho_beta) * exp(-rho_beta));
@@ -121,11 +122,11 @@ double calculateOverlapSTOFull(double tau, double rho, double kappa, double rho_
     if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //0s2s
         return (pow((1.0 - pow(tau, 2)), 0.5) / (pow(6, 0.5) * tau * rho))
                * (-(1.0 - kappa) * (1.0 - 2.0 * kappa) * exp(-rho_alpha)
-                  + ((1.0 - kappa) * (1.0 - 2.0 * kappa) + 2.0 * (1.0 - kappa) * rho_beta + pow(rho_beta, 2)) * exp(-rho_beta));
+                  + (1.0 - kappa) * ((1.0 - 2.0 * kappa) + 2.0 * (1.0 - kappa) * rho_beta + pow(rho_beta, 2)) * exp(-rho_beta));
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
         return (pow((1.0 - pow(tau, 2)), 0.5) / (pow(3, 0.5) * tau * rho))
-               * (-(1.0 - kappa) * (2.0 * (1.0 + kappa) * (2.0 - 3.0 * kappa) + (1.0 - 2.0 * kappa) * exp(-rho_alpha))
+               * (-(1.0 - kappa) * (2.0 * (1.0 + kappa) * (2.0 - 3.0 * kappa) + (1.0 - 2.0 * kappa) * rho_alpha) * exp(-rho_alpha)
                   + (1.0 + kappa) * (2.0 * (1.0 - kappa) * (2.0 - 3.0 * kappa) + 4.0 * (1.0 - kappa) * rho_beta + pow(rho_beta, 2)) * exp(-rho_beta));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
@@ -141,7 +142,7 @@ double calculateOverlapSTOFull(double tau, double rho, double kappa, double rho_
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1s2pz
         return pow((1.0 + tau) / (1.0 - tau), 0.5) * (1.0 / (tau * pow(rho, 2)))
                * (-pow(1.0 - kappa, 2) * (6.0 * (1.0 + kappa) * (1.0 + rho_alpha) + 2.0 * pow(rho_alpha, 2)) * exp(-rho_alpha)
-                  + pow(1.0 + kappa, 2) * (6.0 * (1.0 - kappa) * (1.0 + rho_beta) + 4.0 * (1.0 - kappa) * pow(rho_beta, 2) + pow(rho_beta, 3)) * exp(-rho_beta));
+                  + pow(1.0 + kappa, 1) * (6.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta) + 4.0 * (1.0 - kappa) * pow(rho_beta, 2) + pow(rho_beta, 3)) * exp(-rho_beta));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2s2pz
         return pow((1.0 + tau) / (1.0 - tau), 0.5) * (1.0 / (pow(3, 0.5) * tau * pow(rho, 2)))
@@ -182,7 +183,6 @@ double calculateOverlapSTOFull(double tau, double rho, double kappa, double rho_
         return calculateOverlapSTOFull(-tau, rho, -kappa, rho_beta, rho_alpha, b, a);
     }
     return 0;
-    //throw std::runtime_error("Failed to catch case");
 }
 
 double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) { //Tau = 0
@@ -232,7 +232,6 @@ double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double 
         return calculateOverlapSTOSameZeta(-tau, rho, -kappa, rho_beta, rho_alpha, b, a);
     }
     return 0;
-    //throw std::runtime_error("Failed to catch case");
 }
 
 double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) { //Rho = 0
@@ -266,14 +265,14 @@ double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, dou
     if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 0 && a[2] == b[2]) { //1pz2s
         return 0;
     }
+    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2] && a[2] == 0) { //1pz2pz
+        return -1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
+    }
     if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
         return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
     }
-    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
-        return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
-    }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
-        return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
+    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2] && a[2] == 0) { //2pz2pz
+        return -pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
     }
     if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
         return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
@@ -282,15 +281,13 @@ double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, dou
         return calculateOverlapSTOSamePosition(-tau, rho, -kappa, rho_beta, rho_alpha, b, a);
     }
     return 0;
-    //throw std::runtime_error("Failed to catch case");
 }
 
 double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
-    if (fabs(tau) < tolerance) {
-        return calculateOverlapSTOSameZeta(tau, rho, kappa, rho_alpha, rho_beta, a, b);
-    }
-    else if (fabs(rho) < tolerance) {
+    if (fabs(rho) < tolerance) {
         return calculateOverlapSTOSamePosition(tau, rho, kappa, rho_alpha, rho_beta, a, b);
+    } else if (fabs(tau) < tolerance) {
+        return calculateOverlapSTOSameZeta(tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
     else {
         return calculateOverlapSTOFull(tau, rho, kappa, rho_alpha, rho_beta, a, b);
@@ -298,17 +295,18 @@ double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alph
 }
 
 double calculateOverlapSTO(STOFunction a, STOFunction b) {
+    std::cout << a.zeta << " " << b.zeta << std::endl;
     double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
     double tau = (a.zeta - b.zeta) / (a.zeta + b.zeta);
     double rho = 0.5 * (a.zeta + b.zeta) * r;
-    double kappa = 0.5 * (tau + 1 / tau);
+    double kappa = 0.5 * (tau + 1.0 / tau);
     double rho_alpha = a.zeta * r, rho_beta = b.zeta * r;
     int avec[3] = {a.nlm.n, a.nlm.l, a.nlm.m};
     int bvec[3] = {b.nlm.n, b.nlm.l, b.nlm.m};
     return calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, avec, bvec);
 }
 
-arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, double z2) {
+void findRotation(double x1, double y1, double z1, double x2, double y2, double z2, arma::mat &rotationMatrix) {
     double x = x2 - x1;
     double y = y2 - y1;
     double z = z2 - z1;
@@ -337,7 +335,6 @@ arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, do
     zRotation(2, 1) = 0;
     zRotation(2, 2) = z / pow(pow(x, 2) + pow(y, 2) + pow(z, 2), 0.5);
 
-    mat rotationMatrix(3, 3);
     rotationMatrix = zRotation * xzRotation;
 
     for (int k = 0; k < 3; k++) {
@@ -347,7 +344,6 @@ arma::mat findRotation(double x1, double y1, double z1, double x2, double y2, do
             }
         }
     }
-    return rotationMatrix;
 }
 
 //[a,1Sb]
@@ -366,31 +362,25 @@ double calculateBasicIntegral(double zeta, double rho, int *a) {
 //[1Sa,1Sb]
 double calculateBasicCoulombIntegralFull(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
-        std::cout << "11" << std::endl;
         return (zeta_a / rho) * (1.0 - pow(1 - kappa, 2.0) * (1.0 / 4.0 * (2.0 + kappa) + 1.0 / 4.0 * rho_alpha) * exp(-2.0 * rho_alpha)
                                  - (1.0 + pow(kappa, 2.0)) * (1.0 / 4.0 * (2.0 - kappa) + 1.0 / 4.0 * rho_beta) * exp(-2.0 * rho_beta));
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
-        std::cout << "12" << std::endl;
-        std::cout << kappa << " " << zeta_a << " " << zeta_b << " " << rho_alpha << " " << rho_beta << std::endl;
-        return (zeta_a / rho) * (1.0 - pow(1.0 - kappa, 3.0) * (1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) + 1.0 / 8.0 * kappa * rho_alpha) * exp(-2 * rho_alpha)
-                                 - pow(1.0 + kappa, 2.0) * (1.0 / 16.0 * (15.0 - 22.0 * kappa - 15.0 * pow(kappa, 2.0) - 4.0 * pow(kappa, 3.0))
-                                         + 3.0 / 8.0 * (3.0 - 3.0 * kappa + pow(kappa, 2.0)) * rho_beta + 1.0 / 4.0 * (2.0 - kappa) * pow(rho_beta, 2.0) + 1.0 / 12.0 * pow(rho_beta, 3.0)) * exp(-2.0 * rho_beta));
+        return (zeta_a / rho) * (1.0 - (pow(1.0 - kappa, 3.0) * (1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) - 1.0 / 8.0 * kappa * rho_alpha) * exp(-2.0 * rho_alpha))
+                                 - (pow(1.0 + kappa, 2.0) * (1.0 / 16.0 * (15.0 - 22.0 * kappa + 15.0 * pow(kappa, 2.0) - 4.0 * pow(kappa, 3.0))
+                                         + 3.0 / 8.0 * (3.0 - 3.0 * kappa + pow(kappa, 2.0)) * rho_beta + 1.0 / 4.0 * (2.0 - kappa) * pow(rho_beta, 2.0) + 1.0 / 12.0 * pow(rho_beta, 3.0))) * exp(-2.0 * rho_beta));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s2s
-        std::cout << "21" << std::endl;
-        std::cout << kappa << " " << zeta_a << " " << zeta_b << " " << rho_alpha << " " << rho_beta << std::endl;
-
-        return (zeta_b / rho) * (1.0 - pow(1.0 - kappa, 3.0) * (1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) + 1.0 / 8.0 * kappa * rho_beta) * exp(-2 * rho_beta)
-                                 - pow(1.0 + kappa, 2.0) * (1.0 / 16.0 * (15.0 - 22.0 * kappa - 15.0 * pow(kappa, 2.0) - 4.0 * pow(kappa, 3.0))
-                                         + 3.0 / 8.0 * (3.0 - 3.0 * kappa + pow(kappa, 2.0)) * rho_alpha + 1.0 / 4.0 * (2.0 - kappa) * pow(rho_alpha, 2.0) + 1.0 / 12.0 * pow(rho_alpha, 3.0)) * exp(-2.0 * rho_alpha));
+        kappa = -kappa;
+        return (zeta_b / rho) * (1.0 - (pow(1.0 - kappa, 3.0) * (1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) - 1.0 / 8.0 * kappa * rho_beta) * exp(-2.0 * rho_beta))
+                                 - (pow(1.0 + kappa, 2.0) * (1.0 / 16.0 * (15.0 - 22.0 * kappa + 15.0 * pow(kappa, 2.0) - 4.0 * pow(kappa, 3.0))
+                                         + 3.0 / 8.0 * (3.0 - 3.0 * kappa + pow(kappa, 2.0)) * rho_alpha + 1.0 / 4.0 * (2.0 - kappa) * pow(rho_alpha, 2.0) + 1.0 / 12.0 * pow(rho_alpha, 3.0))) * exp(-2.0 * rho_alpha));
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
-        std::cout << "22" << std::endl;
         return (zeta_a / rho) * (1.0 - pow(1 - kappa, 3.0) * (1.0 / 16.0 * (8.0 - kappa - 27.0 * pow(kappa, 2.0) - 30.0 * pow(kappa, 3.0) - 10.0 * pow(kappa, 4.0))
                                  + 1.0 / 32.0 * (11.0 - 19.0 * kappa - 44.0 * pow(kappa, 2) - 20 * pow(kappa, 3)) * rho_alpha
-                                 + 1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) * pow(rho_alpha, 2)) * exp(-2 * rho_alpha)
-                                 - pow(1 + kappa, 3.0) * (1.0 / 16.0 * (8.0 + kappa - 27.0 * pow(kappa, 2.0) + 30.0 * pow(kappa, 3.0) - 10 * pow(kappa, 4))
+                                 + 1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) * pow(rho_alpha, 2)) * exp(-2.0 * rho_alpha)
+                                 - pow(1.0 + kappa, 3.0) * (1.0 / 16.0 * (8.0 + kappa - 27.0 * pow(kappa, 2.0) + 30.0 * pow(kappa, 3.0) - 10 * pow(kappa, 4))
                                          + 1.0 / 32.0 * (11.0 + 19.0 * kappa - 44.0 * pow(kappa, 2.0) + 20.0 * pow(kappa, 3)) * rho_beta
                                          + 1.0 / 16.0 * (1.0 + 5.0 * kappa - 4.0 * pow(kappa, 2.0)) * pow(rho_beta, 2) + 1.0 / 24.0 * kappa * pow(rho_beta, 3)) * exp(-2 * rho_beta));
     }
@@ -416,49 +406,31 @@ double calculateBasicCoulombIntegralSameZeta(double zeta_a, double zeta_b, doubl
 
 //[1Sa,1Sb] rho = 0
 double calculateBasicCoulombIntegralSamePosition(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
+
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
-        std::cout << "11" << std::endl;
         return 1.0 / 8.0 * (1.0 - pow(tau, 2.0)) * (5.0 - pow(tau, 2.0)) * zeta_a;
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
-        std::cout << "12" << std::endl;
         return 1.0 / 32.0 * (1.0 - pow(tau, 2.0)) * (14.0 - 7 * tau - 3.0 * pow(tau, 2.0) + pow(tau, 3)) * zeta_a;
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s2s
-        std::cout << "21" << std::endl;
         return 1.0 / 32.0 * (1.0 - pow(-tau, 2.0)) * (14.0 - 7 * -tau - 3.0 * pow(-tau, 2.0) + pow(-tau, 3)) * zeta_b;
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
-        std::cout << "22" << std::endl;
-        std::cout << tau << " " << zeta_a << " " << zeta_b << std::endl;
-        return 1.0 / 256.0 * (1.0 - pow(tau, 2.0)) * (93.0 - 47 * pow(tau, 2.0) + 23 * pow(tau, 4) - 5 * pow(tau, 6)) * zeta_a;
+        return 1.0 / 256.0 * (1.0 - pow(tau, 2.0)) * (93.0 - 47.0 * pow(tau, 2.0) + 23.0 * pow(tau, 4) - 5.0 * pow(tau, 6)) * zeta_a;
     }
     return 0;
 }
 
 double calculateBasicCoulombIntegral(double zeta_a, double zeta_b, double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
     if (std::abs(rho) < tolerance) {
-        std::cout << "A" << std::endl;
         return calculateBasicCoulombIntegralSamePosition(zeta_a, zeta_b, tau, rho, kappa, rho_alpha, rho_beta, a, b);
     } else if (std::abs(tau) < tolerance) {
-        std::cout << "b" << std::endl;
-
         return calculateBasicCoulombIntegralSameZeta(zeta_a, zeta_b, tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
     else {
-        std::cout << "c" << std::endl;
-
         return calculateBasicCoulombIntegralFull(zeta_a, zeta_b, tau, rho, kappa, rho_alpha, rho_beta, a, b);
     }
-}
-
-
-double calculateCoreValenceInteraction(int *a, int *b) { //V_AB
-
-}
-
-double calculateElectrionRepulsionIntegral(int *a, int *b) {
-
 }
 
 } //namespace Semi

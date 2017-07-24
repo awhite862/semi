@@ -61,9 +61,9 @@ int run_sto_matrix_test() {
     //double f = .629118;
     QNumber q1s(1, 0, 0);
     QNumber q2s(2, 0, 0);
-    QNumber q2px(2, 1, 1);   
-    QNumber q2py(2, 1, -1);  
-    QNumber q2pz(2, 1, 0);  
+    QNumber q2px(2, 1, 1);
+    QNumber q2py(2, 1, -1);
+    QNumber q2pz(2, 1, 0);
     a.myBasis.push_back(STOFunction(q1s, 6, 0, 0, 0, 0));
     a.myBasis.push_back(STOFunction(q2s, 6, 0, 0, 0, 0));
     a.myBasis.push_back(STOFunction(q2px, 6, 0, 0, 0, 0));
@@ -74,8 +74,9 @@ int run_sto_matrix_test() {
     a.myBasis.push_back(STOFunction(q1s, 1, f, -f, -f, 2));
     a.myBasis.push_back(STOFunction(q1s, 1, -f, -f, f, 3));
     a.myBasis.push_back(STOFunction(q1s, 1, -f, f, -f, 4));
-    arma::mat sol =  Semi::calculateOverlapMatrix(a);
-    sol.print();
+    arma::mat sol;
+    Semi::calculateOverlapMatrix(a, sol);
+    sol.print("STO overlap");
     return 0;
 }
 
@@ -85,25 +86,29 @@ int run_rotation_test() {
     vec1(0) = 5;
     vec1(1) = 5;
     vec1(2) = 5;
-    arma::mat rotated1 = Semi::findRotation(5, 5, 5, 7, 7, 7);
+    arma::mat rotated1;
+    Semi::findRotation(5, 5, 5, 7, 7, 7, rotated1);
 
     arma::vec vec2(3);
     vec2(0) = 5;
     vec2(1) = 5;
     vec2(2) = 5;
-    arma::mat rotated2 = Semi::findRotation(5, 5, 5, 3, 3, 3);
+    arma::mat rotated2;
+    Semi::findRotation(5, 5, 5, 3, 3, 3, rotated2);
 
     arma::vec vec3(3);
     vec3(0) = 1;
     vec3(1) = 1;
     vec3(2) = 1;
-    arma::mat rotated3 = Semi::findRotation(1, 1, 1, 3, 4, 5);
+    arma::mat rotated3;
+    Semi::findRotation(1, 1, 1, 3, 4, 5, rotated3);
 
     arma::vec vec4(3);
     vec4(0) = 1;
     vec4(1) = -2;
     vec4(2) = -3;
-    arma::mat rotated4 = Semi::findRotation(1, -2, -3, -4, 5, -6);
+    arma::mat rotated4;
+    Semi::findRotation(1, -2, -3, -4, 5, -6, rotated4);
 
     arma::mat test1 = trans(rotated1) * rotated1;
     arma::mat test2 = trans(rotated2) * rotated2;
@@ -114,7 +119,8 @@ int run_rotation_test() {
     vec4(0) = 0;
     vec4(1) = 0;
     vec4(2) = 5;
-    arma::mat rotated5 = Semi::findRotation(0, 0, 5, 0, 0, 10);
+    arma::mat rotated5;
+    Semi::findRotation(0, 0, 5, 0, 0, 10, rotated5);
 
     return (norm(test1 - arma::eye(3, 3)) > tolerance | norm(test2 - arma::eye(3, 3)) > tolerance | norm(test3 - arma::eye(3, 3)) > tolerance | norm(test4 - arma::eye(3, 3)) > tolerance | norm(rotated5 - arma::eye(3, 3)) > tolerance);
 }

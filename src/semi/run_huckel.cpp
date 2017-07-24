@@ -27,7 +27,8 @@ void run_huckel(Molecule &mol, parameters &huckel_params, output &out) {
     }
 
     BasisSet<CGTOFunction> bset(vbasis);
-    arma::mat S = calculateOverlapMatrixCGTO(bset);
+    arma::mat S;
+    calculateOverlapMatrixCGTO(bset, S);
     double kValue = huckel_params.get_value<double>("k");
     double deltaValue = huckel_params.get_value<double>("delta");
     arma::mat C;
