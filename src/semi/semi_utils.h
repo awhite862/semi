@@ -28,6 +28,9 @@ double distance (double x1, double y1, double z1, double x2, double y2, double z
 /** \brief Calculates the inverse square root of a matrix. **/
 void invSqrt(arma::mat A, arma::mat &sol);
 
+/** \brief Calculates number of valence electrons for given atom. **/
+int numValence(int num);
+
 } // namespace Semi
 
 #endif // SEMI_UTILS_H

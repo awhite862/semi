@@ -114,17 +114,6 @@ void solveHuckelMatrix(arma::mat Hhuckel, arma::mat Smatrix, Molecule m, std::ve
     solMatrix = eigvec;
 }
 
-int numValence(int atom) {
-    if (atom <= 2) {
-        return atom;
-    }
-    if (atom <= 10) {
-        return (atom - 2) % 8;;
-    }
-    if (atom <= 18) {
-        return numValence(atom - 8);
-    }
-    return 0;
-}
+
 
 } // namespace Semi

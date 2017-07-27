@@ -1,6 +1,6 @@
 #include "semi_api.h"
 #include "run_huckel.h"
-
+#include "run_cndo.h"
 namespace Semi {
 
 namespace {
@@ -23,6 +23,9 @@ void run_semi(input &in, output &out, std::ostream &logger) {
     
     if (in.ctype == HUCKEL) {
         run_huckel(in.mol, in.huckel_params, out);
+    }
+    if (in.ctype == CNDO) {
+        run_cndo(in.mol, in.huckel_params, out);
     }
 
     print_end_banner(logger);

@@ -33,6 +33,7 @@ void run_huckel(Molecule &mol, parameters &huckel_params, output &out) {
     double deltaValue = huckel_params.get_value<double>("delta");
     arma::mat C;
     calculateHuckel(S, kValue, deltaValue, mol, C);
+    C.print();
     out.C = C;
 }
 

@@ -60,7 +60,7 @@ void build_input(
         throw std::runtime_error(ss.str()); 
     }
     
-    // parse control section
+    // parse     section
     {
         typename imap_type::const_iterator ii = inputs.find("control");
         if (ii == inputs.end()) {

@@ -21,7 +21,7 @@ int run_huckel_test() {
     std::ifstream fin;
     std::string line;
     std::vector<STOFunction> vbasis;
-    fin.open("bh.txt");
+    fin.open("co.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
         double elem, x, y, z;
@@ -54,7 +54,7 @@ int run_huckel_test() {
 
     ///////////////////////////////////////////////////////////////////////////////
     std::vector<CGTOFunction> vbasisprime;
-    fin.open("bh.txt");
+    fin.open("co.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
         double elem, x, y, z;
@@ -106,7 +106,9 @@ int run_huckel_test() {
     // Sprime(4, 3) = 0.5172;
     //Sprime.eye(4,4);
 
-    Sprime.print("Overlap matrix");
+
+    //S.load("bh2.txt", arma::raw_ascii);
+    S.print("Overlap matrix");
     sol.zeros();
     sol.print("coeffs");
     SCF(bset, sol, S, fock);
@@ -120,7 +122,7 @@ int run_huckel_test() {
     //colbyeigvec.print("colby");
 
     arma::mat colbyeigval;
-    colbyeigval.load("colby2.txt", arma::raw_ascii);
+    colbyeigval.load("colby.txt", arma::raw_ascii);
     //colbyeigval.print("colby");
 
     arma::mat temp;
@@ -128,7 +130,7 @@ int run_huckel_test() {
     temp.print("fock");
     //Sprime.print("Overlap matrix cgto");
 
-    //S.print("Overlap matrix sto");
+    S.print("Overlap matrix sto");
 
     return 0;
 }

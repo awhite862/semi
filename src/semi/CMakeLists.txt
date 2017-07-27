@@ -13,6 +13,7 @@ set(SRC
     Structure/QNumber.cpp
     Structure/Molecule.cpp
     run_huckel.cpp
+    run_cndo.cpp
     semi_utils.cpp
     semi_api.cpp
 )

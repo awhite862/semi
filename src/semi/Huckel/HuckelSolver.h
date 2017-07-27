@@ -14,8 +14,7 @@ void solveHuckelMatrixWithOverlap(arma::mat Hhuckel, arma::mat Shuckel, arma::ma
 /** \brief Solves the Huckel Hamiltonian eigenvalue equation without overlap matrix, HΨ=ΨE. **/
 void solveHuckelMatrix(arma::mat Hhuckel, arma::mat Smatrix, Molecule m, std::vector<myOrbital> valenceOrbitalData, arma::mat &solMatrix);
 
-/** \brief Calculates number of valence electrons for given atom. **/
-int numValence(int num);
+
 
 } // namespace Semi
 

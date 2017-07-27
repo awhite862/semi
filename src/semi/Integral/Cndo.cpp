@@ -51,10 +51,23 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
     std::vector<arma::mat> occs;
     std::vector<arma::mat> f;
     std::vector<arma::mat> eigvals;
-    double num_orbitals = 2;
+
+
+    unsigned int numpi = 0;
+    std::vector<int> ids;
+    for (int k = 0; k < a.myBasis.size(); k++) {
+        if (std::find(ids.begin(), ids.end(), a.myBasis[k].id) == ids.end()) {
+            ids.push_back(a.myBasis[k].id);
+            std::cout << numValence(a.myBasis[k].charge) << std::endl;
+            numpi += numValence(a.myBasis[k].charge);
+        }
+    }
+    unsigned int num_orbitals = numpi / 2;
+
+    std::cout << num_orbitals << " orbitals" << std::endl;
     arma::mat density;
     S.print("overlap");
-    for (int k = 0; k < 10; k++) {
+    for (int k = 0; k < 20; k++) {
         calculateFockMatrix(a, coefMatrix, S, fock);
         arma::mat occ = coefMatrix.cols(0, num_orbitals - 1);
         calculateChargeDensity(occ, density);
@@ -78,16 +91,18 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
     std::cout << "density occ" << std::endl;
     calculateChargeDensity(occs[0], density);
     density.print();
-
+    arma::mat old;
     double energy = 0;
-    for (int k = 1; k < 10; k++) {
+    for (int k = 1; k < 20; k++) {
         energy = 0;
         std::cout << "-----------------------------------------------------------------------" << std::endl;
         std::cout << "fock" << std::endl;
-        (round(1000 * f[k])/1000).print();
+        (round(1000 * f[k]) / 1000).print();
+        old = density;
         std::cout << "occs charge density" << std::endl;
         calculateChargeDensity(occs[k], density);
-        (round(1000*density)/1000).print();
+        (round(1000 * density) / 1000).print();
+        std::cout << "iteration: " << k << " convergence: " << norm(old - density) << std::endl;
 
 
 
@@ -113,10 +128,21 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
 
 //tr(density) = num_elec
 
-void calculateFockMatrix(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &fock) {
+void calculateFockMatrix(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat & fock) {
     fock.set_size(a.myBasis.size(), a.myBasis.size());
     fock.zeros();
-    double num_orbitals = 2;
+    unsigned int numpi = 0;
+    std::vector<int> ids;
+    for (int k = 0; k < a.myBasis.size(); k++) {
+        if (std::find(ids.begin(), ids.end(), a.myBasis[k].id) == ids.end()) {
+            ids.push_back(a.myBasis[k].id);
+            std::cout << numValence(a.myBasis[k].charge) << std::endl;
+            numpi += numValence(a.myBasis[k].charge);
+        }
+    }
+    unsigned int num_orbitals = numpi / 2;
+    std::cout << num_orbitals << std::endl;
+    coefMatrix.print();
     arma::mat occ = coefMatrix.cols(0, num_orbitals - 1);
     arma::mat density;
     calculateChargeDensity(occ, density);
@@ -149,7 +175,7 @@ void calculateFockMatrix(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::ma
         for (int v = 0; v < a.myBasis.size(); v++) {
             if (u != v && a.myBasis[u].id != a.myBasis[v].id) {
                 fock(u, v) = calculateBondingParameter(a.myBasis[u].charge, a.myBasis[v].charge) * S(u, v)
-                             - 0.5 * (density(u, v) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[v]));
+                             -   0.5 * (density(u, v) * 0.4342/*calculateElectronRepulsion(a.myBasis[u], a.myBasis[v])*/);
                 bondingParameter(u, v) = calculateBondingParameter(a.myBasis[u].charge, a.myBasis[v].charge);
                 electronRepulsion(u, v) = calculateElectronRepulsion(a.myBasis[u], a.myBasis[v]);
             }
@@ -171,6 +197,10 @@ void calculateFockMatrix(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::ma
                         ids.push_back(a.myBasis[k].id);
                         fock(u, u) += calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k])
                                       - calculateNucleurAttraction(a.myBasis[u], a.myBasis[k]);
+
+
+
+
                         sum += calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k])
                                - calculateNucleurAttraction(a.myBasis[u], a.myBasis[k]);
                         summation(u, u) = calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k]);
@@ -260,7 +290,7 @@ double calculateTotalChargeDensity(arma::mat density, double id, BasisSet<STOFun
 }
 
 //P_uv
-void calculateChargeDensity(arma::mat c_v, arma::mat &density) {
+void calculateChargeDensity(arma::mat c_v, arma::mat & density) {
     density.set_size(c_v.n_rows, c_v.n_rows);
     density =  2.0 * c_v * trans(c_v);
 }
@@ -312,7 +342,7 @@ double calculateNucleurAttraction(STOFunction a, STOFunction b) {
         return (a.zeta / rho) * (1.0 - (1.0 + rho) * exp(-2.0 * rho)) * num;
     }
     else if (aOrbitalType[0] == 2) {
-        return (a.zeta / rho) * (1.0 - (1.0 + 4.0 / 3.0 * rho + 2.0 / 3.0 * pow(rho, 2)) * exp(-2.0 * rho)) * num;
+        return (a.zeta / rho) * (1.0 - (1.0 + 3.0 / 2.0 * rho + pow(rho, 2) + 1.0 / 3.0 * pow(rho, 3)) * exp(-2.0 * rho)) * num;
     }
     return 0;
 }
@@ -377,7 +407,7 @@ double calculateBondingParameter(double a, double b) {
 }
 
 //S_uv
-void calculateOverlapMatrix(BasisSet<STOFunction> a, arma::mat &Smatrix) {
+void calculateOverlapMatrix(BasisSet<STOFunction> a, arma::mat & Smatrix) {
     Smatrix.set_size(a.myBasis.size(), a.myBasis.size());
     for (unsigned k1 = 0; k1 < a.myBasis.size(); k1++) {
         for (unsigned l1 = 0; l1 < a.myBasis.size(); l1++) {
