@@ -223,6 +223,101 @@ void calculateFockMatrix(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::ma
     S.print("overlap");
 }
 
+void calculateFockMatrix3(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat & fock) {
+    fock.set_size(a.myBasis.size(), a.myBasis.size());
+    fock.zeros();
+    unsigned int numpi = 0;
+    std::vector<int> ids;
+    for (int k = 0; k < a.myBasis.size(); k++) {
+        if (std::find(ids.begin(), ids.end(), a.myBasis[k].id) == ids.end()) {
+            ids.push_back(a.myBasis[k].id);
+            std::cout << numValence(a.myBasis[k].charge) << std::endl;
+            numpi += numValence(a.myBasis[k].charge);
+        }
+    }
+    unsigned int num_orbitals = numpi / 2;
+    std::cout << num_orbitals << std::endl;
+    coefMatrix.print();
+    arma::mat occ = coefMatrix.cols(0, num_orbitals - 1);
+    arma::mat density;
+    calculateChargeDensity(occ, density);
+    coefMatrix.print("coeffs");
+    occ.print("occ");
+    density.print("density");
+
+    //debug
+    arma::mat bondingParameter(a.myBasis.size(), a.myBasis.size());
+    arma::mat electronRepulsion(a.myBasis.size(), a.myBasis.size());
+    arma::mat coreHamiltonian(a.myBasis.size(), a.myBasis.size());
+    arma::mat chargeDensity(a.myBasis.size(), a.myBasis.size());
+    arma::mat second(a.myBasis.size(), a.myBasis.size());
+    arma::mat third(a.myBasis.size(), a.myBasis.size());
+    arma::mat nucleurAttraction(a.myBasis.size(), a.myBasis.size());
+    arma::mat summation(a.myBasis.size(), a.myBasis.size());
+    //debug
+
+    bondingParameter.zeros();
+    electronRepulsion.zeros();
+    coreHamiltonian.zeros();
+    chargeDensity.zeros();
+    second.zeros();
+    third.zeros();
+    summation.zeros();
+    nucleurAttraction.zeros();
+
+    std::cout << "debug" << std::endl;
+    for (int u = 0; u < a.myBasis.size(); u++) {
+        for (int v = 0; v < a.myBasis.size(); v++) {
+            if (u != v && a.myBasis[u].id != a.myBasis[v].id) {
+                fock(u, v) = calculateBondingParameter(a.myBasis[u].charge, a.myBasis[v].charge) * S(u, v)
+                             -   0.5 * (density(u, v) * 0.4342/*calculateElectronRepulsion(a.myBasis[u], a.myBasis[v])*/);
+                bondingParameter(u, v) = calculateBondingParameter(a.myBasis[u].charge, a.myBasis[v].charge);
+                electronRepulsion(u, v) = calculateElectronRepulsion(a.myBasis[u], a.myBasis[v]);
+            }
+            else if (u != v && a.myBasis[u].id == a.myBasis[v].id) {
+                fock(u, v) = - 0.5 * (density(u, v) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]));
+                electronRepulsion(u, v) = calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]);
+            }
+            else {
+                coreHamiltonian(u, v) = calculateCoreHamiltonian(a.myBasis[u], a.myBasis[u]);
+                chargeDensity(u, v) = calculateTotalChargeDensity(density, a.myBasis[u].id, a);
+                second(u, v) =  (calculateTotalChargeDensity(density, a.myBasis[u].id, a) - 0.5 * density(u, u)) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]);
+                fock(u, u) = calculateCoreHamiltonian(a.myBasis[u], a.myBasis[v])
+                             + (calculateTotalChargeDensity(density, a.myBasis[u].id, a) - 0.5 * density(u, u)) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]);
+                std::vector<int> ids;
+                electronRepulsion(u, v) = calculateElectronRepulsion(a.myBasis[u], a.myBasis[v]);
+                double sum = 0;
+                for (int k = 0; k < a.myBasis.size(); k++) {
+                    if (a.myBasis[k].id != a.myBasis[u].id && std::find(ids.begin(), ids.end(), a.myBasis[k].id) == ids.end()) {
+                        ids.push_back(a.myBasis[k].id);
+                        fock(u, u) += calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k])
+                                      - calculateNucleurAttraction(a.myBasis[u], a.myBasis[k]);
+
+
+
+
+                        sum += calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k])
+                               - calculateNucleurAttraction(a.myBasis[u], a.myBasis[k]);
+                        summation(u, u) = calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k]);
+                        nucleurAttraction(u, k) = calculateNucleurAttraction(a.myBasis[u], a.myBasis[k]);
+                    }
+                }
+                third(u, v) = sum;
+            }
+        }
+    }
+    bondingParameter.print("bonding param");
+    electronRepulsion.print("elec repulsion");
+    coreHamiltonian.print("core");
+    chargeDensity.print("charge density");
+    second.print("second term");
+    third.print("third term");
+    summation.print("summation");
+    nucleurAttraction.print("nuc attraction");
+    density.print("density");
+    S.print("overlap");
+}
+
 
 //diag should be negativ
 //U_uu, v_ab
@@ -289,6 +384,22 @@ double calculateTotalChargeDensity(arma::mat density, double id, BasisSet<STOFun
     return sum;
 }
 
+void calculateAtomicData(double charge, double l) {
+    double h = 27.21138602;
+    switch ((int)charge) {
+    case 1: return 7.176 / h;
+    case 2: return 0;
+    case 3: return (l == 0) ? 3.106 / h : 1.258 / h;
+    case 4: return (l == 0) ? 5.946 / h : 2.563 / h;
+    case 5: return (l == 0) ? 9.594 / h : 4.001 / h;
+    case 6: return (l == 0) ? 14.051 / h : 5.572 / h;
+    case 7: return (l == 0) ? 19.316 / h : 7.275 / h;
+    case 8: return (l == 0) ? 25.390 / h : 9.111 / h;
+    case 9: return (l == 0) ? 32.272 / h : 11.080 / h;
+    case 10: return 0;
+    default: return 0;
+    }
+}
 //P_uv
 void calculateChargeDensity(arma::mat c_v, arma::mat & density) {
     density.set_size(c_v.n_rows, c_v.n_rows);

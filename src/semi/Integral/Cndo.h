@@ -31,6 +31,7 @@ void calculateOverlapMatrixSTO(BasisSet<STOFunction> b, arma::mat &Smatrix);
 void calculateFockMatrix(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &fock);
 void calculateOverlapMatrixGTO(BasisSet<GTOFunction> b, arma::mat &Smatrix);
 void calculateOverlapMatrixCGTO(BasisSet<CGTOFunction> b, arma::mat &Smatrix);
+void calculateFockMatrix3(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat & fock);
 
 
 
