@@ -5,6 +5,7 @@
 #include <cmath>
 #include <armadillo>
 namespace Semi {
+
 /** \brief Determines string corresponding to an elements charge. **/
 std::string getElement(double charge);
 

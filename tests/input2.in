@@ -1,0 +1,13 @@
+@molecule
+6	0	0	0
+8	0	0	1.25
+@end
+
+$control
+method	huckel
+$end
+
+$huckel
+k 1.25
+delta 0.5
+$end

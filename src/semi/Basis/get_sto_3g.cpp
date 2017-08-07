@@ -133,4 +133,4 @@ void get_sto_3g(std::string &name, QNumber &qn, std::vector<double> &nVec, std::
     }
 }
 
-} //namespace Semi
+} // namespace Semi

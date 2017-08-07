@@ -14,7 +14,7 @@ namespace Semi {
 /** \brief Class that evaluates overlap integrals. **/
 
 double calculateOverlapSTO(STOFunction a, STOFunction b);
-
+void get_rot(arma::mat &R, double x, double y, double z);
 /** \brief calculates overlap integral for STO basis from given parameters. **/
 double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b);
 

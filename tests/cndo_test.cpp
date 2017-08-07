@@ -14,14 +14,13 @@ using namespace Semi;
 /** \brief Test for huckel theory initial guess.*/
 int run_huckel_test() {
     arma::mat SMatrix;
-    //SMatrix.load("s.txt", arma::raw_ascii);
 
     int i = 0;
     Molecule m;
     std::ifstream fin;
     std::string line;
     std::vector<STOFunction> vbasis;
-    fin.open("co.txt");
+    fin.open("o2.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
         double elem, x, y, z;
@@ -52,77 +51,24 @@ int run_huckel_test() {
     }
     fin.close();
 
-    ///////////////////////////////////////////////////////////////////////////////
-    std::vector<CGTOFunction> vbasisprime;
-    fin.open("co.txt");
-    while (std::getline(fin, line)) {
-        std::stringstream linestream(line);
-        double elem, x, y, z;
-        linestream >> elem >> x >> y >> z;
-        Atom a(x, y, z, elem, i);
-        double scale = 1;
-        std::vector<double> r(3);
-        r[0] = x * scale;
-        r[1] = y * scale;
-        r[2] = z * scale;
-        double charge = elem;
-        if (charge - 0.1 > 2) {
-            QNumber q2s(2, 0, 0);
-            QNumber q2px(2, 1, 1);
-            QNumber q2py(2, 1, -1);
-            QNumber q2pz(2, 1, 0);
-            vbasisprime.push_back(CGTOFunction(q2s, 0, 0, 0, r, charge));
-            vbasisprime.push_back(CGTOFunction(q2px, 1, 0, 0, r, charge));
-            vbasisprime.push_back(CGTOFunction(q2py, 0, 1, 0, r, charge));
-            vbasisprime.push_back(CGTOFunction(q2pz, 0, 0, 1, r, charge));
-        }
-        else {
-            QNumber q1s(1, 0, 0);
-            vbasisprime.push_back(CGTOFunction(q1s, 0, 0, 0, r, charge));
-        }
-        i++;
-    }
-    fin.close();
-
-    BasisSet<CGTOFunction> bsetprime(vbasisprime);
-    arma::mat Sprime;
-    calculateOverlapMatrixCGTO(bsetprime, Sprime);
-    ///////////////////////////////////////////////////////////////////////
     BasisSet<STOFunction> bset(vbasis);
     arma::mat S;
-    calculateOverlapMatrixSTO(bset, S);
-    //arma::mat Srot = calculateOverlapMatrix(bset);
-
-
+    calculateOverlapMatrix(bset, S);
     arma::mat sol;
     Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), sol);
     sol.print("sol");
-
     arma::mat fock;
-
-    // Sprime(0, 4) = 0.4873;
-    // Sprime(4, 0) = 0.4873;
-    // Sprime(3, 4) = 0.5172;
-    // Sprime(4, 3) = 0.5172;
-    //Sprime.eye(4,4);
-
-
-    //S.load("bh2.txt", arma::raw_ascii);
     S.print("Overlap matrix");
     sol.zeros();
     sol.print("coeffs");
     SCF(bset, sol, S, fock);
 
-
-
-
-
     arma::mat colbyeigvec;
-    colbyeigvec.load("colby.txt", arma::raw_ascii);
+    colbyeigvec.load("colby2.txt", arma::raw_ascii);
     //colbyeigvec.print("colby");
 
     arma::mat colbyeigval;
-    colbyeigval.load("colby.txt", arma::raw_ascii);
+    colbyeigval.load("colby1.txt", arma::raw_ascii);
     //colbyeigval.print("colby");
 
     arma::mat temp;
@@ -130,7 +76,17 @@ int run_huckel_test() {
     temp.print("fock");
     //Sprime.print("Overlap matrix cgto");
 
-    S.print("Overlap matrix sto");
+    std::cout << "------------------------------------------------------------------------------------" << std::endl;
+    calculateOverlapMatrix(bset, S);
+
+    (round(1000 * S) / 1000).print("Overlap matrix sto");
+
+    arma::mat eigvec;
+    arma::vec eigval;
+    eig_sym(eigval, eigvec, S);
+    fock.print("fock");
+    eigval.print("eigval");
+    eigvec.print("eigvecs");
 
     return 0;
 }

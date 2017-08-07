@@ -50,4 +50,4 @@ public:
 
 } // namespace Semi
 
-#endif // GTOBASIS_H
+#endif // CGTOFUNCTION_H

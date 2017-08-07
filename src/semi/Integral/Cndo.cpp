@@ -58,7 +58,7 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
     for (int k = 0; k < a.myBasis.size(); k++) {
         if (std::find(ids.begin(), ids.end(), a.myBasis[k].id) == ids.end()) {
             ids.push_back(a.myBasis[k].id);
-            std::cout << numValence(a.myBasis[k].charge) << std::endl;
+            std::cout << "valence elec" <<  numValence(a.myBasis[k].charge) << std::endl;
             numpi += numValence(a.myBasis[k].charge);
         }
     }
@@ -67,8 +67,8 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
     std::cout << num_orbitals << " orbitals" << std::endl;
     arma::mat density;
     S.print("overlap");
-    for (int k = 0; k < 20; k++) {
-        calculateFockMatrix(a, coefMatrix, S, fock);
+    for (int k = 0; k < 50; k++) {
+        calculateFockMatrix3(a, coefMatrix, S, fock);
         arma::mat occ = coefMatrix.cols(0, num_orbitals - 1);
         calculateChargeDensity(occ, density);
         f.push_back(fock);
@@ -85,6 +85,7 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
 
 
     }
+    std::cout << "num orbitals:" << num_orbitals << std::endl;
     std::cout << "-----------------------------------------------------------------------" << std::endl;
     std::cout << "fock" << std::endl;
     f[0].print();
@@ -93,7 +94,7 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
     density.print();
     arma::mat old;
     double energy = 0;
-    for (int k = 1; k < 20; k++) {
+    for (int k = 1; k < 50; k++) {
         energy = 0;
         std::cout << "-----------------------------------------------------------------------" << std::endl;
         std::cout << "fock" << std::endl;
@@ -248,29 +249,28 @@ void calculateFockMatrix3(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::m
     //debug
     arma::mat bondingParameter(a.myBasis.size(), a.myBasis.size());
     arma::mat electronRepulsion(a.myBasis.size(), a.myBasis.size());
-    arma::mat coreHamiltonian(a.myBasis.size(), a.myBasis.size());
-    arma::mat chargeDensity(a.myBasis.size(), a.myBasis.size());
+    arma::mat atomicData(a.myBasis.size(), a.myBasis.size());
     arma::mat second(a.myBasis.size(), a.myBasis.size());
     arma::mat third(a.myBasis.size(), a.myBasis.size());
+    arma::mat chargeDensity(a.myBasis.size(), a.myBasis.size());
     arma::mat nucleurAttraction(a.myBasis.size(), a.myBasis.size());
-    arma::mat summation(a.myBasis.size(), a.myBasis.size());
+    arma::mat valence(a.myBasis.size(), a.myBasis.size());
     //debug
 
     bondingParameter.zeros();
     electronRepulsion.zeros();
-    coreHamiltonian.zeros();
-    chargeDensity.zeros();
+    atomicData.zeros();
     second.zeros();
     third.zeros();
-    summation.zeros();
+    chargeDensity.zeros();
     nucleurAttraction.zeros();
-
+    valence.zeros();
     std::cout << "debug" << std::endl;
     for (int u = 0; u < a.myBasis.size(); u++) {
         for (int v = 0; v < a.myBasis.size(); v++) {
             if (u != v && a.myBasis[u].id != a.myBasis[v].id) {
                 fock(u, v) = calculateBondingParameter(a.myBasis[u].charge, a.myBasis[v].charge) * S(u, v)
-                             -   0.5 * (density(u, v) * 0.4342/*calculateElectronRepulsion(a.myBasis[u], a.myBasis[v])*/);
+                             -   0.5 * (density(u, v) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[v]));
                 bondingParameter(u, v) = calculateBondingParameter(a.myBasis[u].charge, a.myBasis[v].charge);
                 electronRepulsion(u, v) = calculateElectronRepulsion(a.myBasis[u], a.myBasis[v]);
             }
@@ -279,41 +279,34 @@ void calculateFockMatrix3(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::m
                 electronRepulsion(u, v) = calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]);
             }
             else {
-                coreHamiltonian(u, v) = calculateCoreHamiltonian(a.myBasis[u], a.myBasis[u]);
-                chargeDensity(u, v) = calculateTotalChargeDensity(density, a.myBasis[u].id, a);
-                second(u, v) =  (calculateTotalChargeDensity(density, a.myBasis[u].id, a) - 0.5 * density(u, u)) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]);
-                fock(u, u) = calculateCoreHamiltonian(a.myBasis[u], a.myBasis[v])
-                             + (calculateTotalChargeDensity(density, a.myBasis[u].id, a) - 0.5 * density(u, u)) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]);
+                fock(u, u) = -calculateAtomicData(a.myBasis[u].charge, a.myBasis[u].nlm.l)
+                             + (calculateTotalChargeDensity(density, a.myBasis[u].id, a) - numValence(a.myBasis[u].charge) - 0.5 * (density(u, u) - 1)) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]);
                 std::vector<int> ids;
+                std::cout << "numvalence:" << u << " " << a.myBasis[u].charge << " " << numValence(a.myBasis[u].charge) << std::endl;
+                valence(u, u) = numValence(a.myBasis[u].charge);
+
+                atomicData(u, v) = calculateAtomicData(a.myBasis[u].charge, a.myBasis[u].nlm.l);
+                second(u, v) = (calculateTotalChargeDensity(density, a.myBasis[u].id, a) - numValence(a.myBasis[u].charge) - 0.5 * (density(u, u) - 1)) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[u]);
                 electronRepulsion(u, v) = calculateElectronRepulsion(a.myBasis[u], a.myBasis[v]);
-                double sum = 0;
                 for (int k = 0; k < a.myBasis.size(); k++) {
                     if (a.myBasis[k].id != a.myBasis[u].id && std::find(ids.begin(), ids.end(), a.myBasis[k].id) == ids.end()) {
                         ids.push_back(a.myBasis[k].id);
-                        fock(u, u) += calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k])
-                                      - calculateNucleurAttraction(a.myBasis[u], a.myBasis[k]);
-
-
-
-
-                        sum += calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k])
-                               - calculateNucleurAttraction(a.myBasis[u], a.myBasis[k]);
-                        summation(u, u) = calculateTotalChargeDensity(density, a.myBasis[k].id, a) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k]);
-                        nucleurAttraction(u, k) = calculateNucleurAttraction(a.myBasis[u], a.myBasis[k]);
+                        third(u, u) = (calculateTotalChargeDensity(density, a.myBasis[k].id, a) - numValence(a.myBasis[k].charge)) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k]);
+                        fock(u, u) += (calculateTotalChargeDensity(density, a.myBasis[k].id, a) - numValence(a.myBasis[k].charge)) * calculateElectronRepulsion(a.myBasis[u], a.myBasis[k]);
+                        nucleurAttraction(u, k) = calculateElectronRepulsion(a.myBasis[u], a.myBasis[k]);
                     }
                 }
-                third(u, v) = sum;
             }
         }
     }
     bondingParameter.print("bonding param");
     electronRepulsion.print("elec repulsion");
-    coreHamiltonian.print("core");
+    atomicData.print("atomicData");
     chargeDensity.print("charge density");
-    second.print("second term");
-    third.print("third term");
-    summation.print("summation");
-    nucleurAttraction.print("nuc attraction");
+    second.print("second");
+    third.print("third");
+    nucleurAttraction.print("gamma");
+    valence.print("num valence");
     density.print("density");
     S.print("overlap");
 }
@@ -384,7 +377,7 @@ double calculateTotalChargeDensity(arma::mat density, double id, BasisSet<STOFun
     return sum;
 }
 
-void calculateAtomicData(double charge, double l) {
+double calculateAtomicData(double charge, double l) {
     double h = 27.21138602;
     switch ((int)charge) {
     case 1: return 7.176 / h;
@@ -426,7 +419,7 @@ double calculateElectronRepulsion(STOFunction a, STOFunction b) {
     }
     int aOrbitalType [3] =  {az, 0, 0};
     int bOrbitalType [3] = {bz, 0, 0};
-    double gamma =  Semi::calculateBasicCoulombIntegral(a.zeta, b.zeta, tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
+    double gamma =  Semi::calculateBasicCoulombIntegral(zeta_average, zeta_average, tau, rho, kappa, rho_alpha, rho_beta, aOrbitalType, bOrbitalType);
     return gamma;
 }
 
@@ -520,56 +513,73 @@ double calculateBondingParameter(double a, double b) {
 //S_uv
 void calculateOverlapMatrix(BasisSet<STOFunction> a, arma::mat & Smatrix) {
     Smatrix.set_size(a.myBasis.size(), a.myBasis.size());
-    for (unsigned k1 = 0; k1 < a.myBasis.size(); k1++) {
-        for (unsigned l1 = 0; l1 < a.myBasis.size(); l1++) {
-            if (k1 == l1) {
-                Smatrix(k1, l1) =  1;
+    for (unsigned k = 0; k < a.myBasis.size(); k++) {
+        for (unsigned l = 0; l < a.myBasis.size(); l++) {
+            if (k == l) {
+                Smatrix(k, l) =  1;
             }
-            else if (a.myBasis[k1].id == a.myBasis[l1].id) {
-                Smatrix(k1, l1) = calculateOverlapSTO(a.myBasis[k1], a.myBasis[l1]);
+            else if (a.myBasis[k].nlm.l + a.myBasis[l].nlm.l == 1) {
+                if (a.myBasis[k].nlm.l == 0 && k > l) {
+                    Smatrix(k, l) = -calculateOverlapSTO(a.myBasis[k], a.myBasis[l]);
+                }
+                else if (a.myBasis[k].nlm.l == 0 && k < l) {
+                    Smatrix(k, l) = -calculateOverlapSTO(a.myBasis[k], a.myBasis[l]);
+                }
+                else {
+                    Smatrix(k, l) = calculateOverlapSTO(a.myBasis[k], a.myBasis[l]);
+                }
             }
             else {
-                Smatrix(k1, l1) = calculateOverlapSTO(a.myBasis[k1], a.myBasis[l1]);
+                Smatrix(k, l) = calculateOverlapSTO(a.myBasis[k], a.myBasis[l]);
             }
         }
     }
+    Smatrix.print("no rotation");
+    int counter = 0;
     for (unsigned k = 0; k < a.myBasis.size(); k++) {
         for (unsigned l = 0; l < a.myBasis.size(); l++) {
-            if (a.myBasis[k].id == a.myBasis[k - 1].id && a.myBasis[k].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k].id == a.myBasis[k + 1].id && a.myBasis[k].nlm.l == a.myBasis[k + 1].nlm.l && k > 1 && k < a.myBasis.size() - 2
-                    && a.myBasis[l].id == a.myBasis[l - 1].id && a.myBasis[l].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l].id == a.myBasis[l + 1].id && a.myBasis[l].nlm.l == a.myBasis[l + 1].nlm.l && l > 1 && l < a.myBasis.size() - 2) {
+            std::cout << k << l << std::endl;
+            if (a.myBasis[k].id == a.myBasis[k - 1].id && a.myBasis[k].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k].id == a.myBasis[k + 1].id && a.myBasis[k].nlm.l == a.myBasis[k + 1].nlm.l && k > 1 && k < a.myBasis.size() - 1
+                    && a.myBasis[l].id == a.myBasis[l - 1].id && a.myBasis[l].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l].id == a.myBasis[l + 1].id && a.myBasis[l].nlm.l == a.myBasis[l + 1].nlm.l && l > 1 && l < a.myBasis.size() - 1) {
                 arma::mat rotationMatrix;
                 findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
                 arma::mat sub(3, 3);
                 sub = Smatrix.submat(k - 1, l - 1, k + 1, l + 1);
-                sub = rotationMatrix * sub  * trans(rotationMatrix);
+                sub = trans(rotationMatrix) * sub  * (rotationMatrix);
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
                         Smatrix(k - 1 + i, l - 1 + j) = sub(i, j);
                     }
                 }
+                counter++;
             }
-            else if (a.myBasis[l].nlm.l == 0 && a.myBasis[k].id == a.myBasis[k - 1].id && a.myBasis[k].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k].id == a.myBasis[k + 1].id && a.myBasis[k].nlm.l == a.myBasis[k + 1].nlm.l && k > 1 && k < a.myBasis.size() - 2) {
+            else if (a.myBasis[l].nlm.l == 0 && a.myBasis[k].id == a.myBasis[k - 1].id && a.myBasis[k].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k].id == a.myBasis[k + 1].id && a.myBasis[k].nlm.l == a.myBasis[k + 1].nlm.l && k > 1 && k < a.myBasis.size() - 1) {
                 arma::mat rotationMatrix;
                 findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
                 arma::mat sub(3, 1);
                 sub = Smatrix.submat(k - 1, l, k + 1, l);
-                sub = rotationMatrix * sub;
+                sub = trans(rotationMatrix) * sub;
                 for (int i = 0; i < 3; i++) {
                     Smatrix(k  + i - 1, l ) = sub(i, 0);
                 }
+                counter++;
             }
-            else if (a.myBasis[k].nlm.l == 0 && a.myBasis[l].id == a.myBasis[l - 1].id && a.myBasis[l].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l].id == a.myBasis[l + 1].id && a.myBasis[l].nlm.l == a.myBasis[l + 1].nlm.l && l > 1 && l < a.myBasis.size() - 2) {
+            else if (a.myBasis[k].nlm.l == 0 && a.myBasis[l].id == a.myBasis[l - 1].id && a.myBasis[l].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l].id == a.myBasis[l + 1].id && a.myBasis[l].nlm.l == a.myBasis[l + 1].nlm.l && l > 1 && l < a.myBasis.size() - 1) {
                 arma::mat rotationMatrix;
                 findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
                 arma::mat sub(1, 3);
-                sub = trans(Smatrix.submat(k, l - 1, k, l + 1));
-                sub = trans(rotationMatrix * sub);
+                sub = (Smatrix.submat(k, l - 1, k, l + 1));
+                sub = (sub * (rotationMatrix));
                 for (int i = 0; i < 3; i++) {
                     Smatrix(k, l  + i - 1) = sub(0, i);
                 }
+                counter++;
             }
         }
     }
+    //Smatrix(1, 5) = -Smatrix(1, 5);
+    //ssSmatrix(5, 1) = -Smatrix(5, 1);
+    std::cout << "counter:" << counter << std::endl;
 }
 
 } //namespace Semi

@@ -63,16 +63,16 @@ void invSqrt(arma::mat A, arma::mat &sol) {
 }
 
 int numValence(int atom) {
+    std::cout << "debug " << atom << std::endl;
     if (atom <= 2) {
         return atom;
     }
-    if (atom <= 10) {
-        return (atom - 2) % 8;;
+    else if (atom <= 10) {
+        return (atom - 2);
     }
-    if (atom <= 18) {
-        return numValence(atom - 8);
+    else {
+        return 100;
     }
-    return 0;
 }
 
 } // namespace Semi

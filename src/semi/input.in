@@ -1,0 +1,13 @@
+@molecule
+6	0	0	0
+8	0	0	1.25
+@end
+
+$control
+method	cndo
+$end
+
+$param
+k 1
+delta 0.2
+$end

@@ -109,78 +109,40 @@ bool isReversed(int *a, int *b) {
 }
 
 double calculateOverlapSTOFull(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) {
-    std::cout << "tau: " << tau << " rho: " << rho << " kappa: " << kappa << " a: " << rho_alpha << " b: " << rho_beta << std::endl;
-    if (a[0] == 0 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //0s1s
-        return (pow((1.0 - pow(tau, 2)), 0.5) / (pow(2, 0.5) * tau * rho))
-               * (-(1.0 - kappa) * exp(-rho_alpha) + ((1.0 - kappa) + rho_beta) * exp(-rho_beta));
-    }
-    if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
+    if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s s
         return (pow((1.0 - pow(tau, 2)), 0.5) / (tau * rho))
                * (-(1.0 - kappa) * (2.0 * (1.0 + kappa) + rho_alpha) * exp(-rho_alpha)
                   + (1.0 + kappa) * (2.0 * (1.0 - kappa) + rho_beta) * exp(-rho_beta));
     }
-    if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //0s2s
-        return (pow((1.0 - pow(tau, 2)), 0.5) / (pow(6, 0.5) * tau * rho))
-               * (-(1.0 - kappa) * (1.0 - 2.0 * kappa) * exp(-rho_alpha)
-                  + (1.0 - kappa) * ((1.0 - 2.0 * kappa) + 2.0 * (1.0 - kappa) * rho_beta + pow(rho_beta, 2)) * exp(-rho_beta));
-    }
-    if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
+    if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s s
         return (pow((1.0 - pow(tau, 2)), 0.5) / (pow(3, 0.5) * tau * rho))
                * (-(1.0 - kappa) * (2.0 * (1.0 + kappa) * (2.0 - 3.0 * kappa) + (1.0 - 2.0 * kappa) * rho_alpha) * exp(-rho_alpha)
                   + (1.0 + kappa) * (2.0 * (1.0 - kappa) * (2.0 - 3.0 * kappa) + 4.0 * (1.0 - kappa) * rho_beta + pow(rho_beta, 2)) * exp(-rho_beta));
     }
-    if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
+    if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s s
         return (pow((1.0 - pow(tau, 2)), 0.5) / (3.0 * tau * rho))
                * (-(1.0 - kappa) * (2.0 * (1.0 + kappa) * (7 - 12.0 * pow(kappa, 2)) + 4.0 * (1.0 + kappa) * (2.0 - 3.0 * kappa) * rho_alpha + (1.0 - 2.0 * kappa) * pow(rho_alpha, 2)) *  exp(-rho_alpha)
                   + (1.0 + kappa) * (2.0 * (1.0 - kappa) * (7 - 12.0 * pow(kappa, 2)) + 4.0 * (1.0 - kappa) * (2.0 + 3.0 * kappa) * rho_beta + (1.0 + 2.0 * kappa) * pow(rho_beta, 2)) *  exp(-rho_beta));
-    }
-    if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //0s2pz
-        return pow((1.0 + tau) / (1.0 - tau), 0.5) * (1.0 / (pow(2, 0.5) * tau * pow(rho, 2)))
-               * (-2.0 * pow(1.0 - kappa, 2) * (1.0 + rho_alpha) * exp(-rho_alpha)
-                  + (2.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta) + 2.0 * (1.0 - kappa) * pow(rho_beta, 2) + pow(rho_beta, 3)) * exp(-rho_beta));
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1s2pz
         return pow((1.0 + tau) / (1.0 - tau), 0.5) * (1.0 / (tau * pow(rho, 2)))
                * (-pow(1.0 - kappa, 2) * (6.0 * (1.0 + kappa) * (1.0 + rho_alpha) + 2.0 * pow(rho_alpha, 2)) * exp(-rho_alpha)
                   + pow(1.0 + kappa, 1) * (6.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta) + 4.0 * (1.0 - kappa) * pow(rho_beta, 2) + pow(rho_beta, 3)) * exp(-rho_beta));
     }
-    if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2s2pz
-        std::cout << "DEBUGGING KDFJKSDFJALSKADFJALF " << pow((1.0 + tau) / (1.0 - tau), 0.5) * (1.0 / (pow(3, 0.5) * tau * pow(rho, 2))) << " " << ((-pow(1.0 - kappa, 2) * (6.0 * (1.0 + kappa) * (3.0 + 4.0 * kappa) * (1.0 + rho_alpha) + 2.0 * (5.0 + 6.0 * kappa) * pow(rho_alpha, 2) + 2.0 * pow(rho_alpha, 3)) * exp(-rho_alpha)))
-                  << " " <<  ((1.0 + kappa) * (6.0 * pow(1.0 - kappa, 2) * (3.0 + 4.0 * kappa) * (1.0 + rho_beta) + 4.0 * (1.0 - kappa) * (2.0 + 3.0 * kappa) * pow(rho_beta, 2) + (1.0 + 2.0 * kappa) * pow(rho_alpha, 3)) * exp(-rho_beta)) << std::endl;
-
+    if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2s2pz s
         return pow((1.0 + tau) / (1.0 - tau), 0.5) * (1.0 / (pow(3, 0.5) * tau * pow(rho, 2)))
                * ((-pow(1.0 - kappa, 2) * (6.0 * (1.0 + kappa) * (3.0 + 4.0 * kappa) * (1.0 + rho_alpha) + 2.0 * (5.0 + 6.0 * kappa) * pow(rho_alpha, 2) + 2.0 * pow(rho_alpha, 3)) * exp(-rho_alpha))
                   + (1.0 + kappa) * (6.0 * pow(1.0 - kappa, 2) * (3.0 + 4.0 * kappa) * (1.0 + rho_beta) + 4.0 * (1.0 - kappa) * (2.0 + 3.0 * kappa) * pow(rho_beta, 2) + (1.0 + 2.0 * kappa) * pow(rho_beta, 3)) * exp(-rho_beta));
     }
-    if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 1 && a[2] == b[2]) { //1pz1s
-        return pow((1.0 - tau) / (1.0 + tau), 0.5) * (pow(3, 0.5) / (tau * pow(rho, 2)))
-               * (-(1.0 - kappa) * (2.0 * (1.0 + kappa) * (1.0 + rho_alpha) + pow(rho_alpha, 2)) * exp(-rho_alpha)
-                  + (1.0 + kappa) * (2.0 * (1.0 - kappa) * (1.0 + rho_beta) + pow(rho_beta, 2)) * exp(-rho_beta));
-    }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 0 && a[2] == b[2]) { //1pz2s
-        return pow((1.0 - tau) / (1.0 + tau), 0.5) * (1.0 / (tau * pow(rho, 2)))
-               * (-(1.0 - kappa) * (2.0 * (1.0 + kappa) * (2.0 - 3.0 * kappa) * (1.0 + rho_alpha) + (1.0 - 2.0 * kappa) * pow(rho_alpha, 2)) * exp(-rho_alpha)
-                  + (1.0 + kappa) * (2.0 * (1.0 - kappa) * (2.0 - 3.0 * kappa) * (1.0 + rho_beta) + (3.0 - 4.0 * kappa) * pow(rho_beta, 2) + pow(rho_beta, 3)) * exp(-rho_beta));
-    }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
-        return pow(3, 0.5) / (pow(1.0 - pow(tau, 2), 0.5) * tau * pow(rho, 3))
-               * (-pow(1.0 - kappa, 2) * (12.0 * (1.0 + kappa) * (1.0 + rho_alpha + 0.5 * pow(rho_alpha, 2)) + 2.0 * pow(rho_alpha, 3)) * exp(-rho_alpha)
-                  + (1.0 + kappa) * (12.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta + 0.5 * pow(rho_beta, 2)) + (3.0 - 4.0 * kappa) * pow(rho_beta, 3) + pow(rho_beta, 4)) * exp(-rho_beta));
-    }
-    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
-        return 1.0 / (pow(1.0 - pow(tau, 2), 0.5) * tau * pow(rho, 3))
+    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2] && a[2] == 0) { //2pz2pz s
+        return -1.0 / (pow(1.0 - pow(tau, 2), 0.5) * tau * pow(rho, 3))
                * (-pow(1.0 - kappa, 2) * (48.0 * pow(1.0 + kappa, 2) * (1.0 + rho_alpha + 0.5 * pow(rho_alpha, 2)) + 2.0 * (5.0 + 6.0 * kappa) * pow(rho_alpha, 3) + 2.0 * pow(rho_alpha, 4)) * exp(-rho_alpha)
                   + pow(1.0 + kappa, 2) * (48.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta + 0.5 * pow(rho_beta, 2)) + 2.0 * (5.0 - 6.0 * kappa) * pow(rho_beta, 3) + 2.0 * pow(rho_beta, 4)) * exp(-rho_beta));
     }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
-        return pow(3, 0.5) / (pow(1.0 - pow(tau, 2), 0.5) * tau * pow(rho, 3))
-               * (-pow(1.0 - kappa, 2) * (6.0 * (1.0 + kappa) * (1.0 + rho_alpha) + 2.0 * pow(rho_alpha, 2)) * exp(-rho_alpha)
-                  + (1.0 + kappa) * (6.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta) + 4.0 * (1.0 - kappa) * pow(rho_beta, 2) + pow(rho_beta, 3)) * exp(-rho_beta));
-    }
-    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
+    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz p
         return 1.0 / (pow(1.0 - pow(tau, 2), 0.5) * tau * pow(rho, 3))
-               * (-pow(1.0 - kappa, 2) * (24.0 * pow(1.0 + kappa, 2) * (1.0 + rho_alpha) + 12.0 * (1.0 + kappa) * pow(rho_alpha, 2) + pow(rho_alpha, 3)) * exp(-rho_alpha)
-                  + pow(1.0 + kappa, 2) * (24.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta) + 12.0 * (1.0 - kappa) * pow(rho_beta, 2) + pow(rho_beta, 3)) * exp(-rho_beta));
+               * (-pow(1.0 - kappa, 2) * (24.0 * pow(1.0 + kappa, 2) * (1.0 + rho_alpha) + 12.0 * (1.0 + kappa) * pow(rho_alpha, 2) + 2 * pow(rho_alpha, 3)) * exp(-rho_alpha)
+                  + pow(1.0 + kappa, 2) * (24.0 * pow(1.0 - kappa, 2) * (1.0 + rho_beta) + 12.0 * (1.0 - kappa) * pow(rho_beta, 2) + 2 * pow(rho_beta, 3)) * exp(-rho_beta));
     }
     if (isReversed(a, b)) {
         return calculateOverlapSTOFull(-tau, rho, -kappa, rho_beta, rho_alpha, b, a);
@@ -189,47 +151,26 @@ double calculateOverlapSTOFull(double tau, double rho, double kappa, double rho_
 }
 
 double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) { //Tau = 0
-    if (a[0] == 0 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //0s1s
-        return (1.0 / pow(2, 0.5)) * (1.0 + rho) * exp(-rho);
-    }
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
         return (1.0 + rho + 1.0 / 3.0 * pow(rho, 2)) * exp(-rho);
-    }
-    if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //0s2s
-        return pow(6, -0.5) * (1.0 + rho + 2.0 / 3.0 * pow(rho, 2)) * exp(-rho);
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
         return pow(3, 0.5) / 2.0 * (1.0 + rho + 4 / 9 * pow(rho, 2) + 1.0 / 9 * pow(rho, 3)) * exp(-rho);
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
-        return (1.0 + rho + 4 / 9 * pow(rho, 2) + 1.0 / 9 * pow(rho, 3) + 1.0 / 45 * pow(rho, 4)) * exp(-rho);
-    }
-    if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //0s2pz
-        return  (1.0 / 3.0 * pow(2, 0.5) * rho) * (1.0 + rho) * exp(-rho);
+        return (1.0 + rho + 4.0 / 9.0 * pow(rho, 2) + 1.0 / 9.0 * pow(rho, 3) + 1.0 / 45 * pow(rho, 4)) * exp(-rho);
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1s2pz
         return  1.0 / 2.0 * rho * (1.0 + rho + 1.0 / 3.0 * pow(rho, 2)) * exp(-rho);
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2s2pz
-        return  1.0 / (2.0 * pow(3, 0.5)) * rho * (1.0 + rho + 7 / 15 * pow(rho, 2) + 2.0 / 15 * pow(rho, 3)) * exp(-rho);
+        return  1.0 / (2.0 * pow(3, 0.5)) * rho * (1.0 + rho + 7.0 / 15.0 * pow(rho, 2) + 2.0 / 15.0 * pow(rho, 3)) * exp(-rho);
     }
-    if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 1 && a[2] == b[2]) { //1pz1s
-        return  1.0 / pow(3, 0.5) * rho * (1.0 + rho) * exp(-rho);
-    }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 0 && a[2] == b[2]) { //1pz2s
-        return  1.0 / 6.0 * (1.0 + rho + pow(rho, 2)) * exp(-rho);
-    }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
-        return  1.0 / 2.0 * pow(3, 0.5) * (-1.0 - rho + 1.0 / 3.0 * pow(rho, 3)) * exp(-rho);
+    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2] && a[2] == 0) { //2pz2pz  
+        return  -(-1.0 - rho - 1.0 / 5.0 * pow(rho, 2) + 2.0 / 15.0 * pow(rho, 3) + 1.0 / 15.0 * pow(rho, 4)) * exp(-rho);
     }
     if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
-        return  (-1.0 - rho - 1.0 / 5 * pow(rho, 2) + 2.0 / 15 * pow(rho, 3) + 1.0 / 15 * pow(rho, 4)) * exp(-rho);
-    }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
-        return 1.0 / 2.0 *  pow(3, 0.5) * (1.0 + rho + 1.0 / 3.0 * pow(rho, 2)) * exp(-rho);
-    }
-    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
-        return  (1.0 + rho + 2.0 / 5 * pow(rho, 2) + 1.0 / 15 * pow(rho, 3)) * exp(-rho);
+        return  (1.0 + rho + 2.0 / 5.0 * pow(rho, 2) + 1.0 / 15.0 * pow(rho, 3)) * exp(-rho);
     }
     if (isReversed(a, b)) {
         return calculateOverlapSTOSameZeta(-tau, rho, -kappa, rho_beta, rho_alpha, b, a);
@@ -238,14 +179,8 @@ double calculateOverlapSTOSameZeta(double tau, double rho, double kappa, double 
 }
 
 double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, double rho_alpha, double rho_beta, int *a, int *b) { //Rho = 0
-    if (a[0] == 0 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //0s1s
-        return 1.0 / pow(2, 0.5) * pow(1.0 + tau, 0.5) * pow(1.0 - tau, 1.5);
-    }
     if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 0) { //1s1s
         return pow(1.0 + tau, 1.5) * pow(1.0 - tau, 1.5);
-    }
-    if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //0s2s
-        return pow(6, -0.5) * pow(1.0 + tau, 0.5) * pow(1.0 - tau, 2.5);
     }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //1s2s
         return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
@@ -253,31 +188,16 @@ double calculateOverlapSTOSamePosition(double tau, double rho, double kappa, dou
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
         return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
     }
-    if (a[0] == 0 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //0s2pz
-        return 0;
-    }
     if (a[0] == 1 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1s2pz
         return 0;
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2s2pz
         return 0;
     }
-    if (a[0] == 1 && a[1] == 0 && b[0] == 1 && b[1] == 1 && a[2] == b[2]) { //1pz1s
-        return 0;
+    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2] && a[2] == 0) { //2pz2pz s
+        return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
     }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 0 && a[2] == b[2]) { //1pz2s
-        return 0;
-    }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2] && a[2] == 0) { //1pz2pz
-        return -1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
-    }
-    if (a[0] == 1 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //1pz2pz
-        return 1.0 / 2.0 * pow(3, 0.5) * pow(1.0 + tau, 1.5) * pow(1.0 - tau, 2.5);
-    }
-    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2] && a[2] == 0) { //2pz2pz
-        return -pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
-    }
-    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz
+    if (a[0] == 2 && a[1] == 1 && b[0] == 2 && b[1] == 1 && a[2] == b[2]) { //2pz2pz p
         return pow(1.0 + tau, 2.5) * pow(1.0 - tau, 2.5);
     }
     if (isReversed(a, b)) {
@@ -298,7 +218,6 @@ double calculateOverlapSTO(double tau, double rho, double kappa, double rho_alph
 }
 
 double calculateOverlapSTO(STOFunction a, STOFunction b) {
-    std::cout << a.zeta << " " << b.zeta << std::endl;
     double r = distance(a.x, a.y, a.z, b.x, b.y, b.z);
     double tau = (a.zeta - b.zeta) / (a.zeta + b.zeta);
     double rho = 0.5 * (a.zeta + b.zeta) * r;
@@ -309,44 +228,101 @@ double calculateOverlapSTO(STOFunction a, STOFunction b) {
     return calculateOverlapSTO(tau, rho, kappa, rho_alpha, rho_beta, avec, bvec);
 }
 
+
+void get_rot(arma::mat &R, double x, double y, double z) {
+    const double thresh = 1e-14;
+    arma::mat R1(3, 3); R1.eye();
+    arma::mat R2(3, 3); R2.eye();
+
+    // rotate about z if y != 0
+    if (std::abs(y) > thresh) {
+        double theta = std::atan2(y, x);
+        double c = std::cos(theta);
+        double s = std::sin(theta);
+        R1(0, 0) = c;
+        R1(1, 1) = c;
+        R1(0, 1) = s;
+        R1(1, 0) = -s;
+    }
+
+    arma::vec v(3); v(0) = x; v(1) = y; v(2) = z;
+    arma::vec u = R1 * v;
+
+    // finally rotate about y
+    double theta = std::atan2(u(0), u(2));
+    double c1 = std::cos(theta);
+    double s1 = std::sin(theta);
+    R2(0, 0) = c1;
+    R2(2, 2) = c1;
+    R2(0, 2) = -s1;
+    R2(2, 0) = s1;
+
+    R = R2 * R1;
+}
+
+
+
 void findRotation(double x1, double y1, double z1, double x2, double y2, double z2, arma::mat &rotationMatrix) {
     double x = x2 - x1;
     double y = y2 - y1;
     double z = z2 - z1;
+    get_rot(rotationMatrix, x, y, z);
+    rotationMatrix.print();
+    // double d = pow( x * x + pow(y, 2) + pow(z, 2), 0.5);
+    // std::cout << x << " " << y << " " << z << " " << d << std::endl;
+    // //xz plane rotation
+    // mat xzRotation(3, 3);
 
-    //xz plane rotation
-    mat xzRotation(3, 3);
-    xzRotation(0, 0) = x / pow(pow(x, 2) + pow(y, 2), 0.5);
-    xzRotation(0, 1) = y / pow(pow(x, 2) + pow(y, 2), 0.5);
-    xzRotation(0, 2) = 0;
-    xzRotation(1, 0) = -y / pow(pow(x, 2) + pow(y, 2), 0.5);
-    xzRotation(1, 1) = x / pow(pow(x, 2) + pow(y, 2), 0.5);
-    xzRotation(1, 2) = 0;
-    xzRotation(2, 0) = 0;
-    xzRotation(2, 1) = 0;
-    xzRotation(2, 2) = 1;
+    // if (y == 0) {
+    //     xzRotation = arma::eye(3, 3);
+    // }
+    // else {
+    //     xzRotation(0, 0) = 1;
+    //     xzRotation(0, 1) = 0;
+    //     xzRotation(0, 2) = 0;
+    //     xzRotation(1, 0) = 0;
+    //     xzRotation(1, 1) = z / d;
+    //     xzRotation(1, 2) = -y / d;
+    //     xzRotation(2, 0) = 0;
+    //     xzRotation(2, 1) = y / d;
+    //     xzRotation(2, 2) = z / d;
+    // }
 
-    //rotation to z axis
-    mat zRotation(3, 3);
-    zRotation(0, 0) = z / pow(pow(x, 2) + pow(y, 2) + pow(z, 2), 0.5);
-    zRotation(0, 1) = 0;
-    zRotation(0, 2) = (-pow(pow(x, 2) + pow(y, 2), 0.5)) / (pow(pow(x, 2) + pow(y, 2) + pow(z, 2), 0.5));
-    zRotation(1, 0) = 0;
-    zRotation(1, 1) = 1;
-    zRotation(1, 2) = 0;
-    zRotation(2, 0) = (pow(pow(x, 2) + pow(y, 2), 0.5)) / (pow(pow(x, 2) + pow(y, 2) + pow(z, 2), 0.5));
-    zRotation(2, 1) = 0;
-    zRotation(2, 2) = z / pow(pow(x, 2) + pow(y, 2) + pow(z, 2), 0.5);
+    // //rotation to z axis
+    // mat zRotation(3, 3);
 
-    rotationMatrix = zRotation * xzRotation;
+    // zRotation(0, 0) = d;
+    // zRotation(0, 1) = 0;
+    // zRotation(0, 2) = -x;
+    // zRotation(1, 0) = 0;
+    // zRotation(1, 1) = 1;
+    // zRotation(1, 2) = 0;
+    // zRotation(2, 0) = x;
+    // zRotation(2, 1) = 0;
+    // zRotation(2, 2) = d;
 
-    for (int k = 0; k < 3; k++) {
-        for (int i = 0; i < 3; i++) {
-            if (isnan(rotationMatrix(k, i))) {
-                rotationMatrix = arma::eye(3, 3);
-            }
-        }
-    }
+    // xzRotation.print("xz");
+    // zRotation.print("z");
+    // rotationMatrix.print("rotation");
+    // if (det(inv(zRotation * xzRotation)) != 0) {
+    //     rotationMatrix = inv(zRotation * xzRotation);
+    // }
+    // else {
+
+    //     rotationMatrix = arma::eye(3, 3);
+    // }
+
+
+    // for (int k = 0; k < 3; k++) {
+    //     for (int i = 0; i < 3; i++) {
+    //         if (isnan(rotationMatrix(k, i))) {
+    //             rotationMatrix = arma::eye(3, 3);
+    //         }
+    //     }
+    // }
+    // xzRotation.print("xz");
+    // zRotation.print("z");
+    // rotationMatrix.print("rotation");
 }
 
 //[a,1Sb]
@@ -381,9 +357,9 @@ double calculateBasicCoulombIntegralFull(double zeta_a, double zeta_b, double ta
     }
     if (a[0] == 2 && a[1] == 0 && b[0] == 2 && b[1] == 0) { //2s2s
         return (zeta_a / rho) * (1.0 - pow(1 - kappa, 3.0) * (1.0 / 16.0 * (8.0 - kappa - 27.0 * pow(kappa, 2.0) - 30.0 * pow(kappa, 3.0) - 10.0 * pow(kappa, 4.0))
-                                 + 1.0 / 32.0 * (11.0 - 19.0 * kappa - 44.0 * pow(kappa, 2) - 20 * pow(kappa, 3)) * rho_alpha
-                                 + 1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) * pow(rho_alpha, 2)) * exp(-2.0 * rho_alpha)
-                                 - pow(1.0 + kappa, 3.0) * (1.0 / 16.0 * (8.0 + kappa - 27.0 * pow(kappa, 2.0) + 30.0 * pow(kappa, 3.0) - 10 * pow(kappa, 4))
+                                 + 1.0 / 32.0 * (11.0 - 19.0 * kappa - 44.0 * pow(kappa, 2) - 20.0 * pow(kappa, 3)) * rho_alpha
+                                 + 1.0 / 16.0 * (1.0 - 5.0 * kappa - 4.0 * pow(kappa, 2.0)) * pow(rho_alpha, 2) - 1.0 / 24.0 * kappa * pow(rho_alpha, 3)) * exp(-2.0 * rho_alpha)
+                                 - pow(1.0 + kappa, 3.0) * (1.0 / 16.0 * (8.0 + kappa - 27.0 * pow(kappa, 2.0) + 30.0 * pow(kappa, 3.0) - 10.0 * pow(kappa, 4))
                                          + 1.0 / 32.0 * (11.0 + 19.0 * kappa - 44.0 * pow(kappa, 2.0) + 20.0 * pow(kappa, 3)) * rho_beta
                                          + 1.0 / 16.0 * (1.0 + 5.0 * kappa - 4.0 * pow(kappa, 2.0)) * pow(rho_beta, 2) + 1.0 / 24.0 * kappa * pow(rho_beta, 3)) * exp(-2 * rho_beta));
     }

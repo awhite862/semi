@@ -9,24 +9,23 @@
 namespace Semi {
 
 template<typename bType>
-/** \brief Class that represents a basis set by using an vector of basis. **/
+/** \brief Class that represents a basis set by using an vector of basis functions. **/
 class BasisSet {
 public:
 	std::vector<bType> myBasis; ///!< vector representing basis
 
 public:
-    /** \brief Default constructor.
-     **/
-    BasisSet() { }
+	/** \brief Default constructor. **/
+	BasisSet() { }
 
-	/** \brief Constructor.
+	/** \brief Constructor taking in a vector of basis functions.
 	    \param _myBasis vector of basis.
 	 **/
 	BasisSet(std::vector<bType> _myBasis) {
-            myBasis = _myBasis;
-        }
+		myBasis = _myBasis;
+	}
 };
 
-} //namespace Semi
+} // namespace Semi
 
-#endif //BASISSET_H
+#endif // BASISSET_H

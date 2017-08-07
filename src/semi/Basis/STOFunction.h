@@ -3,11 +3,11 @@
 #include "semi/Structure/QNumber.h"
 
 namespace Semi {
-/** \brief Class that represents a STO Basis. **/
+/** \brief Class that represents a STO basis function. **/
 class STOFunction {
 public:
-    double charge;
-    double zeta; ///!< zeta
+    double charge; ///!< charge or atomic number
+    double zeta; ///!< slater zeta value
     QNumber nlm; ///!< quantum numbers
     double x; ///!< x-position
     double y; ///!< y-position

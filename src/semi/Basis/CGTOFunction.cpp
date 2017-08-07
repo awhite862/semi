@@ -1,7 +1,6 @@
 #include "CGTOFunction.h"
 #include "get_sto_3g.h"
 #include "semi/semi_utils.h"
-#include <math.h>
 
 namespace Semi {
 
@@ -13,6 +12,7 @@ CGTOFunction::CGTOFunction(QNumber _nlm, double _a, double _b, double _c, arma::
     elem = _elem;
     nlm = _nlm;
 
+    //loads sto_3g contraction coefficients 
     std::string name = getElement(_elem);
     alphaVec.resize(3);
     nVec.resize(3);
