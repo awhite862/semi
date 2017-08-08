@@ -3,7 +3,9 @@ set(TESTS
     io_utils_test
     framework_test
     semi_test
+    sto_test
     cgto_test
+    sto_vs_cgto_test
     huckel_test
     cndo_test
 )

@@ -21,7 +21,7 @@ int run_huckel_test() {
     std::ifstream fin;
     std::string line;
     std::vector<CGTOFunction> vbasis;
-    fin.open("methane.txt");
+    fin.open("xyz/methane.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
         double elem, x, y, z;
@@ -53,10 +53,8 @@ int run_huckel_test() {
     BasisSet<CGTOFunction> bset(vbasis);
     arma::mat S;
     calculateOverlapMatrixCGTO(bset, S);
-    S.print("overlap");
     arma::mat sol;
     Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), sol);
-    //sol.print();
     return 0;
 }
 

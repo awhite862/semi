@@ -5,7 +5,7 @@
 #include <armadillo>
 
 namespace Semi {
-/** \brief Struct used to read in sto-3g data from EMSL . **/
+/** \brief Struct used to read in STO-3G data from EMSL . **/
 struct coeffs {
     double a;
     double cs;

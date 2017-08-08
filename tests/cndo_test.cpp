@@ -20,7 +20,7 @@ int run_huckel_test() {
     std::ifstream fin;
     std::string line;
     std::vector<STOFunction> vbasis;
-    fin.open("o2.txt");
+    fin.open("xyz/o2.txt");
     while (std::getline(fin, line)) {
         std::stringstream linestream(line);
         double elem, x, y, z;
@@ -50,43 +50,21 @@ int run_huckel_test() {
         i++;
     }
     fin.close();
-
     BasisSet<STOFunction> bset(vbasis);
     arma::mat S;
     calculateOverlapMatrix(bset, S);
     arma::mat sol;
     Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), sol);
-    sol.print("sol");
     arma::mat fock;
-    S.print("Overlap matrix");
-    sol.zeros();
-    sol.print("coeffs");
-    SCF(bset, sol, S, fock);
-
-    arma::mat colbyeigvec;
-    colbyeigvec.load("colby2.txt", arma::raw_ascii);
-    //colbyeigvec.print("colby");
-
-    arma::mat colbyeigval;
-    colbyeigval.load("colby1.txt", arma::raw_ascii);
-    //colbyeigval.print("colby");
-
-    arma::mat temp;
-    temp = colbyeigvec * diagmat(colbyeigval) * inv(colbyeigvec);
-    temp.print("fock");
-    //Sprime.print("Overlap matrix cgto");
+    SCF(bset, sol, S, 50, 9, fock);
 
     std::cout << "------------------------------------------------------------------------------------" << std::endl;
     calculateOverlapMatrix(bset, S);
-
     (round(1000 * S) / 1000).print("Overlap matrix sto");
-
     arma::mat eigvec;
     arma::vec eigval;
     eig_sym(eigval, eigvec, S);
-    fock.print("fock");
     eigval.print("eigval");
-    eigvec.print("eigvecs");
 
     return 0;
 }

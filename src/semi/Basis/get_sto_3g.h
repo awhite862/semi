@@ -8,7 +8,7 @@
 namespace Semi {
 
 /** \brief Fetches STO-3g constraction coefficients and alpha terms for given element and quantum number.
-        \param _alphavec vector of alpha values
+        \param 
         \param _a x power.
         \param _b y power.
         \param _c z power.

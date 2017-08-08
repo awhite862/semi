@@ -109,8 +109,6 @@ void solveHuckelMatrix(arma::mat Hhuckel, arma::mat Smatrix, Molecule m, std::ve
         energy += 2.0 * eigval(k);
     }
     std::cout << "Total Energy: " << energy << std::endl;
-    eigvec.print("eigvec");
-    c_full.print("cfull");
     solMatrix = eigvec;
 }
 
