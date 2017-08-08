@@ -76,8 +76,8 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
         arma::mat eigvec;
         arma::vec eigval;
         eig_sym(eigval, eigvec, fock);
-        fock.print("fock");
-        eigvec.print("eigvecs");
+        //fock.print("fock");
+        //eigvec.print("eigvecs");
 
         eigval.print("eigvals");
         eigvals.push_back(eigval);
@@ -87,8 +87,8 @@ void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, arma::mat &
     }
     std::cout << "num orbitals:" << num_orbitals << std::endl;
     std::cout << "-----------------------------------------------------------------------" << std::endl;
-    std::cout << "fock" << std::endl;
-    f[0].print();
+    //std::cout << "fock" << std::endl;
+    //f[0].print();
     std::cout << "density occ" << std::endl;
     calculateChargeDensity(occs[0], density);
     density.print();
@@ -536,49 +536,96 @@ void calculateOverlapMatrix(BasisSet<STOFunction> a, arma::mat & Smatrix) {
     }
     Smatrix.print("no rotation");
     int counter = 0;
-    for (unsigned k = 0; k < a.myBasis.size(); k++) {
-        for (unsigned l = 0; l < a.myBasis.size(); l++) {
-            std::cout << k << l << std::endl;
-            if (a.myBasis[k].id == a.myBasis[k - 1].id && a.myBasis[k].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k].id == a.myBasis[k + 1].id && a.myBasis[k].nlm.l == a.myBasis[k + 1].nlm.l && k > 1 && k < a.myBasis.size() - 1
-                    && a.myBasis[l].id == a.myBasis[l - 1].id && a.myBasis[l].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l].id == a.myBasis[l + 1].id && a.myBasis[l].nlm.l == a.myBasis[l + 1].nlm.l && l > 1 && l < a.myBasis.size() - 1) {
+    
+    unsigned k = 0;
+    while(k < a.myBasis.size()) {
+        unsigned kl = a.myBasis[k].nlm.l;
+        unsigned l = 0;
+        while(l < a.myBasis.size()) {
+            unsigned ll = a.myBasis[l].nlm.l;
+            if (kl == 1 && ll == 1) {
                 arma::mat rotationMatrix;
                 findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
                 arma::mat sub(3, 3);
-                sub = Smatrix.submat(k - 1, l - 1, k + 1, l + 1);
+                sub = Smatrix.submat(k, l, k + 2, l + 2);
                 sub = trans(rotationMatrix) * sub  * (rotationMatrix);
                 for (int i = 0; i < 3; i++) {
                     for (int j = 0; j < 3; j++) {
-                        Smatrix(k - 1 + i, l - 1 + j) = sub(i, j);
+                        Smatrix(k + i, l + j) = sub(i, j);
                     }
                 }
-                counter++;
             }
-            else if (a.myBasis[l].nlm.l == 0 && a.myBasis[k].id == a.myBasis[k - 1].id && a.myBasis[k].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k].id == a.myBasis[k + 1].id && a.myBasis[k].nlm.l == a.myBasis[k + 1].nlm.l && k > 1 && k < a.myBasis.size() - 1) {
+            else if (kl == 1 && ll == 0) {
                 arma::mat rotationMatrix;
                 findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
                 arma::mat sub(3, 1);
-                sub = Smatrix.submat(k - 1, l, k + 1, l);
+                sub = Smatrix.submat(k, l, k + 2, l);
                 sub = trans(rotationMatrix) * sub;
                 for (int i = 0; i < 3; i++) {
-                    Smatrix(k  + i - 1, l ) = sub(i, 0);
+                    Smatrix(k  + i, l) = sub(i, 0);
                 }
-                counter++;
             }
-            else if (a.myBasis[k].nlm.l == 0 && a.myBasis[l].id == a.myBasis[l - 1].id && a.myBasis[l].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l].id == a.myBasis[l + 1].id && a.myBasis[l].nlm.l == a.myBasis[l + 1].nlm.l && l > 1 && l < a.myBasis.size() - 1) {
+            else if (kl == 0 && ll == 1) {
                 arma::mat rotationMatrix;
                 findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
                 arma::mat sub(1, 3);
-                sub = (Smatrix.submat(k, l - 1, k, l + 1));
+                sub = (Smatrix.submat(k, l, k, l + 2));
                 sub = (sub * (rotationMatrix));
                 for (int i = 0; i < 3; i++) {
-                    Smatrix(k, l  + i - 1) = sub(0, i);
+                    Smatrix(k, l  + i) = sub(0, i);
                 }
-                counter++;
             }
+            else {// do nothing for both s-functions 
+            }
+            l += 2*ll + 1;
         }
+        k += 2*kl + 1;
     }
+
+    //for (unsigned k = 0; k < a.myBasis.size(); k++) {
+    //    for (unsigned l = 0; l < a.myBasis.size(); l++) {
+    //        std::cout << k << l << std::endl;
+    //        if (k > 1 && k < a.myBasis.size() - 1 && l > 1 && l < a.myBasis.size() - 1 && a.myBasis[k].id == a.myBasis[k - 1].id && a.myBasis[k].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k].id == a.myBasis[k + 1].id && a.myBasis[k].nlm.l == a.myBasis[k + 1].nlm.l 
+    //                && a.myBasis[l].id == a.myBasis[l - 1].id && a.myBasis[l].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l].id == a.myBasis[l + 1].id && a.myBasis[l].nlm.l == a.myBasis[l + 1].nlm.l) {
+    //            arma::mat rotationMatrix;
+    //            findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
+    //            arma::mat sub(3, 3);
+    //            sub = Smatrix.submat(k - 1, l - 1, k + 1, l + 1);
+    //            sub = trans(rotationMatrix) * sub  * (rotationMatrix);
+    //            for (int i = 0; i < 3; i++) {
+    //                for (int j = 0; j < 3; j++) {
+    //                    Smatrix(k - 1 + i, l - 1 + j) = sub(i, j);
+    //                }
+    //            }
+    //            counter++;
+    //        }
+    //        else if (k > 1 && k < a.myBasis.size() - 1 && a.myBasis[l].nlm.l == 0 && a.myBasis[k].id == a.myBasis[k - 1].id && a.myBasis[k].nlm.l == a.myBasis[k - 1].nlm.l && a.myBasis[k].id == a.myBasis[k + 1].id && a.myBasis[k].nlm.l == a.myBasis[k + 1].nlm.l) {
+    //            arma::mat rotationMatrix;
+    //            findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
+    //            arma::mat sub(3, 1);
+    //            sub = Smatrix.submat(k - 1, l, k + 1, l);
+    //            sub = trans(rotationMatrix) * sub;
+    //            for (int i = 0; i < 3; i++) {
+    //                Smatrix(k  + i - 1, l ) = sub(i, 0);
+    //            }
+    //            counter++;
+    //        }
+    //        else if (l > 1 && l < a.myBasis.size() - 1 && a.myBasis[k].nlm.l == 0 && a.myBasis[l].id == a.myBasis[l - 1].id && a.myBasis[l].nlm.l == a.myBasis[l - 1].nlm.l && a.myBasis[l].id == a.myBasis[l + 1].id && a.myBasis[l].nlm.l == a.myBasis[l + 1].nlm.l) {
+    //            arma::mat rotationMatrix;
+    //            findRotation(a.myBasis[k].x, a.myBasis[k].y, a.myBasis[k].z, a.myBasis[l].x, a.myBasis[l].y, a.myBasis[l].z, rotationMatrix);
+    //            arma::mat sub(1, 3);
+    //            sub = (Smatrix.submat(k, l - 1, k, l + 1));
+    //            sub = (sub * (rotationMatrix));
+    //            for (int i = 0; i < 3; i++) {
+    //                Smatrix(k, l  + i - 1) = sub(0, i);
+    //            }
+    //            counter++;
+    //        }
+    //    }
+    //}
     //Smatrix(1, 5) = -Smatrix(1, 5);
     //ssSmatrix(5, 1) = -Smatrix(5, 1);
+    Smatrix.print("Overlap matrix");
     std::cout << "counter:" << counter << std::endl;
 }
 

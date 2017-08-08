@@ -31,7 +31,7 @@ public:
         \param value Value of the defualt.
      **/
     template <typename T>
-    void set_default(std::string &key, T value) {
+    void set_default(std::string key, T value) {
         typename map_type::iterator i = m_data.find(key);
         if (i == m_data.end()) {
             std::stringstream ss;

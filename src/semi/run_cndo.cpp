@@ -15,7 +15,7 @@
 
 namespace Semi {
 
-void run_cndo(Molecule &mol, parameters &huckel_params, output &out) {
+void run_cndo(Molecule &mol, parameters &huckel_params, parameters &cndo_params, output &out) {
 
    std::vector<CGTOFunction> vbasishuckel;
     for (size_t i = 0; i < mol.myMolecule.size(); i++) {
@@ -65,7 +65,7 @@ void run_cndo(Molecule &mol, parameters &huckel_params, output &out) {
 
     BasisSet<STOFunction> bset(vbasis);
     arma::mat S;
-    calculateOverlapMatrixSTO(bset, S);
+    calculateOverlapMatrix(bset, S);
     double kValue = huckel_params.get_value<double>("k");
     double deltaValue = huckel_params.get_value<double>("delta");
     arma::mat C;

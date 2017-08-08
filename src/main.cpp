@@ -88,7 +88,7 @@ void build_input(
     // get CNDO section if applicable
     if (inputs.count("cndo") != 0) {
         typename imap_type::const_iterator ic = inputs.find("cndo");
-        in.huckel_params = Semi::parameters(ic->second.get());
+        in.cndo_params = Semi::parameters(ic->second.get());
     }
 }
 

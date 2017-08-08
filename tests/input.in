@@ -8,6 +8,7 @@ method	cndo
 $end
 
 $cndo
-k 1.25
-delta 0.5
+guess huckel
+max_iter 100
+convergence 9
 $end

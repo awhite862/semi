@@ -8,7 +8,7 @@
 
 namespace Semi {
 
-void run_cndo(Molecule &mol, parameters &huckel_params, output &out);
+void run_cndo(Molecule &mol, parameters &huckel_params, parameters &cndo_params, output &out);
 
 } // namespace Semi
 
