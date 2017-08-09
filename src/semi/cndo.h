@@ -14,6 +14,10 @@ private:
     arma::mat F;
 
 public:
+    cndo(/** whatever is necessary **/);
+
+/** \name Implementation of semi_method **/
+///@{
     // return the abs(P - P_prev)
     virtual double get_error();
     // compute and return energy
@@ -23,6 +27,7 @@ public:
     virtual void take_step();
     // print orbital energies, etc
     virtual void final_print();
+///@}
 };
 
 } // namespace Semi
