@@ -8,8 +8,6 @@ include(CheckIncludeFileCXX)
 include("${SEMI_DIR}/cmake/SEMIDeps.txt")
 
 #find_package(Doxygen)
-#find_package( BLAS REQUIRED )
-#find_package( LAPACK REQUIRED )
 
 #set(ARMADILLO_LIBRARY ${Armadillo_DIR}/libarmadillo.so)
 #set(ARMADILLO_INCLUDE_DIR ${Armadillo_DIR}/include/)

@@ -15,6 +15,10 @@
 
 namespace Semi {
 
+/** \brief A class to implement the CNDO/2 method of Pople and coworkers.
+    
+    \sa http://dx.doi.org/10.1063/1.1727227
+ **/
 class cndo2: public semi_method {
 private:
     size_t nbasis;

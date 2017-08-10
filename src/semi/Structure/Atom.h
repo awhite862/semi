@@ -5,11 +5,11 @@ namespace Semi {
 /** \brief Class that represents an atom. **/
 class Atom {
 public:
-    double x; ///!< x-position
-    double y; ///!< y-position
-    double z; ///!< z-position
-    double charge; ///!< charge of the atom
-    unsigned id; ///!< id for the atom
+    double x; //!< x-position
+    double y; //!< y-position
+    double z; //!< z-position
+    double charge; //!< charge of the atom
+    unsigned id; //!< id for the atom
 
 public:
     /** \brief Default constructor
