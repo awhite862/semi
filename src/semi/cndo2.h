@@ -1,20 +1,37 @@
-#ifndef CNDO_H
-#define CNDO_H
+#ifndef CNDO2_H
+#define CNDO2_H
+#include <iostream>
+#include <sstream>
+#include <iomanip>
+
+#include <armadillo>
+#include <iostream>
+#include <cstdlib>
+#include "semi_method.h"
+#include "semi/Integral/Cndo.h"
+#include "semi/Integral/IntegralEvaluator.h"
+#include "semi/Basis/BasisSet.h"
+#include "semi/Basis/STOFunction.h"
 
 namespace Semi {
 
-class cndo : public semi_method {
+class cndo2: public semi_method {
 private:
     size_t nbasis;
     size_t natoms;
+    size_t nocc;
     arma::mat P;
     arma::mat P_prev;
     arma::mat C;
     arma::mat C_prev;
     arma::mat F;
+    arma::mat eigvalues;
+    arma::mat S;
+    arma::mat occs;
+    BasisSet<STOFunction> bset;
 
 public:
-    cndo(/** whatever is necessary **/);
+    cndo2(size_t nbasis, size_t natoms, arma::mat C, BasisSet<STOFunction> bset);
 
 /** \name Implementation of semi_method **/
 ///@{
@@ -32,4 +49,4 @@ public:
 
 } // namespace Semi
 
-#endif // CNDO_H
+#endif // CNDO2_H

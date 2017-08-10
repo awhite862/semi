@@ -56,7 +56,7 @@ int run_huckel_test() {
     arma::mat sol;
     Semi::calculateHuckel(S, 1, 0.2, Molecule(m.myMolecule), sol);
     arma::mat fock;
-    SCF(bset, sol, S, 50, 9, fock);
+    SCFold(bset, sol, S, 50, 9, fock);
 
     std::cout << "------------------------------------------------------------------------------------" << std::endl;
     calculateOverlapMatrix(bset, S);

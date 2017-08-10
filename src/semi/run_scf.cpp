@@ -1,7 +1,8 @@
-#include "run_cndo.h"
+#include "run_scf.h"
 #include <semi/Basis/STOFunction.h>
 #include <semi/Integral/Cndo.h>
 #include <semi/Huckel/HuckelMethod.h>
+#include "cndo2.h"
 #include <cstdlib>
 #include <armadillo>
 #include <cstdlib>
@@ -12,10 +13,11 @@
 #include "semi/Huckel/HuckelMethod.h"
 #include "semi/semi_utils.h"
 #include <map>
+#include "scf.h"
 
 namespace Semi {
 
-void run_cndo(Molecule &mol, parameters &huckel_params, parameters &cndo_params, output &out) {
+void run_scf(Molecule &mol, parameters &huckel_params, parameters &cndo_params,  parameters &scf_params, output &out) {
 
     std::vector<STOFunction> valenceBasisSet;
     for (size_t i = 0; i < mol.myMolecule.size(); i++) {
@@ -41,24 +43,28 @@ void run_cndo(Molecule &mol, parameters &huckel_params, parameters &cndo_params,
         }
     }
     BasisSet<STOFunction> bset(valenceBasisSet);
-
     arma::mat overlapMatrix;
     calculateOverlapMatrix(bset, overlapMatrix);
 
+    double maxIterations = scf_params.get_value<double>("maxiter");
+    double convergence = scf_params.get_value<double>("convergence");
+    double method = scf_params.get_value<double>("method");
+
+    arma::mat C(bset.myBasis.size(), bset.myBasis.size());
+
+    std::cout << "Initial Huckel Guess" << std::endl;
     double kValue = huckel_params.get_value<double>("k");
     double deltaValue = huckel_params.get_value<double>("delta");
-
-    double guessType = cndo_params.get_value<double>("guess");
-    double cndoVariant = cndo_params.get_value<double>("variant");
-
-    arma::mat C;
     calculateHuckel(overlapMatrix, kValue, deltaValue, mol, C);
-    C.zeros();
 
     arma::mat fock;
-    SCFold(bset, C, overlapMatrix, 100, 9, fock);
-    std::cout << "done" << std::endl;
-    out.C = C;
+
+    std::cout << "SCF Convergence" << std::endl;
+    cndo2 cndomethod(bset.myBasis.size(), mol.myMolecule.size(), C, bset);
+
+    scf(cndomethod, convergence, maxIterations);
+
+    //out.C = C;
 }
 
 } // namespace Semi

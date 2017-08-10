@@ -6,13 +6,14 @@
 
 namespace Semi {
 
-enum calc_type {HUCKEL, CNDO};
+enum calc_type {HUCKEL, CNDO, SCF};
 
 struct input {
     Molecule mol; 
     calc_type ctype;
     parameters huckel_params;
     parameters cndo_params;
+    parameters scf_params;
 };
 
 } // namespace Semi

@@ -6,7 +6,7 @@ using namespace arma;
 namespace Semi {
 
 
-void SCF(BasisSet<STOFunction> valenceBasis, arma::mat coefMatrix, arma::mat overlapMatrix, double maxIterations, double convergence, arma::mat &fock) {
+void SCFold(BasisSet<STOFunction> valenceBasis, arma::mat coefMatrix, arma::mat overlapMatrix, double maxIterations, double convergence, arma::mat &fock) {
     std::vector<arma::mat> occs;
     std::vector<arma::mat> eigvals;
 
@@ -24,7 +24,7 @@ void SCF(BasisSet<STOFunction> valenceBasis, arma::mat coefMatrix, arma::mat ove
     (round(100000*overlapMatrix)/100000).print("Overlap Matrix");
 
     arma::mat previous(coefMatrix.n_rows, coefMatrix.n_rows);
-    previous.zeros();
+    previous.ones();
 
     int counter = 0;
     while (counter < maxIterations) {
@@ -42,7 +42,6 @@ void SCF(BasisSet<STOFunction> valenceBasis, arma::mat coefMatrix, arma::mat ove
         eig_sym(eigval, eigvec, fock);
 
         //check convergence
-
         if (-log10(norm(density - previous)) > convergence) {
             std::cout << "Iteration: " << counter << " Convergence: " << norm(density - previous) << std::endl;
             printEnergy(eigval, num_orbitals, 0);

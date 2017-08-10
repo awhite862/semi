@@ -7,7 +7,7 @@ namespace Semi {
 
 void printEnergy(arma::mat eigval, double num_orbitals, double variant);
 /** \brief Iteratively . **/
-void SCF(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, double maxIterations, double convergence, arma::mat &fock);
+void SCFold(BasisSet<STOFunction> a, arma::mat coefMatrix, arma::mat S, double maxIterations, double convergence, arma::mat &fock);
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////

@@ -4,11 +4,16 @@
 @end
 
 $control
-method	cndo
+method	scf
+$end
+
+$scf
+maxiter 100
+convergence 5
+method cndo
 $end
 
 $cndo
 guess huckel
-max_iter 100
-convergence 9
 $end
+	

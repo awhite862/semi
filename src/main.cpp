@@ -45,9 +45,9 @@ void build_input(
         for (size_t i = 0; i < ii->second.size(); i++) {
             double charge = get_charge(ii->second.gets(i));
             Semi::Atom A(
-                ii->second.getx(i), 
-                ii->second.gety(i), 
-                ii->second.getz(i), 
+                ii->second.getx(i),
+                ii->second.gety(i),
+                ii->second.getz(i),
                 charge, i);
 
             avec.push_back(A);
@@ -57,9 +57,9 @@ void build_input(
     else {
         std::stringstream ss;
         ss << "Incorrect molecule specification: " << nmol << " molecules were specified.";
-        throw std::runtime_error(ss.str()); 
+        throw std::runtime_error(ss.str());
     }
-    
+
     // parse     section
     {
         typename imap_type::const_iterator ii = inputs.find("control");
@@ -73,6 +73,9 @@ void build_input(
         }
         else if (method == "cndo") {
             in.ctype = Semi::CNDO;
+        }        
+        else if (method == "scf") {
+            in.ctype = Semi::SCF;
         }
         else {
             throw std::runtime_error("Unrecognized method: " + method);
@@ -89,6 +92,13 @@ void build_input(
     if (inputs.count("cndo") != 0) {
         typename imap_type::const_iterator ic = inputs.find("cndo");
         in.cndo_params = Semi::parameters(ic->second.get());
+    }
+
+
+    // get SCF section if applicable
+    if (inputs.count("scf") != 0) {
+        typename imap_type::const_iterator ic = inputs.find("scf");
+        in.scf_params = Semi::parameters(ic->second.get());
     }
 }
 
@@ -110,7 +120,7 @@ int main(int argc, char * argv[]) {
             // Build input for Semi
             Semi::input in;
             build_input(min, inputs, in);
-            
+
             // Run calculation printing output to std::cout
             if (argc == 2) {
                 io::print_input_sections(std::cout, min, inputs);

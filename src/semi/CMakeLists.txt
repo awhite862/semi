@@ -16,6 +16,10 @@ set(SRC
     run_cndo.cpp
     semi_utils.cpp
     semi_api.cpp
+    cndo2.cpp
+    scf.cpp
+    run_cndo.cpp
+    run_scf.cpp 
 )
 
 add_library(libsemi ${SRC})
